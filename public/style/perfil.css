@@ -1,0 +1,132 @@
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: linear-gradient(to right, #f5ebe0, #e6ccb2);
+            color: #4a3c31;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 560px;
+        }
+
+        .voltar {
+            display: inline-block;
+            margin-bottom: 18px;
+            font-size: 13px;
+            color: #7f5539;
+            font-weight: bold;
+        }
+
+        .voltar:hover {
+            color: #9c6644;
+        }
+
+        .cartao {
+            background-color: #fffaf6;
+            border-radius: 12px;
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.15);
+            padding: 40px;
+        }
+
+        .cabecalho-perfil {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+
+        .avatar-grande {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: #e6ccb2;
+            color: #7f5539;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .cabecalho-perfil h2 {
+            color: #7f5539;
+            font-size: 20px;
+        }
+
+        .cabecalho-perfil p {
+            font-size: 13px;
+            color: #6b5744;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-top: 14px;
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        input,
+        select {
+            padding: 10px;
+            margin-top: 6px;
+            border: 1px solid #d9c5b2;
+            border-radius: 5px;
+            background-color: #f5ebe0;
+            color: #4a3c31;
+            font-size: 14px;
+        }
+
+        input:disabled {
+            opacity: 0.6;
+        }
+
+        .ajuda {
+            font-size: 11px;
+            color: #6b5744;
+            font-weight: normal;
+            margin-top: 4px;
+        }
+
+        input[type="submit"] {
+            background-color: #7f5539;
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 26px;
+            border: none;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #9c6644;
+        }
+
+        .mensagem {
+            margin-top: 14px;
+            font-size: 13px;
+            text-align: center;
+            display: none;
+        }
+
+        .mensagem.sucesso {
+            color: #2f5233;
+        }
+
+        .mensagem.erro {
+            color: #a4442c;
+        }
+    

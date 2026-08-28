@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diário Privado - Maia</title>
+    <link rel="icon" href="img/maiaFavicon.png" type="image/png">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: linear-gradient(to right, #f5ebe0, #e6ccb2);
+            color: #4a3c31;
+            min-height: 100vh;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        /* ===================== LAYOUT GERAL ===================== */
+        .app {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ===================== SIDEBAR ===================== */
+        .sidebar {
+            width: 240px;
+            flex-shrink: 0;
+            background-color: #7f5539;
+            color: #fff;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar .logo {
+            font-size: 22px;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 40px;
+        }
+
+        .sidebar .logo span {
+            color: #e6ccb2;
+        }
+
+        .sidebar nav {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex-grow: 1;
+        }
+
+        .sidebar nav a {
+            color: #f5ebe0;
+            font-size: 14px;
+            padding: 11px 14px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: background-color 0.25s;
+        }
+
+        .sidebar nav a:hover,
+        .sidebar nav a.ativo {
+            background-color: rgba(255, 255, 255, 0.14);
+        }
+
+        .sidebar .rodape-sidebar {
+            font-size: 11px;
+            color: #e6ccb2;
+            opacity: 0.7;
+        }
+
+        /* ===================== CONTEÚDO ===================== */
+        .conteudo {
+            flex-grow: 1;
+            padding: 30px 40px;
+            max-width: 900px;
+        }
+
+        /* Topbar */
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 14px;
+        }
+
+        .saudacao h1 {
+            font-size: 24px;
+            color: #7f5539;
+        }
+
+        .saudacao p {
+            font-size: 13px;
+            color: #6b5744;
+        }
+
+        /* Menu da engrenagem */
+        .conta {
+            position: relative;
+        }
+
+        .conta-botao {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background-color: #fffaf6;
+            border: 1px solid #e6ccb2;
+            border-radius: 30px;
+            padding: 6px 16px 6px 6px;
+            cursor: pointer;
+        }
+
+        .avatar-mini {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background-color: #e6ccb2;
+            color: #7f5539;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        .conta-botao span.nome-mini {
+            font-size: 13px;
+            font-weight: bold;
+            color: #4a3c31;
+        }
+
+        .conta-menu {
+            position: absolute;
+            right: 0;
+            top: calc(100% + 8px);
+            background-color: #fffaf6;
+            border-radius: 10px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            width: 190px;
+            overflow: hidden;
+            display: none;
+            z-index: 20;
+        }
+
+        .conta-menu.aberto {
+            display: block;
+        }
+
+        .conta-menu a,
+        .conta-menu button {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            text-align: left;
+            padding: 12px 16px;
+            font-size: 13px;
+            color: #4a3c31;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .conta-menu a:hover,
+        .conta-menu button:hover {
+            background-color: #f5ebe0;
+        }
+
+        .conta-menu .sair {
+            color: #a4442c;
+            border-top: 1px solid #f0e3d3;
+        }
+
+        /* ===================== CARDS E SEÇÕES ===================== */
+        .painel-card {
+            background-color: #fffaf6;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .painel-card h2 {
+            font-size: 18px;
+            color: #7f5539;
+            margin-bottom: 6px;
+        }
+
+        .painel-card p.subtitulo {
+            font-size: 13px;
+            color: #6b5744;
+            margin-bottom: 18px;
+        }
+
+        /* Check-in Emocional */
+        .checkin-opcoes {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .checkin-opcoes button {
+            flex: 1;
+            min-width: 80px;
+            background-color: #f5ebe0;
+            border: 2px solid transparent;
+            border-radius: 12px;
+            padding: 14px 10px;
+            font-size: 26px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .checkin-opcoes button:hover {
+            background-color: #e6ccb2;
+            transform: translateY(-2px);
+        }
+
+        .checkin-opcoes button.selecionado {
+            background-color: #7f5539;
+            color: #fff;
+            border-color: #7f5539;
+        }
+
+        .checkin-opcoes button.selecionado .rotulo {
+            color: #f5ebe0;
+        }
+
+        .checkin-opcoes .rotulo {
+            display: block;
+            font-size: 12px;
+            margin-top: 6px;
+            color: #6b5744;
+            font-weight: 500;
+        }
+
+        /* Área de Texto Privada */
+        .caixa-escrita textarea {
+            width: 100%;
+            height: 120px;
+            border: 1px solid #e6ccb2;
+            border-radius: 10px;
+            padding: 14px;
+            font-family: inherit;
+            font-size: 14px;
+            background-color: #f5ebe0;
+            color: #4a3c31;
+            resize: vertical;
+            outline: none;
+            margin-bottom: 14px;
+        }
+
+        .caixa-escrita textarea:focus {
+            border-color: #7f5539;
+            background-color: #fff;
+        }
+
+        .btn-salvar {
+            background-color: #7f5539;
+            color: #fff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            float: right;
+        }
+
+        .btn-salvar:hover {
+            background-color: #9c6644;
+        }
+
+        /* Clearfix para o botão float */
+        .caixa-escrita::after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+
+        /* Histórico Privado */
+        .historico-lista {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-top: 10px;
+        }
+
+        .item-registro-privado {
+            background-color: #f5ebe0;
+            border-radius: 10px;
+            padding: 16px;
+            border-left: 4px solid #7f5539;
+        }
+
+        .registro-topo {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .registro-humor-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: bold;
+            font-size: 14px;
+            color: #7f5539;
+        }
+
+        .registro-data {
+            font-size: 12px;
+            color: #6b5744;
+        }
+
+        .registro-texto {
+            font-size: 14px;
+            line-height: 1.5;
+            color: #4a3c31;
+            white-space: pre-wrap;
+        }
+
+        /* Responsivo */
+        @media (max-width: 900px) {
+            .app {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                flex-direction: row;
+                align-items: center;
+                padding: 16px 20px;
+                gap: 20px;
+            }
+
+            .sidebar .logo {
+                margin-bottom: 0;
+            }
+
+            .sidebar nav {
+                flex-direction: row;
+                flex-wrap: wrap;
+                flex-grow: 1;
+            }
+
+            .sidebar .rodape-sidebar {
+                display: none;
+            }
+
+            .conteudo {
+                padding: 24px 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app">
+        <!-- ===================== SIDEBAR ===================== -->
+        <aside class="sidebar">
+            <a href="./dashboard.html" class="logo">Ma<span>i</span>a</a>
+            <nav>
+                <a href="./dashboard.html"> Painel</a>
+                <a href="./diario.html" class="ativo"> Diário Emocional</a>
+                <a href="./mural.html"> Mural da Comunidade</a>
+                <a href="./agendamento.html"> Agendamentos</a>
+                <a href="./telemedicina.html"> Telemedicina</a>
+                <a href="./rede-apoio.html"> Rede de Apoio</a>
+                <a href="./profissionais.html"> Profissionais</a>
+            </nav>
+            <span class="rodape-sidebar">© 2026 Maia</span>
+        </aside>
+
+        <!-- ===================== CONTEÚDO ===================== -->
+        <main class="conteudo">
+            <div class="topbar">
+                <div class="saudacao">
+                    <h1 id="saudacaoNome">Seu Diário Privado 🔒</h1>
+                    <p>Um espaço só seu para registrar sentimentos e momentos da sua jornada.</p>
+                </div>
+
+                <div class="conta">
+                    <button class="conta-botao" id="botaoConta">
+                        <span class="avatar-mini" id="avatarMini">?</span>
+                        <span class="nome-mini" id="nomeMini">Minha conta</span>
+                        <span class="icone-engrenagem">⚙️</span>
+                    </button>
+                    <div class="conta-menu" id="menuConta">
+                        <a href="/perfil">✏️ Editar perfil</a>
+                        <button id="botaoSair" class="sair">🚪 Sair</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD DE REGISTRO PRIVADO -->
+            <div class="painel-card caixa-escrita">
+                <h2>Como você está se sentindo hoje?</h2>
+                <p class="subtitulo">Selecione uma emoção e, se desejar, escreva o que está em sua mente. Apenas você tem acesso a esses registros.</p>
+
+                <!-- Opções de Humor -->
+                <div class="checkin-opcoes" id="botoesHumor">
+                    <button type="button" onclick="selecionarHumor('Tranquila', '😌', this)">😌<span class="rotulo">Tranquila</span></button>
+                    <button type="button" onclick="selecionarHumor('Cansada', '😴', this)">😴<span class="rotulo">Cansada</span></button>
+                    <button type="button" onclick="selecionarHumor('Ansiosa', '😟', this)">😟<span class="rotulo">Ansiosa</span></button>
+                    <button type="button" onclick="selecionarHumor('Triste', '😢', this)">😢<span class="rotulo">Triste</span></button>
+                    <button type="button" onclick="selecionarHumor('Feliz', '🥰', this)">🥰<span class="rotulo">Feliz</span></button>
+                </div>
+
+                <!-- Campo de Texto Privado -->
+                <textarea id="textoPrivado" placeholder="Quer desabafar ou registrar algo sobre o seu dia? Escreva aqui..."></textarea>
+                
+                <button class="btn-salvar" onclick="salvarRegistroPrivado()">Salvar no Meu Diário</button>
+            </div>
+
+            <!-- HISTÓRICO PRIVADO DO DIÁRIO -->
+            <div class="painel-card">
+                <h2>Seu Histórico Emocional</h2>
+                <p class="subtitulo">Seus registros passados ficam guardados aqui com toda a privacidade.</p>
+                <div class="historico-lista" id="listaHistoricoPrivado">
+                    <!-- Preenchido via JavaScript -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+    let humorSelecionado = null;
+    let emojiSelecionado = null;
+    let usuarioAtualChave = "convidado"; // Chave padrão caso não haja login
+
+    // Carrega dados do usuário logado e isola o diário pelo ID ou E-mail
+    fetch("/cliente/me")
+        .then(res => res.json())
+        .then(usuario => {
+            const primeiroNome = (usuario.Nome || usuario.nome || "Mamãe").split(" ")[0];
+            document.getElementById("nomeMini").textContent = primeiroNome;
+            document.getElementById("avatarMini").textContent = primeiroNome.charAt(0).toUpperCase();
+
+            // Define uma chave única para a conta logada (ex: id, email ou nome)
+            usuarioAtualChave = usuario.id || usuario.email || primeiroNome;
+            
+            // Recarrega o histórico específico deste usuário
+            mostrarHistoricoPrivado();
+        })
+        .catch(() => {
+            mostrarHistoricoPrivado();
+        });
+
+    // Controle do menu de conta
+    const botaoConta = document.getElementById("botaoConta");
+    const menuConta = document.getElementById("menuConta");
+
+    botaoConta.addEventListener("click", function (e) {
+        e.stopPropagation();
+        menuConta.classList.toggle("aberto");
+    });
+
+    document.addEventListener("click", function () {
+        menuConta.classList.remove("aberto");
+    });
+
+    document.getElementById("botaoSair").addEventListener("click", function () {
+        fetch("/cliente/logout", { method: "POST" }).then(() => {
+            window.location.href = "/";
+        });
+    });
+
+    // Seleção de Humor
+    function selecionarHumor(rotulo, emoji, elemento) {
+        document.querySelectorAll("#botoesHumor button").forEach(b => b.classList.remove("selecionado"));
+        elemento.classList.add("selecionado");
+        humorSelecionado = rotulo;
+        emojiSelecionado = emoji;
+    }
+
+    // Salvar Registro Privado (Salva apenas na chave deste usuário)
+    function salvarRegistroPrivado() {
+        const texto = document.getElementById("textoPrivado").value.trim();
+
+        if (!humorSelecionado && !texto) {
+            alert("Selecione um emoji ou escreva uma mensagem antes de salvar.");
+            return;
+        }
+
+        // Alerta de apoio emocional
+        if (texto.toLowerCase().includes("matar") || texto.toLowerCase().includes("suic")) {
+            alert("Você não está sozinha 💛\nSe estiver passando por um momento difícil, ligue 188 (CVV) – apoio emocional gratuito 24h.");
+        }
+
+        const chaveUsuario = `maia_diario_privado_${usuarioAtualChave}`;
+        let registros = JSON.parse(localStorage.getItem(chaveUsuario)) || [];
+        
+        const novoRegistro = {
+            id: Date.now(),
+            humor: humorSelecionado || "Registro",
+            emoji: emojiSelecionado || "📝",
+            texto: texto,
+            data: new Date().toLocaleDateString("pt-BR", { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+        };
+
+        registros.unshift(novoRegistro);
+        localStorage.setItem(chaveUsuario, JSON.stringify(registros));
+
+        // Limpa os campos
+        document.getElementById("textoPrivado").value = "";
+        document.querySelectorAll("#botoesHumor button").forEach(b => b.classList.remove("selecionado"));
+        humorSelecionado = null;
+        emojiSelecionado = null;
+
+        mostrarHistoricoPrivado();
+    }
+
+    // Mostrar Histórico Privado (Carrega apenas o diário da conta ativa)
+    function mostrarHistoricoPrivado() {
+        const container = document.getElementById("listaHistoricoPrivado");
+        const chaveUsuario = `maia_diario_privado_${usuarioAtualChave}`;
+        const registros = JSON.parse(localStorage.getItem(chaveUsuario)) || [];
+
+        container.innerHTML = "";
+
+        if (registros.length === 0) {
+            container.innerHTML = "<p style='font-size: 13px; color: #6b5744; text-align: center; padding: 10px 0;'>Você ainda não tem nenhum registro no seu diário privado.</p>";
+            return;
+        }
+
+        registros.forEach(item => {
+            const div = document.createElement("div");
+            div.className = "item-registro-privado";
+            div.innerHTML = `
+                <div class="registro-topo">
+                    <div class="registro-humor-badge">
+                        <span>${item.emoji}</span>
+                        <span>${item.humor}</span>
+                    </div>
+                    <span class="registro-data">${item.data}</span>
+                </div>
+                ${item.texto ? `<p class="registro-texto">${item.texto}</p>` : ''}
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    mostrarHistoricoPrivado();
+</script>
+</body>
+
+</html>

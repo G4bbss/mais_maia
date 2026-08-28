@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="pt-BR"> <!-- Define que o documento é HTML5 e está em português do Brasil -->
+
+<head>
+    <meta charset="UTF-8"> <!-- Garante suporte a acentos e caracteres especiais -->
+    <title>Login - Maia</title> <!-- Título da aba do navegador -->
+    <link rel="icon" href="img/maiaFavicon.png" type="image/png">
+
+    <!-- Script oficial do Google Sign-In -->
+    <script src="https://accounts.google.com/gsi/client" async></script>
+
+    <style>
+        /* Reset básico para incluir padding/borda no cálculo do tamanho */
+        * {
+            box-sizing: border-box;
+        }
+
+        /* Estilo geral do corpo da página */
+        body {
+            margin: 0;
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: linear-gradient(to right, #f5ebe0, #e6ccb2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #4a3c31;
+        }
+
+        /* Container principal que envolve os dois painéis */
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            width: 90%;
+            max-width: 1000px;
+            background-color: #fffaf6;
+            border-radius: 12px;
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        /* Painel esquerdo com mensagem de boas-vindas */
+        .left-panel {
+            flex: 1;
+            min-width: 300px;
+            background-color: #7f5539;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 50px;
+        }
+
+        .left-panel h1 {
+            font-size: 32px;
+            margin-bottom: 15px;
+        }
+
+        .left-panel p {
+            font-size: 15px;
+            max-width: 350px;
+            line-height: 1.5;
+        }
+
+        /* Painel direito com formulário de login */
+        .right-panel {
+            flex: 1;
+            min-width: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 50px;
+        }
+
+        /* Caixa que contém o formulário */
+        .login-box {
+            width: 100%;
+            max-width: 350px;
+            text-align: center;
+        }
+
+        .login-box h2 {
+            color: #7f5539;
+            margin-bottom: 20px;
+        }
+
+        /* Estilo dos campos de entrada */
+        .login-box input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #d9c5b2;
+            border-radius: 5px;
+            font-size: 14px;
+            background-color: #f5ebe0;
+            color: #4a3c31;
+        }
+
+        /* Placeholder dos inputs */
+        .login-box input::placeholder {
+            color: #7f5539;
+        }
+
+        /* Botão de envio */
+        .login-box input[type="submit"] {
+            background-color: #7f5539;
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        /* Efeito hover no botão */
+        .login-box input[type="submit"]:hover {
+            background-color: #9c6644;
+        }
+
+        /* Área do Botão do Google */
+        .google-btn-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 15px;
+        }
+
+        /* Área de opções (checkbox + link) */
+        .options {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            margin: 10px 0;
+            align-items: center;
+        }
+
+        /* Estilo do checkbox e texto */
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        /* Links */
+        .options a {
+            color: #7f5539;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .options a:hover {
+            color: #9c6644;
+            text-decoration: underline;
+        }
+
+        /* Área social */
+        .social {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 14px;
+            color: #7f5539;
+        }
+
+        .social a {
+            color: #7f5539;
+            text-decoration: none;
+            margin: 0 8px;
+        }
+
+        .social a:hover {
+            color: #9c6644;
+        }
+
+        /* Rodapé */
+        footer {
+            text-align: center;
+            font-size: 12px;
+            color: #7f5539;
+            margin-top: 30px;
+        }
+
+        /* Responsividade para telas menores */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .left-panel,
+            .right-panel {
+                align-items: center;
+                text-align: center;
+            }
+
+            .left-panel {
+                padding: 30px;
+            }
+
+            .right-panel {
+                padding: 30px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Container principal -->
+    <div class="container">
+
+        <!-- Painel esquerdo com mensagem -->
+        <div class="left-panel">
+            <h1>Bem-vinda, mamãe!</h1>
+            <p>Estamos aqui para apoiar você no pós-parto, oferecendo ajuda emocional, física e psicológica.</p>
+        </div>
+
+        <!-- Painel direito com formulário -->
+        <div class="right-panel">
+            <div class="login-box">
+                <h2>Login</h2>
+
+                <!-- Formulário de login -->
+                <form method="POST" action="/cliente/login">
+                    <input type="email" name="Email" placeholder="Endereço de e-mail" required>
+                    <input type="password" name="Senha" placeholder="Senha" required>
+
+                    <!-- Opções extras -->
+                    <div class="options">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="lembrar"> Lembrar-me
+                        </label>
+                        <!-- BOTÃO ESQUECEU A SENHA CORRIGIDO -->
+                        <a href="#" onclick="esqueciMinhaSenha(event)">Esqueceu a senha?</a>
+                    </div>
+
+                    <!-- Botão de envio -->
+                    <input type="submit" value="Entrar">
+                </form>
+
+                <!-- Botão do Google -->
+                <div class="google-btn-container">
+                    <div id="g_id_onload"
+                        data-client_id="910310455755-ecuctmqtfutt440jbjebr97jdj1pgkk5.apps.googleusercontent.com"
+                        data-context="signin" data-ux_mode="popup" data-callback="lidarComRespostaGoogle"
+                        data-auto_prompt="false">
+                    </div>
+
+                    <div class="g_id_signin" data-type="standard" data-shape="rectangular" data-theme="outline"
+                        data-text="continue_with" data-size="large" data-logo_alignment="center">
+                    </div>
+                </div>
+
+                <!-- Link para cadastro -->
+                <p style="margin-top:15px;">Não possui conta? <a href="/cadastro">Cadastre-se</a></p>
+
+                <!-- Redes sociais -->
+                <div class="social">
+                    <span>Siga:</span>
+                    <a href="https://www.instagram.com/mmaiabrasil/" target="_blank">@mmaiabrasil</a>
+                </div>
+
+                <!-- Rodapé -->
+                <footer>
+                    © 2026 Maia - Todos os direitos reservados
+                </footer>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts da página -->
+    <script>
+        // Função para tratar a resposta do Google Sign-In
+        async function lidarComRespostaGoogle(response) {
+            try {
+                const res = await fetch("/cliente/google-auth", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ token: response.credential })
+                });
+
+                const data = await res.json();
+
+                if (data.ok) {
+                    if (data.cadastrado) {
+                        // Usuário já tem conta -> vai pro Dashboard
+                        window.location.href = data.redirect;
+                    } else {
+                        // Usuário NOVO -> vai pro Cadastro
+                        const query = `?nome=${encodeURIComponent(data.nome)}&email=${encodeURIComponent(data.email)}&foto=${encodeURIComponent(data.foto || '')}`;
+                        window.location.href = data.redirect + query;
+                    }
+                } else {
+                    alert(data.erro || "Erro ao verificar com o Google.");
+                }
+            } catch (erro) {
+                console.error("Erro no login Google:", erro);
+                alert("Erro ao conectar com o servidor.");
+            }
+        }
+
+        // Quando a página carregar, verifica se há email salvo pelo "Lembrar-me"
+        window.onload = function () {
+            const savedEmail = localStorage.getItem("email");
+            const savedCheck = localStorage.getItem("lembrar");
+
+            if (savedEmail && savedCheck === "true") {
+                document.querySelector('input[name="Email"]').value = savedEmail;
+                document.getElementById("lembrar").checked = true;
+            }
+        };
+
+        // Captura o envio do formulário tradicional
+        document.querySelector("form").addEventListener("submit", function () {
+            const email = document.querySelector('input[name="Email"]').value;
+            const lembrar = document.getElementById("lembrar").checked;
+
+            if (lembrar) {
+                localStorage.setItem("email", email);
+                localStorage.setItem("lembrar", "true");
+            } else {
+                localStorage.removeItem("email");
+                localStorage.removeItem("lembrar");
+            }
+        });
+
+        // ===================== FUNÇÃO ESQUECI MINHA SENHA =====================
+        async function esqueciMinhaSenha(e) {
+            if (e) e.preventDefault();
+
+            // Pega o e-mail do campo do formulário se a pessoa já tiver digitado
+            const emailInput = document.querySelector('input[name="Email"]').value;
+            const email = prompt("Digite seu e-mail cadastrado para redefinir a senha:", emailInput || "");
+
+            if (!email) return;
+
+            try {
+                // Step 1: Solicita o envio do código por e-mail
+                const res = await fetch("/cliente/esqueci-senha", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ Email: email })
+                });
+
+                const data = await res.json();
+
+                if (data.ok) {
+                    alert("Enviamos um código de verificação para o seu e-mail!");
+
+                    // Step 2: Pede o código enviado
+                    const codigo = prompt("Digite o código recebido no seu e-mail:");
+                    if (!codigo) return;
+
+                    // Step 3: Pede a nova senha
+                    const novaSenha = prompt("Digite a sua nova senha:");
+                    if (!novaSenha) return;
+
+                    // Step 4: Redefine a senha no servidor
+                    const resRedefinir = await fetch("/cliente/redefinir-senha", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ Email: email, Codigo: codigo, NovaSenha: novaSenha })
+                    });
+
+                    const dataRedefinir = await resRedefinir.json();
+
+                    if (dataRedefinir.ok) {
+                        alert(dataRedefinir.mensagem || "Senha alterada com sucesso! Você já pode entrar.");
+                    } else {
+                        alert(dataRedefinir.erro || "Não foi possível alterar a senha.");
+                    }
+                } else {
+                    alert(data.erro || "Não foi possível processar a solicitação.");
+                }
+            } catch (erro) {
+                console.error("Erro na recuperação de senha:", erro);
+                alert("Erro ao conectar com o servidor.");
+            }
+        }
+    </script>
+
+</body>
+
+</html>

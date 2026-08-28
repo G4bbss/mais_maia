@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maia - Rede de Apoio Materno</title>
+    <link rel="icon" href="img/maiaFavicon.png" type="image/png">
+    <link rel="stylesheet" href="style/style.css">
+
+</head>
+
+<body>
+
+    <!-- ===================== HEADER ===================== -->
+    <header>
+        <div class="navbar">
+            <a href="/" class="logo">Ma<span>i</span>a</a>
+
+            <nav class="nav-links" id="navLinks">
+                <a href="#funcionalidades">Funcionalidades</a>
+                <a href="#dicas">Dicas</a>
+                <a href="/agendamento">Agendamentos</a>
+                <a href="/rede-apoio">Rede de Apoio</a>
+                <a href="/profissionais">Profissionais</a>
+                <a href="/diario">Diário Emocional</a>
+            </nav>
+
+            <div class="nav-cta">
+                <a href="/login" class="btn btn-outline">Entrar</a>
+                <a href="/cadastro" class="btn btn-filled">Cadastre-se</a>
+            </div>
+
+            <!--foto de perfil-->
+            <div class="header-side" style="display: flex; justify-content: center; align-items: center;">
+                <a href="../perfil.html">
+                    <img src="./img/perfil.jpg" class="user-icon" id="foto-cabecalho" alt="Perfil"
+                        style="width: 60px; height: 60px; object-fit: cover; border-radius: 50%; border: 3px solid #8B4513;">
+                </a>
+            </div>
+        </div>
+
+        <!--<button class="menu-toggle" id="menuToggle" aria-label="Abrir menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>-->
+
+        </div>
+    </header>
+
+    <!-- ===================== HERO ===================== -->
+    <section class="hero" style="padding: 0;">
+        <div class="hero-text">
+            <span class="eyebrow">Rede de Apoio Materno</span>
+            <h1>Você não precisa passar pelo pós-parto sozinha.</h1>
+            <p>O Maia acompanha mães gestantes e puérperas com diário emocional, rede de apoio, profissionais
+                especializados e alertas para quem cuida de você — tudo em um só lugar.</p>
+            <div class="hero-buttons">
+                <a href="/cadastro" class="btn btn-filled">Criar minha conta</a>
+                <a href="#funcionalidades" class="btn btn-outline">Conhecer a plataforma</a>
+            </div>
+        </div>
+        <div class="hero-visual">
+            <div class="stat-card">
+                <strong>Diário Emocional</strong>
+                <span>Registre sentimentos e acompanhe seu nível de risco emocional dia após dia.</span>
+            </div>
+            <div class="stat-card">
+                <strong>Contato de Emergência</strong>
+                <span>Alguém da sua confiança é avisado automaticamente quando você mais precisa.</span>
+            </div>
+            <div class="stat-card">
+                <strong>Profissionais Indicados</strong>
+                <span>Psicólogos e obstetras recomendados de acordo com a sua situação.</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===================== FUNCIONALIDADES ===================== -->
+    <section id="funcionalidades">
+        <div class="section-heading">
+            <span class="eyebrow">O que você encontra por aqui</span>
+            <h2>Tudo o que você precisa no puerpério</h2>
+            <p>Da saúde emocional ao cuidado físico, cada funcionalidade foi pensada para caminhar com você em cada
+                fase do pós-parto.</p>
+        </div>
+
+        <div class="grid">
+            <div class="card">
+                <div class="icon">📓</div>
+                <h3>Diário Emocional</h3>
+                <p>Registre seus sentimentos diariamente. Cada anotação recebe um nível de risco (baixo, moderado ou
+                    alto) e uma pontuação emocional, ajudando profissionais a entenderem seu momento.</p>
+                <a href="/diario" class="card-link">Abrir diário →</a>
+            </div>
+
+            <div class="card">
+                <div class="icon">🚨</div>
+                <h3>Alertas para o contato de emergência</h3>
+                <p>Seu contato de confiança recebe alertas com motivo, classificação e status (ativo, pendente ou
+                    resolvido), para agir rapidamente quando necessário.</p>
+                <a href="/perfil" class="card-link">Configurar contato →</a>
+            </div>
+
+            <div class="card">
+                <div class="icon">🩺</div>
+                <h3>Profissionais especializados</h3>
+                <p>Psicólogos, obstetras e outros profissionais indicados de acordo com a sua fase, semanas de
+                    gestação e nível de risco.</p>
+                <a href="/profissionais" class="card-link">Ver profissionais →</a>
+            </div>
+
+            <div class="card">
+                <div class="icon">📅</div>
+                <h3>Agendamento de consultas</h3>
+                <p>Marque consultas presenciais ou por telemedicina, com confirmação por e-mail, localização no mapa e
+                    convênio médico.</p>
+                <a href="/agendamento" class="card-link">Ver agenda →</a>
+            </div>
+
+            <div class="card">
+                <div class="icon">💻</div>
+                <h3>Telemedicina</h3>
+                <p>Consultas por vídeo direto pela plataforma, sem sair de casa, com a mesma qualidade do atendimento
+                    presencial.</p>
+                <a href="/telemedicina" class="card-link">Acessar telemedicina →</a>
+            </div>
+
+            <div class="card">
+                <div class="icon">🤝</div>
+                <h3>Rede de apoio</h3>
+                <p>Encontre pessoas disponíveis para ajudar no dia a dia. Veja distância, atividades oferecidas e
+                    disponibilidade de cada voluntário.</p>
+                <a href="/rede-apoio" class="card-link">Encontrar apoio →</a>
+            </div>
+
+            <div class="card">
+                <div class="icon">⭐</div>
+                <h3>Avaliação de profissionais</h3>
+                <p>Depois da consulta, avalie o profissional de 1 a 5 estrelas e deixe um comentário para ajudar
+                    outras mães a escolherem melhor.</p>
+                <a href="/agendamento" class="card-link">Ver histórico →</a>
+            </div>
+
+            <div class="card">
+                <div class="icon">💡</div>
+                <h3>Dicas de bem-estar</h3>
+                <p>Conteúdos sobre nutrição pós-parto, exercícios leves e apoio psicológico, pensados para a sua
+                    recuperação física e emocional.</p>
+                <a href="#dicas" class="card-link">Ver dicas →</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===================== FASES DO PUERPÉRIO ===================== -->
+    <section class="fases">
+        <div class="section-heading">
+            <span class="eyebrow">Entenda o seu momento</span>
+            <h2>As fases do puerpério</h2>
+            <p>O Maia acompanha você em cada etapa, adaptando conteúdos e recomendações conforme a fase em que você
+                está.</p>
+        </div>
+        <div class="fases-grid">
+            <div class="fase-item">
+                <strong>Puerpério imediato</strong>
+                <span>Do 1º ao 10º dia após o parto — período de maiores mudanças físicas e emocionais.</span>
+            </div>
+            <div class="fase-item">
+                <strong>Puerpério tardio</strong>
+                <span>Do 10º ao 45º dia — o corpo segue se recuperando e a rotina com o bebê se ajusta.</span>
+            </div>
+            <div class="fase-item">
+                <strong>Puerpério remoto</strong>
+                <span>Após o 45º dia, podendo se estender até um ano — fase de readaptação plena.</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===================== DICAS ===================== -->
+    <section id="dicas">
+        <div class="section-heading">
+            <span class="eyebrow">Cuidando de você</span>
+            <h2>Dicas para o pós-parto</h2>
+            <p>Sugestões de exercícios leves, nutrição pós-parto e apoio psicológico para te ajudar na recuperação
+                física e emocional.</p>
+        </div>
+
+        <div class="dicas-tabs">
+            <span class="tab-label">Exercícios leves</span>
+            <span class="tab-label">Nutrição pós-parto</span>
+            <span class="tab-label">Apoio psicológico</span>
+        </div>
+
+        <div class="dicas-grid">
+            <div class="dica-card">
+                <span class="tag tag-exercicio">Exercício</span>
+                <h3>Caminhadas curtas</h3>
+                <p>Estimulam a circulação e ajudam na recuperação cardiovascular. Comece com 10 a 15 minutos em ritmo
+                    leve, evoluindo aos poucos.</p>
+            </div>
+            <div class="dica-card">
+                <span class="tag tag-exercicio">Exercício</span>
+                <h3>Fortalecimento do assoalho pélvico</h3>
+                <p>Exercícios de Kegel previnem incontinência urinária e melhoram o controle muscular. Podem ser
+                    feitos em qualquer lugar, várias vezes ao dia.</p>
+            </div>
+            <div class="dica-card">
+                <span class="tag tag-exercicio">Exercício</span>
+                <h3>Movimentos leves com o bebê</h3>
+                <p>Dançar suavemente com o bebê no colo fortalece o vínculo afetivo e ajuda a mãe a se movimentar de
+                    forma leve e prazerosa.</p>
+            </div>
+
+            <div class="dica-card">
+                <span class="tag tag-nutricao">Nutrição</span>
+                <h3>Dietas específicas</h3>
+                <p>Veganas, vegetarianas, sem glúten, sem lactose, low carb ou anti-inflamatória: cardápios pensados
+                    para cada necessidade alimentar.</p>
+            </div>
+            <div class="dica-card">
+                <span class="tag tag-nutricao">Nutrição</span>
+                <h3>Princípios básicos</h3>
+                <p>Frutas, proteínas magras, grãos integrais, oleaginosas e hidratação constante ajudam na energia e
+                    na produção de leite materno.</p>
+            </div>
+            <div class="dica-card">
+                <span class="tag tag-nutricao">Nutrição</span>
+                <h3>Evite ultraprocessados</h3>
+                <p>Reduzir açúcar, frituras e excesso de cafeína contribui para uma recuperação mais equilibrada no
+                    pós-parto.</p>
+            </div>
+
+            <div class="dica-card">
+                <span class="tag tag-psicologico">Psicológico</span>
+                <h3>Terapia individual ou em grupo</h3>
+                <p>Conversar com psicólogos especializados ajuda a lidar com medos, inseguranças e os sintomas do baby
+                    blues ou da depressão pós-parto.</p>
+            </div>
+            <div class="dica-card">
+                <span class="tag tag-psicologico">Psicológico</span>
+                <h3>Grupos de apoio para mães</h3>
+                <p>Compartilhar experiências com outras mães reduz a sensação de isolamento durante o puerpério.</p>
+            </div>
+            <div class="dica-card">
+                <span class="tag tag-psicologico">Psicológico</span>
+                <h3>Diário emocional</h3>
+                <p>Escrever ajuda a organizar pensamentos e perceber padrões emocionais ao longo do tempo.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===================== REDE DE APOIO E PROFISSIONAIS ===================== -->
+    <section>
+        <div class="split-section">
+            <div class="split-text">
+                <span class="eyebrow">Rede de apoio</span>
+                <h2>Ajuda de quem está por perto</h2>
+                <p>Conheça pessoas contratadas e disponíveis para ajudar no dia a dia com o bebê e com a casa.</p>
+                <ul>
+                    <li>Veja a distância entre você e cada voluntário</li>
+                    <li>Consulte a descrição das atividades oferecidas</li>
+                    <li>Confira a disponibilidade antes de escolher</li>
+                </ul>
+                <a href="/rede-apoio" class="btn btn-filled">Ver rede de apoio</a>
+            </div>
+            <div class="split-visual">
+                <div class="profile-card">
+                    <div class="profile-avatar">CM</div>
+                    <div class="profile-info">
+                        <h4>Cláudia Martins</h4>
+                        <span>Cuidados com o bebê · 2,4 km de distância</span>
+                        <div class="stars">★★★★★</div>
+                    </div>
+                </div>
+                <div class="profile-card">
+                    <div class="profile-avatar">RS</div>
+                    <div class="profile-info">
+                        <h4>Renata Souza</h4>
+                        <span>Apoio doméstico · 4,1 km de distância</span>
+                        <div class="stars">★★★★☆</div>
+                    </div>
+                </div>
+                <div class="profile-card">
+                    <div class="profile-avatar">JA</div>
+                    <div class="profile-info">
+                        <h4>Juliana Alves</h4>
+                        <span>Acompanhamento noturno · 1,8 km de distância</span>
+                        <div class="stars">★★★★★</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===================== DEPOIMENTOS ===================== -->
+    <section class="depoimentos">
+        <div class="section-heading">
+            <span class="eyebrow">Quem já usa o Maia</span>
+            <h2>Mães que encontraram apoio</h2>
+        </div>
+        <div class="grid">
+            <div class="depoimento-card">
+                <p>"O diário emocional me ajudou a perceber que eu precisava de ajuda antes que as coisas piorassem.
+                    Hoje faço acompanhamento com uma psicóloga indicada pela plataforma."</p>
+                <div class="depoimento-autor">
+                    <div class="profile-avatar">FM</div>
+                    <div>
+                        <strong>Fernanda M.</strong>
+                        <span>Puérpera tardia</span>
+                    </div>
+                </div>
+            </div>
+            <div class="depoimento-card">
+                <p>"Consegui marcar minha consulta com a obstetra pelo app, recebi a confirmação por e-mail e ainda
+                    fiz a primeira consulta por telemedicina, sem sair de casa."</p>
+                <div class="depoimento-autor">
+                    <div class="profile-avatar">LC</div>
+                    <div>
+                        <strong>Larissa C.</strong>
+                        <span>Gestante · 32 semanas</span>
+                    </div>
+                </div>
+            </div>
+            <div class="depoimento-card">
+                <p>"Minha mãe recebe os alertas do meu contato de emergência. Isso trouxe segurança pra toda a
+                    família nas primeiras semanas do bebê."</p>
+                <div class="depoimento-autor">
+                    <div class="profile-avatar">PT</div>
+                    <div>
+                        <strong>Patrícia T.</strong>
+                        <span>Puérpera imediata</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===================== CTA FINAL ===================== -->
+    <section>
+        <div class="cta-final">
+            <h2>Comece a cuidar de você hoje</h2>
+            <p>Crie sua conta gratuita e tenha acesso ao diário emocional, à rede de apoio e a profissionais
+                indicados para o seu momento.</p>
+            <a href="/cadastro" class="btn btn-filled">Criar minha conta</a>
+        </div>
+    </section>
+
+    
+
+    <script>
+        // Menu mobile (hamburguer)
+        const menuToggle = document.getElementById("menuToggle");
+        const navLinks = document.getElementById("navLinks");
+
+        menuToggle.addEventListener("click", function () {
+            navLinks.classList.toggle("open");
+        });
+
+        // Fecha o menu mobile ao clicar em um link
+        navLinks.querySelectorAll("a").forEach(function (link) {
+            link.addEventListener("click", function () {
+                navLinks.classList.remove("open");
+            });
+        });
+    </script>
+
+</body>
+
+</html>

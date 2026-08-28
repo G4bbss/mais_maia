@@ -1,0 +1,730 @@
+        /* Reset básico */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: linear-gradient(to right, #f5ebe0, #e6ccb2);
+            color: #4a3c31;
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        img {
+            max-width: 100%;
+            display: block;
+        }
+
+        /* ===================== HEADER / NAVEGAÇÃO ===================== */
+        header {
+            background-color: #fffaf6;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 30px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #7f5539;
+        }
+
+        .logo span {
+            color: #9c6644;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 26px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: #4a3c31;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #9c6644;
+        }
+
+        .nav-cta {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 22px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: #7f5539;
+            border-color: #7f5539;
+        }
+
+        .btn-outline:hover {
+            background-color: #7f5539;
+            color: #fff;
+        }
+
+        .btn-filled {
+            background-color: #7f5539;
+            color: #fff;
+        }
+
+        .btn-filled:hover {
+            background-color: #9c6644;
+        }
+
+        /* Menu hamburguer (mobile) */
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+
+        .menu-toggle span {
+            width: 26px;
+            height: 3px;
+            background-color: #7f5539;
+            border-radius: 2px;
+        }
+
+        /* ===================== HERO ===================== */
+        .hero {
+            display: flex;
+            flex-wrap: wrap;
+            max-width: 1200px;
+            margin: 40px auto;
+            background-color: #fffaf6;
+            border-radius: 12px;
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+        }
+
+        .hero-text {
+            flex: 1;
+            min-width: 300px;
+            background-color: #7f5539;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 60px 50px;
+        }
+
+        .hero-text .eyebrow {
+            font-size: 13px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #e6ccb2;
+            margin-bottom: 14px;
+        }
+
+        .hero-text h1 {
+            font-size: 36px;
+            margin-bottom: 18px;
+            line-height: 1.25;
+        }
+
+        .hero-text p {
+            font-size: 15px;
+            max-width: 420px;
+            margin-bottom: 26px;
+            color: #f5ebe0;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .hero-buttons .btn-filled {
+            background-color: #fff;
+            color: #7f5539;
+        }
+
+        .hero-buttons .btn-filled:hover {
+            background-color: #e6ccb2;
+        }
+
+        .hero-buttons .btn-outline {
+            border-color: #fff;
+            color: #fff;
+        }
+
+        .hero-buttons .btn-outline:hover {
+            background-color: #fff;
+            color: #7f5539;
+        }
+
+        .hero-visual {
+            flex: 1;
+            min-width: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 50px;
+            gap: 18px;
+        }
+
+        .stat-card {
+            width: 100%;
+            max-width: 340px;
+            background-color: #f5ebe0;
+            border-left: 5px solid #7f5539;
+            border-radius: 8px;
+            padding: 16px 20px;
+        }
+
+        .stat-card strong {
+            display: block;
+            font-size: 22px;
+            color: #7f5539;
+        }
+
+        .stat-card span {
+            font-size: 13px;
+            color: #6b5744;
+        }
+
+        /* ===================== SEÇÕES GERAIS ===================== */
+        section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 70px 30px;
+        }
+
+        .section-heading {
+            text-align: center;
+            margin-bottom: 46px;
+        }
+
+        .section-heading .eyebrow {
+            font-size: 13px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #9c6644;
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .section-heading h2 {
+            font-size: 30px;
+            color: #7f5539;
+            margin-bottom: 12px;
+        }
+
+        .section-heading p {
+            max-width: 600px;
+            margin: 0 auto;
+            color: #6b5744;
+            font-size: 15px;
+        }
+
+        /* ===================== CARDS DE FUNCIONALIDADES ===================== */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 24px;
+        }
+
+        .card {
+            background-color: #fffaf6;
+            border-radius: 12px;
+            padding: 30px 26px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.14);
+        }
+
+        .card .icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background-color: #f5ebe0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 18px;
+        }
+
+        .card h3 {
+            color: #7f5539;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .card p {
+            font-size: 14px;
+            color: #6b5744;
+            flex-grow: 1;
+            margin-bottom: 16px;
+        }
+
+        .card a.card-link {
+            font-size: 13px;
+            font-weight: bold;
+            color: #9c6644;
+        }
+
+        .card a.card-link:hover {
+            text-decoration: underline;
+        }
+
+        /* ===================== FASES DO PUERPÉRIO (faixa destacada) ===================== */
+        .fases {
+            background-color: #7f5539;
+            color: #fff;
+        }
+
+        .fases .section-heading .eyebrow {
+            color: #e6ccb2;
+        }
+
+        .fases .section-heading h2,
+        .fases .section-heading p {
+            color: #fff;
+        }
+
+        .fases-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .fase-item {
+            background-color: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 10px;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .fase-item strong {
+            display: block;
+            font-size: 16px;
+            margin-bottom: 8px;
+            color: #f5ebe0;
+        }
+
+        .fase-item span {
+            font-size: 13px;
+            color: #e6ccb2;
+        }
+
+        /* ===================== DICAS (Exercícios, Nutrição, Psicológico) ===================== */
+        .dicas-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 36px;
+            flex-wrap: wrap;
+        }
+
+        .tab-label {
+            padding: 10px 20px;
+            border-radius: 30px;
+            background-color: #f5ebe0;
+            color: #7f5539;
+            font-size: 13px;
+            font-weight: bold;
+            border: 1px solid #d9c5b2;
+        }
+
+        .dicas-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+        }
+
+        .dica-card {
+            background-color: #fffaf6;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .dica-card .tag {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: bold;
+            padding: 5px 12px;
+            border-radius: 20px;
+            margin: 18px 0 0 20px;
+        }
+
+        .tag-exercicio {
+            background-color: #e6ccb2;
+            color: #5c3d22;
+        }
+
+        .tag-nutricao {
+            background-color: #dcefdc;
+            color: #2f5233;
+        }
+
+        .tag-psicologico {
+            background-color: #ead9f0;
+            color: #55305e;
+        }
+
+        .dica-card h3 {
+            padding: 12px 20px 0 20px;
+            color: #7f5539;
+            font-size: 17px;
+        }
+
+        .dica-card p {
+            padding: 8px 20px 22px 20px;
+            font-size: 14px;
+            color: #6b5744;
+        }
+
+        /* ===================== REDE DE APOIO / PROFISSIONAIS ===================== */
+        .split-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .split-text {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .split-text .eyebrow {
+            font-size: 13px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #9c6644;
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .split-text h2 {
+            font-size: 28px;
+            color: #7f5539;
+            margin-bottom: 16px;
+        }
+
+        .split-text p {
+            font-size: 15px;
+            color: #6b5744;
+            margin-bottom: 18px;
+        }
+
+        .split-text ul {
+            list-style: none;
+            margin-bottom: 24px;
+        }
+
+        .split-text ul li {
+            padding: 8px 0;
+            padding-left: 26px;
+            position: relative;
+            font-size: 14px;
+            color: #4a3c31;
+        }
+
+        .split-text ul li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #9c6644;
+            font-weight: bold;
+        }
+
+        .split-visual {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .profile-card {
+            background-color: #fffaf6;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            padding: 22px;
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .profile-avatar {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background-color: #e6ccb2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #7f5539;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .profile-info h4 {
+            color: #7f5539;
+            font-size: 15px;
+            margin-bottom: 4px;
+        }
+
+        .profile-info span {
+            font-size: 13px;
+            color: #6b5744;
+        }
+
+        .profile-info .stars {
+            color: #c9932f;
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+        /* ===================== DEPOIMENTOS ===================== */
+        .depoimentos {
+            background-color: #f5ebe0;
+        }
+
+        .depoimento-card {
+            background-color: #fffaf6;
+            border-radius: 12px;
+            padding: 28px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+        }
+
+        .depoimento-card p {
+            font-size: 14px;
+            color: #4a3c31;
+            font-style: italic;
+            margin-bottom: 16px;
+        }
+
+        .depoimento-autor {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .depoimento-autor .profile-avatar {
+            width: 42px;
+            height: 42px;
+            font-size: 14px;
+        }
+
+        .depoimento-autor strong {
+            font-size: 13px;
+            color: #7f5539;
+            display: block;
+        }
+
+        .depoimento-autor span {
+            font-size: 12px;
+            color: #6b5744;
+        }
+
+        /* ===================== CTA FINAL ===================== */
+        .cta-final {
+            background-color: #7f5539;
+            color: #fff;
+            border-radius: 12px;
+            max-width: 1200px;
+            margin: 0 auto 70px auto;
+            padding: 60px 40px;
+            text-align: center;
+        }
+
+        .cta-final h2 {
+            font-size: 28px;
+            margin-bottom: 14px;
+        }
+
+        .cta-final p {
+            max-width: 520px;
+            margin: 0 auto 28px auto;
+            color: #f5ebe0;
+            font-size: 15px;
+        }
+
+        .cta-final .btn-filled {
+            background-color: #fff;
+            color: #7f5539;
+        }
+
+        .cta-final .btn-filled:hover {
+            background-color: #e6ccb2;
+        }
+
+        /* ===================== FOOTER ===================== */
+        footer.site-footer {
+            background-color: #fffaf6;
+            border-top: 1px solid #e6ccb2;
+        }
+
+        .footer-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 50px 30px 20px 30px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+        }
+
+        .footer-col .logo {
+            margin-bottom: 12px;
+        }
+
+        .footer-col p {
+            font-size: 13px;
+            color: #6b5744;
+        }
+
+        .footer-col h4 {
+            font-size: 14px;
+            color: #7f5539;
+            margin-bottom: 14px;
+        }
+
+        .footer-col ul {
+            list-style: none;
+        }
+
+        .footer-col ul li {
+            margin-bottom: 10px;
+        }
+
+        .footer-col ul li a {
+            font-size: 13px;
+            color: #6b5744;
+        }
+
+        .footer-col ul li a:hover {
+            color: #9c6644;
+        }
+
+        .footer-bottom {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px 30px;
+            border-top: 1px solid #e6ccb2;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+            font-size: 12px;
+            color: #7f5539;
+        }
+
+        .footer-bottom .social a {
+            color: #7f5539;
+            margin-left: 12px;
+        }
+
+        .footer-bottom .social a:hover {
+            color: #9c6644;
+        }
+
+        /* ===================== RESPONSIVO ===================== */
+        @media (max-width: 900px) {
+            .nav-links {
+                display: none;
+            }
+
+            .menu-toggle {
+                display: flex;
+            }
+
+            .nav-links.open {
+                display: flex;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background-color: #fffaf6;
+                flex-direction: column;
+                padding: 20px 30px;
+                box-shadow: 0 8px 15px rgba(0, 0, 0, 0.08);
+                gap: 16px;
+            }
+        }
+
+        @media (max-width: 768px) {
+
+            .hero-text,
+            .hero-visual {
+                padding: 40px 30px;
+                align-items: center;
+                text-align: center;
+            }
+
+            .hero-buttons {
+                justify-content: center;
+            }
+
+            .split-section {
+                flex-direction: column;
+            }
+
+            section {
+                padding: 50px 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav-cta .btn {
+                padding: 8px 14px;
+                font-size: 12px;
+            }
+
+            .hero-text h1 {
+                font-size: 28px;
+            }
+        }
+   

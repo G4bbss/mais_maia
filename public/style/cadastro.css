@@ -1,0 +1,102 @@
+        body {
+            margin: 0;
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: linear-gradient(to right, #f5ebe0, #e6ccb2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #4a3c31;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 600px;
+            background-color: #fffaf6;
+            border-radius: 12px;
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.2);
+            padding: 40px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #7f5539;
+            margin-bottom: 20px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        input,
+        select {
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #d9c5b2;
+            border-radius: 5px;
+            background-color: #f5ebe0;
+            color: #4a3c31;
+        }
+
+        /* Campo de senha com ícone */
+        .senha-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .senha-container input {
+            flex: 1;
+            padding-right: 40px;
+            /* espaço para o ícone */
+        }
+
+        .senha-container span {
+            position: absolute;
+            right: 10px;
+            cursor: pointer;
+            font-size: 18px;
+            color: #7f5539;
+        }
+
+        input[type="submit"] {
+            background-color: #7f5539;
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #9c6644;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 15px;
+        }
+
+        .checkbox-label a {
+            color: #7f5539;
+            text-decoration: none;
+        }
+
+        .checkbox-label a:hover {
+            color: #9c6644;
+        }
+
+        footer {
+            text-align: center;
+            font-size: 12px;
+            color: #7f5539;
+            margin-top: 20px;
+        }
+   

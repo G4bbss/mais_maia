@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Perfil - Maia</title>
+    <link rel="icon" href="img/maiaFavicon.png" type="image/png">
+    <link rel="stylesheet" href="./style/perfil.css">
+
+</head>
+
+
+<body>
+    <div class="container">
+        <a href="/dashboard" class="voltar">← Voltar ao painel</a>
+
+        <div class="cartao">
+            <div class="cabecalho-perfil">
+                <div class="avatar-grande" id="avatarGrande">?</div>
+                <div>
+                    <h2 id="nomeCabecalho">Meu perfil</h2>
+                    <p id="emailCabecalho">Carregando...</p>
+                </div>
+            </div>
+
+            <form id="formPerfil">
+                <label for="nome">Nome completo</label>
+                <input type="text" id="nome" name="Nome" required>
+
+                <label for="telefone">Telefone</label>
+                <input type="tel" id="telefone" name="Telefone" placeholder="(XX) XXXXX-XXXX">
+
+                <label for="fase">Fase</label>
+                <select id="fase" name="Fase">
+                    <option value="gestante">Gestante</option>
+                    <option value="puerpera">Puérpera</option>
+                </select>
+
+                <label for="semanas">Semanas de gestação</label>
+                <input type="number" id="semanas" name="SemanasGestacao" min="0" max="42">
+                <span class="ajuda">Se você já não estiver mais gestante, pode deixar em branco.</span>
+
+                <input type="submit" value="Salvar alterações">
+
+                <p class="mensagem sucesso" id="mensagemSucesso">Perfil atualizado com sucesso!</p>
+                <p class="mensagem erro" id="mensagemErro">Não foi possível salvar. Tente novamente.</p>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // ---------- Carrega os dados atuais do usuário ----------
+        fetch("/cliente/me")
+            .then(function (resposta) {
+                if (!resposta.ok) throw new Error("Não autenticado");
+                return resposta.json();
+            })
+            .then(function (usuario) {
+                document.getElementById("nome").value = usuario.Nome || "";
+                document.getElementById("telefone").value = usuario.Telefone || "";
+                document.getElementById("fase").value = usuario.Fase || "gestante";
+                document.getElementById("semanas").value = usuario.SemanasGestacao || "";
+
+                document.getElementById("nomeCabecalho").textContent = usuario.Nome || "Meu perfil";
+                document.getElementById("emailCabecalho").textContent = usuario.Email || "";
+                document.getElementById("avatarGrande").textContent =
+                    (usuario.Nome || "?").charAt(0).toUpperCase();
+            })
+            .catch(function () {
+                window.location.href = "/login";
+            });
+
+        // ---------- Envia as alterações ----------
+        document.getElementById("formPerfil").addEventListener("submit", function (evento) {
+            evento.preventDefault();
+
+            const dados = {
+                Nome: document.getElementById("nome").value,
+                Telefone: document.getElementById("telefone").value,
+                Fase: document.getElementById("fase").value,
+                SemanasGestacao: document.getElementById("semanas").value
+            };
+
+            fetch("/cliente/perfil", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(dados)
+            })
+                .then(function (resposta) { return resposta.json(); })
+                .then(function () {
+                    document.getElementById("mensagemErro").style.display = "none";
+                    document.getElementById("mensagemSucesso").style.display = "block";
+                })
+                .catch(function () {
+                    document.getElementById("mensagemSucesso").style.display = "none";
+                    document.getElementById("mensagemErro").style.display = "block";
+                });
+        });
+    </script>
+</body>
+
+</html>

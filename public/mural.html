@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mural da Comunidade - Maia</title>
+    <link rel="icon" href="img/maiaFavicon.png" type="image/png">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: linear-gradient(to right, #f5ebe0, #e6ccb2);
+            color: #4a3c31;
+            min-height: 100vh;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        /* ===================== LAYOUT GERAL ===================== */
+        .app {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ===================== SIDEBAR ===================== */
+        .sidebar {
+            width: 240px;
+            flex-shrink: 0;
+            background-color: #7f5539;
+            color: #fff;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar .logo {
+            font-size: 22px;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 40px;
+        }
+
+        .sidebar .logo span {
+            color: #e6ccb2;
+        }
+
+        .sidebar nav {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex-grow: 1;
+        }
+
+        .sidebar nav a {
+            color: #f5ebe0;
+            font-size: 14px;
+            padding: 11px 14px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: background-color 0.25s;
+        }
+
+        .sidebar nav a:hover,
+        .sidebar nav a.ativo {
+            background-color: rgba(255, 255, 255, 0.14);
+        }
+
+        .sidebar .rodape-sidebar {
+            font-size: 11px;
+            color: #e6ccb2;
+            opacity: 0.7;
+        }
+
+        /* ===================== CONTEÚDO ===================== */
+        .conteudo {
+            flex-grow: 1;
+            padding: 30px 40px;
+            max-width: 900px;
+        }
+
+        /* Topbar */
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 14px;
+        }
+
+        .saudacao h1 {
+            font-size: 24px;
+            color: #7f5539;
+        }
+
+        .saudacao p {
+            font-size: 13px;
+            color: #6b5744;
+        }
+
+        /* Menu da conta */
+        .conta {
+            position: relative;
+        }
+
+        .conta-botao {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background-color: #fffaf6;
+            border: 1px solid #e6ccb2;
+            border-radius: 30px;
+            padding: 6px 16px 6px 6px;
+            cursor: pointer;
+        }
+
+        .avatar-mini {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background-color: #7f5539;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        .conta-botao span.nome-mini {
+            font-size: 13px;
+            font-weight: bold;
+            color: #4a3c31;
+        }
+
+        .conta-menu {
+            position: absolute;
+            right: 0;
+            top: calc(100% + 8px);
+            background-color: #fffaf6;
+            border-radius: 10px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            width: 190px;
+            overflow: hidden;
+            display: none;
+            z-index: 20;
+        }
+
+        .conta-menu.aberto {
+            display: block;
+        }
+
+        .conta-menu a,
+        .conta-menu button {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            text-align: left;
+            padding: 12px 16px;
+            font-size: 13px;
+            color: #4a3c31;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .conta-menu a:hover,
+        .conta-menu button:hover {
+            background-color: #f5ebe0;
+        }
+
+        .conta-menu .sair {
+            color: #a4442c;
+            border-top: 1px solid #f0e3d3;
+        }
+
+        /* ===================== FORMULÁRIO DE POSTAGEM ===================== */
+        .painel-card {
+            background-color: #fffaf6;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .painel-card h2 {
+            font-size: 18px;
+            color: #7f5539;
+            margin-bottom: 6px;
+        }
+
+        .painel-card p.subtitulo {
+            font-size: 13px;
+            color: #6b5744;
+            margin-bottom: 18px;
+        }
+
+        .caixa-postar textarea {
+            width: 100%;
+            height: 100px;
+            border: 1px solid #e6ccb2;
+            border-radius: 10px;
+            padding: 12px;
+            font-family: inherit;
+            font-size: 14px;
+            background-color: #f5ebe0;
+            color: #4a3c31;
+            resize: vertical;
+            outline: none;
+            margin-bottom: 12px;
+        }
+
+        .caixa-postar textarea:focus {
+            border-color: #7f5539;
+            background-color: #fff;
+        }
+
+        .postar-opcoes {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .postar-controles {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .postar-controles select,
+        .postar-controles input {
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid #e6ccb2;
+            background-color: #f5ebe0;
+            font-size: 13px;
+            color: #4a3c31;
+            outline: none;
+        }
+
+        .btn-postar {
+            background-color: #7f5539;
+            color: #fff;
+            border: none;
+            padding: 10px 22px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 13px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-postar:hover {
+            background-color: #9c6644;
+        }
+
+        /* ===================== FEED DE RELATOS ===================== */
+        .lista-relatos {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .item-relato {
+            background-color: #fffaf6;
+            border: 1px solid #e6ccb2;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+            position: relative;
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+        }
+
+        .post-header-user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .post-header-user .avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+            overflow: hidden;
+        }
+
+        .post-header-user .avatar.avatar-anonimo {
+            background-color: #e6ccb2;
+        }
+
+        .post-header-user .avatar.avatar-anonimo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .post-header-user .avatar.avatar-conta {
+            background-color: #7f5539;
+            color: #fff;
+        }
+
+        .post-header-user .nome-usuario {
+            font-weight: bold;
+            font-size: 14px;
+            color: #4a3c31;
+        }
+
+        /* Botão de curtida no canto superior direito */
+        .btn-curtir-topo {
+            background-color: transparent;
+            border: 1px solid #e6ccb2;
+            border-radius: 20px;
+            padding: 4px 12px;
+            cursor: pointer;
+            font-size: 13px;
+            color: #4a3c31;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-curtir-topo:hover {
+            background-color: #f5ebe0;
+            border-color: #7f5539;
+        }
+
+        .texto-relato {
+            font-size: 14px;
+            line-height: 1.5;
+            color: #4a3c31;
+            margin-bottom: 14px;
+            white-space: pre-wrap;
+        }
+
+        .post-footer {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-top: 1px solid #f5ebe0;
+            padding-top: 10px;
+        }
+
+        .btn-compartilhar {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 12px;
+            color: #7f5539;
+            padding: 4px 8px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .btn-compartilhar:hover {
+            background-color: #f5ebe0;
+        }
+
+        /* Respostas */
+        .respostas-container {
+            margin-top: 12px;
+            background-color: #f5ebe0;
+            border-radius: 8px;
+            padding: 12px;
+        }
+
+        .item-resposta {
+            font-size: 13px;
+            padding: 6px 0;
+            border-bottom: 1px solid #e6ccb2;
+            color: #4a3c31;
+        }
+
+        .item-resposta:last-child {
+            border-bottom: none;
+        }
+
+        .campo-responder {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .campo-responder input {
+            flex: 1;
+            min-width: 140px;
+            padding: 8px 12px;
+            border: 1px solid #e6ccb2;
+            border-radius: 6px;
+            font-size: 12px;
+            background-color: #fff;
+            outline: none;
+        }
+
+        .campo-responder button {
+            background-color: #7f5539;
+            color: #fff;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .campo-responder button:hover {
+            background-color: #9c6644;
+        }
+
+        /* Responsivo */
+        @media (max-width: 900px) {
+            .app {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                flex-direction: row;
+                align-items: center;
+                padding: 16px 20px;
+                gap: 20px;
+            }
+
+            .sidebar .logo {
+                margin-bottom: 0;
+            }
+
+            .sidebar nav {
+                flex-direction: row;
+                flex-wrap: wrap;
+                flex-grow: 1;
+            }
+
+            .sidebar .rodape-sidebar {
+                display: none;
+            }
+
+            .conteudo {
+                padding: 24px 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app">
+        <!-- ===================== SIDEBAR ===================== -->
+        <aside class="sidebar">
+            <a href="./dashboard.html" class="logo">Ma<span>i</span>a</a>
+            <nav>
+                <a href="./dashboard.html"> Painel</a>
+                <a href="./diario.html"> Diário Emocional</a>
+                <a href="./mural.html" class="ativo"> Mural da Comunidade</a>
+                <a href="./agendamento.html"> Agendamentos</a>
+                <a href="./telemedicina.html"> Telemedicina</a>
+                <a href="./rede-apoio.html"> Rede de Apoio</a>
+                <a href="./profissionais.html"> Profissionais</a>
+            </nav>
+            <span class="rodape-sidebar">© 2026 Maia</span>
+        </aside>
+
+        <!-- ===================== CONTEÚDO ===================== -->
+        <main class="conteudo">
+            <div class="topbar">
+                <div class="saudacao">
+                    <h1 id="saudacaoNome">Mural da Comunidade 💬</h1>
+                    <p>Conecte-se com outras mães, compartilhe experiências e troque acolhimento.</p>
+                </div>
+
+                <div class="conta">
+                    <button class="conta-botao" id="botaoConta">
+                        <span class="avatar-mini" id="avatarMini">?</span>
+                        <span class="nome-mini" id="nomeMini">Minha conta</span>
+                        <span class="icone-engrenagem">⚙️</span>
+                    </button>
+                    <div class="conta-menu" id="menuConta">
+                        <a href="/perfil">✏️ Editar perfil</a>
+                        <button id="botaoSair" class="sair">🚪 Sair</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PUBLICAR RELATO -->
+            <div class="painel-card caixa-postar">
+                <h2>Compartilhe com a comunidade</h2>
+                <p class="subtitulo">Escreva seu relato ou deixe uma mensagem de apoio. Você pode postar de forma anônima se preferir.</p>
+
+                <textarea id="relatoTexto" placeholder="Escreva o seu relato ou dúvida para a comunidade..."></textarea>
+
+                <div class="postar-opcoes">
+                    <div class="postar-controles">
+                        <select id="tipoUsuario" onchange="verificarTipoUsuario()">
+                            <option value="anonimo">🐱 Postar como Anônima</option>
+                            <option value="nome">👤 Postar com meu nome</option>
+                        </select>
+                        <input type="text" id="nomeUsuario" placeholder="Seu nome" style="display: none;">
+                    </div>
+                    <button class="btn-postar" onclick="enviarRelato()">Publicar no Mural</button>
+                </div>
+            </div>
+
+            <!-- FEED DE RELATOS PUBLICADOS -->
+            <div class="lista-relatos" id="lista-relatos">
+                <!-- Relatos da comunidade preenchidos via JS -->
+            </div>
+        </main>
+    </div>
+
+    <script>
+        let nomeUsuarioLogado = "Usuária";
+        let inicialUsuarioLogado = "U";
+
+        // Carregar Perfil do Usuário Logado
+        fetch("/cliente/me")
+            .then(res => res.json())
+            .then(usuario => {
+                const primeiroNome = (usuario.Nome || usuario.nome || "Mamãe").split(" ")[0];
+                nomeUsuarioLogado = primeiroNome;
+                inicialUsuarioLogado = primeiroNome.charAt(0).toUpperCase();
+
+                document.getElementById("nomeMini").textContent = primeiroNome;
+                document.getElementById("avatarMini").textContent = inicialUsuarioLogado;
+                document.getElementById("nomeUsuario").value = primeiroNome;
+            })
+            .catch(() => {});
+
+        // Controle do Menu da Conta
+        const botaoConta = document.getElementById("botaoConta");
+        const menuConta = document.getElementById("menuConta");
+
+        botaoConta.addEventListener("click", function (e) {
+            e.stopPropagation();
+            menuConta.classList.toggle("aberto");
+        });
+
+        document.addEventListener("click", function () {
+            menuConta.classList.remove("aberto");
+        });
+
+        document.getElementById("botaoSair").addEventListener("click", function () {
+            fetch("/cliente/logout", { method: "POST" }).then(() => {
+                window.location.href = "/";
+            });
+        });
+
+        // ===================== FEED DE RELATOS =====================
+        let relatos = JSON.parse(localStorage.getItem("relatos")) || [];
+
+        function verificarTipoUsuario() {
+            let tipo = document.getElementById("tipoUsuario").value;
+            let inputNome = document.getElementById("nomeUsuario");
+
+            if (tipo === "nome") {
+                inputNome.style.display = "inline-block";
+                if (!inputNome.value) inputNome.value = nomeUsuarioLogado;
+            } else {
+                inputNome.style.display = "none";
+            }
+        }
+
+        function enviarRelato() {
+            let texto = document.getElementById("relatoTexto").value;
+            let tipo = document.getElementById("tipoUsuario").value;
+            let nome = document.getElementById("nomeUsuario").value;
+
+            if (!texto.trim()) {
+                alert("Por favor, escreva algo antes de publicar.");
+                return;
+            }
+
+            // Alerta de apoio emocional / prevenção
+            if (texto.toLowerCase().includes("matar") || texto.toLowerCase().includes("suic")) {
+                alert("Você não está sozinha 💛\nSe estiver passando por um momento difícil, ligue 188 (CVV) – apoio emocional gratuito 24h.");
+            }
+
+            let eAnonimo = (tipo === "anonimo");
+            let nomeExibicao = eAnonimo ? "Anônima" : (nome || nomeUsuarioLogado || "Usuária");
+
+            relatos.push({
+                usuario: nomeExibicao,
+                eAnonimo: eAnonimo,
+                texto: texto,
+                curtidas: 0,
+                respostas: []
+            });
+
+            localStorage.setItem("relatos", JSON.stringify(relatos));
+            mostrarRelatos();
+
+            document.getElementById("relatoTexto").value = "";
+        }
+
+        function mostrarRelatos() {
+            let lista = document.getElementById("lista-relatos");
+            if (!lista) return;
+
+            lista.innerHTML = "";
+
+            if (relatos.length === 0) {
+                lista.innerHTML = "<div class='item-relato' style='text-align:center; color:#6b5744;'>Seja a primeira a compartilhar uma mensagem no mural! 💛</div>";
+                return;
+            }
+
+            relatos.slice().reverse().forEach((r, index) => {
+                const indexReal = relatos.length - 1 - index;
+                const eAnonimo = r.eAnonimo || r.usuario === "Anônima";
+
+                // Avatar de anônimo usa a imagem maiaFavicon.png; usuária identificada usa a inicial da conta
+                const avatarHTML = eAnonimo
+                    ? `<div class="avatar avatar-anonimo"><img src="img/maiaFavicon.png" alt="Anônima"></div>`
+                    : `<div class="avatar avatar-conta">${r.usuario.charAt(0).toUpperCase()}</div>`;
+
+                let htmlRespostas = "";
+                if (r.respostas && r.respostas.length > 0) {
+                    r.respostas.forEach(resp => {
+                        htmlRespostas += `<div class="item-resposta"><strong>${resp.user}:</strong> ${resp.texto}</div>`;
+                    });
+                }
+
+                lista.innerHTML += `
+                <div class="item-relato">
+                    <div class="post-header">
+                        <div class="post-header-user">
+                            ${avatarHTML}
+                            <span class="nome-usuario">${r.usuario}</span>
+                        </div>
+                        <button class="btn-curtir-topo" onclick="curtir(${indexReal})">
+                            💖 <span>${r.curtidas || 0}</span>
+                        </button>
+                    </div>
+                    
+                    <p class="texto-relato">${r.texto}</p>
+
+                    <div class="respostas-container">
+                        ${htmlRespostas}
+                        <div class="campo-responder">
+                            <input type="text" id="nome-${indexReal}" placeholder="Seu nome (opcional)">
+                            <input type="text" id="input-${indexReal}" placeholder="Escreva um comentário carinhoso...">
+                            <button onclick="adicionarResposta(${indexReal})">Enviar</button>
+                        </div>
+                    </div>
+                </div>
+                `;
+            });
+        }
+
+        function adicionarResposta(index) {
+            let input = document.getElementById(`input-${index}`);
+            let inputNome = document.getElementById(`nome-${index}`);
+
+            if (!input) return;
+
+            let texto = input.value;
+            let nome = inputNome && inputNome.value.trim() ? inputNome.value : "Anônima";
+
+            if (!texto.trim()) return;
+
+            if (!relatos[index].respostas) relatos[index].respostas = [];
+
+            relatos[index].respostas.push({
+                user: nome,
+                texto: texto
+            });
+
+            localStorage.setItem("relatos", JSON.stringify(relatos));
+            mostrarRelatos();
+        }
+
+        function curtir(index) {
+            relatos[index].curtidas = (relatos[index].curtidas || 0) + 1;
+            localStorage.setItem("relatos", JSON.stringify(relatos));
+            mostrarRelatos();
+        }
+
+
+        mostrarRelatos();
+    </script>
+</body>
+
+</html>
