@@ -91,7 +91,7 @@
             });
 
             try {
-                const API_KEY = ""; 
+                //const API_KEY = ""; 
                 const MODELO = "gemini-1.5-flash";
 
                 const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODELO}:generateContent?key=${API_KEY}`;
