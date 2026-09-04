@@ -1,0 +1,329 @@
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: linear-gradient(to right, #f5ebe0, #e6ccb2);
+            color: #4a3c31;
+            min-height: 100vh;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        .app {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 240px;
+            flex-shrink: 0;
+            background-color: #7f5539;
+            color: #fff;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar .logo {
+            font-size: 22px;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 40px;
+        }
+
+        .sidebar .logo span {
+            color: #e6ccb2;
+        }
+
+        .sidebar nav {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex-grow: 1;
+        }
+
+        .sidebar nav a {
+            color: #f5ebe0;
+            font-size: 14px;
+            padding: 11px 14px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: background-color 0.25s;
+        }
+
+        .sidebar nav a:hover,
+        .sidebar nav a.ativo {
+            background-color: rgba(255, 255, 255, 0.14);
+        }
+
+        /* Conteúdo Principal */
+        .conteudo {
+            flex-grow: 1;
+            padding: 40px;
+            max-width: 1100px;
+        }
+
+        .titulo-pagina {
+            font-size: 28px;
+            color: #7f5539;
+            margin-bottom: 24px;
+        }
+
+        .grid-agendamento {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .card-secao {
+            background-color: #fffaf6;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            margin-bottom: 24px;
+        }
+
+        .card-secao h2 {
+            font-size: 18px;
+            color: #7f5539;
+            margin-bottom: 16px;
+        }
+
+        /* Calendário */
+        .header-calendario {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .btn-mes {
+            background: #7f5539;
+            color: #fff;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .grid-calendario {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 6px;
+            text-align: center;
+        }
+
+        .dia-semana-cabecalho {
+            font-weight: bold;
+            font-size: 12px;
+            color: #9c6644;
+            padding-bottom: 6px;
+        }
+
+        .dia {
+            padding: 10px 0;
+            border-radius: 8px;
+            background-color: #f5ebe0;
+            font-size: 14px;
+            cursor: pointer;
+            position: relative;
+            transition: 0.2s;
+        }
+
+        .dia.disponivel {
+            background-color: #e6ccb2;
+            font-weight: bold;
+            color: #4a3c31;
+        }
+
+        .dia.disponivel:hover {
+            background-color: #b08968;
+            color: #fff;
+        }
+
+        .dia.dia-focado {
+            background-color: #7f5539 !important;
+            color: #fff !important;
+            font-weight: bold;
+        }
+
+        .dia.invalido {
+            opacity: 0.35;
+            cursor: not-allowed;
+            background-color: #e0e0e0;
+            color: #888;
+        }
+
+        .marcador-consulta {
+            width: 6px;
+            height: 6px;
+            background-color: #28a745;
+            border-radius: 50%;
+            position: absolute;
+            bottom: 4px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        /* Botões Horários */
+        .grid-horarios {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(75px, 1fr));
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .btn-horario {
+            padding: 8px;
+            border: 1px solid #7f5539;
+            background: #fff;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            color: #7f5539;
+            transition: 0.2s;
+        }
+
+        .btn-horario:hover {
+            background: #e6ccb2;
+        }
+
+        .btn-horario.selecionado {
+            background: #7f5539 !important;
+            color: #fff !important;
+            border-color: #7f5539;
+        }
+
+        .btn-horario.ocupado {
+            background: #f8d7da !important;
+            color: #721c24 !important;
+            cursor: not-allowed;
+            border-color: #f5c6cb;
+            opacity: 0.6;
+        }
+
+        /* Formulário */
+        .form-grupo {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 14px;
+        }
+
+        .form-grupo label {
+            font-size: 13px;
+            font-weight: bold;
+            color: #7f5539;
+        }
+
+        .form-grupo input,
+        .form-grupo select,
+        .form-grupo textarea {
+            padding: 10px;
+            border: 1px solid #e6ccb2;
+            border-radius: 8px;
+            background-color: #fff;
+            font-size: 14px;
+            color: #4a3c31;
+            outline: none;
+        }
+
+        .btn-submit {
+            background-color: #7f5539;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            width: 100%;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-submit:hover {
+            background-color: #9c6644;
+        }
+
+        /* Lista de Consultas */
+        .card-consulta-item {
+            background-color: #fff;
+            border: 1px solid #f0e3d3;
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .card-consulta-item:hover {
+            border-color: #7f5539;
+        }
+
+        .mini-card-resumo {
+            background: #f5ebe0;
+            padding: 8px 12px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        /* Modais */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 999;
+        }
+
+        .modal-conteudo {
+            background: #fffaf6;
+            margin: 10% auto;
+            padding: 24px;
+            border-radius: 16px;
+            max-width: 450px;
+            position: relative;
+        }
+
+        .fechar-modal {
+            position: absolute;
+            top: 12px;
+            right: 16px;
+            font-size: 20px;
+            cursor: pointer;
+            color: #7f5539;
+        }
+
+        @media(max-width: 850px) {
+            .grid-agendamento {
+                grid-template-columns: 1fr;
+            }
+
+            .app {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+            }
+        }
+   

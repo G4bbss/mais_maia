@@ -7,7 +7,6 @@
     <title>Telemedicina - Maia Care</title>
     <link rel="icon" href="img/maiaFavicon.png" type="image/png">
     <link rel="stylesheet" href="./style/telemedicina.css">
-
 </head>
 
 <body>
@@ -16,13 +15,13 @@
         <aside class="sidebar">
             <a href="./dashboard.html" class="logo">Ma<span>i</span>a</a>
             <nav>
-                <a href="./dashboard.html"> Painel</a>
+                <a href="./dashboard.html" class="ativo"> Painel</a>
                 <a href="./diario.html"> Diário Emocional</a>
-                <a href="./mural.html"> Mural da Comunidade</a>
                 <a href="./agendamento.html"> Agendamentos</a>
-                <a href="./telemedicina.html" class="ativo"> Telemedicina</a>
-                <a href="./rede-apoio.html"> Rede de Apoio</a>
+                <a href="./telemedicina.html"> Telemedicina</a>
+                <a href="./redeapoio.html"> Rede de Apoio</a>
                 <a href="./profissionais.html"> Profissionais</a>
+                <a href="./mural.html"> Mural</a>
             </nav>
             <span class="rodape-sidebar">© 2026 Maia</span>
         </aside>
@@ -31,19 +30,19 @@
         <main class="conteudo">
             <div class="topbar">
                 <div class="saudacao">
-                    <h1>Telemedicina Maia Care 🩺</h1>
+                    <h1>Telemedicina Maia Care </h1>
                     <p>Atendimento médico online integrado com seus agendamentos do site.</p>
                 </div>
 
                 <div class="topbar-acoes">
                     <button class="btn-abrir-direct" id="btnToggleDirect">
-                        💬 Direct Profissionais
+                         Direct Profissionais
                     </button>
 
                     <div class="conta">
                         <button class="conta-botao" id="botaoConta">
-                            <span class="avatar-mini" id="avatarMini">B</span>
-                            <span class="nome-mini" id="nomeMini">Batman</span>
+                            <span class="avatar-mini" id="avatarMini">U</span>
+                            <span class="nome-mini" id="nomeMini">Usuário</span>
                             <span>⚙️</span>
                         </button>
                         <div class="conta-menu" id="menuConta">
@@ -58,22 +57,22 @@
             <div class="banner-parceiro">
                 <div class="logo-maia-care-box">
                     <img src="./img/maia care.png" alt="Maia Care" class="logo-maia-care-img"
-                        onerror="this.onerror=null; this.src='img/maiaCareLogo.png';">
+                        onerror="this.onerror=null; this.src='img/maiaFavicon.png';">
                     <div class="logo-maia-care-text">
                         <h2>Maia Care</h2>
                         <p>Rede Credenciada de Saúde Materno-Infantil</p>
                     </div>
                 </div>
                 <div class="tag-parceria">
-                    🏥 Patrocinador Oficial Maia
+                     Patrocinador Oficial Maia
                 </div>
             </div>
 
-            <!-- CARD EMERGÊNCIA -->
+            <!-- CARD EMERGÊNCIA (EXCLUSIVO DRA. CAMILA) -->
             <div class="card-emergencia">
                 <div class="emergencia-perfil">
-                    <img src="camila.png" alt="Camila Rocha Ferreira" class="emergencia-foto"
-                        onerror="this.onerror=null; this.src='img/camila.png';">
+                    <img src="img/camila.png" alt="Camila Rocha Ferreira" class="emergencia-foto"
+                        onerror="this.onerror=null; this.src='img/maiaFavicon.png';">
                     <div class="emergencia-info">
                         <h2>
                             Camila Rocha Ferreira
@@ -83,7 +82,7 @@
                     </div>
                 </div>
                 <button class="btn-emergencia" onclick="iniciarFilaEmergencia()">
-                    🚨 Consulta de Emergência Agora
+                    Consulta de Emergência Agora
                 </button>
             </div>
 
@@ -97,17 +96,17 @@
             <h2 class="secao-titulo">Vantagens da Telemedicina Maia Care</h2>
             <div class="grid-vantagens">
                 <div class="card-vantagem">
-                    <span class="icone">👨‍⚕️</span>
+                    <span class="icone"></span>
                     <h3>Equipe Qualificada</h3>
                     <p>Consultas virtuais com a equipe de profissionais credenciados.</p>
                 </div>
                 <div class="card-vantagem">
-                    <span class="icone">📄</span>
+                    <span class="icone"></span>
                     <h3>Prontuário Completo</h3>
                     <p>Formulário preenchido na chamada e salvo no seu painel.</p>
                 </div>
                 <div class="card-vantagem">
-                    <span class="icone">🔒</span>
+                    <span class="icone"></span>
                     <h3>Segurança de Dados</h3>
                     <p>Privacidade garantida durante todo o seu atendimento.</p>
                 </div>
@@ -118,17 +117,15 @@
             <div class="grid-acoes">
                 <div class="card-acao">
                     <div class="card-acao-info">
-                        <h4>🪪 Carteirinha Maia Care</h4>
+                        <h4>Carteirinha Maia Care</h4>
                         <p>Acesse seu documento virtual de identificação.</p>
                     </div>
-                    <button class="btn-acao-secundaria"
-                        onclick="alert('Carteirinha Maia Care Ativa!\nTitular: ' + (document.getElementById('nomeMini').textContent || 'Batman') + '\nN° 9482-2026')">Ver
-                        Carteirinha</button>
+                    <button class="btn-acao-secundaria" onclick="abrirCarteirinha()">Ver Carteirinha</button>
                 </div>
 
                 <div class="card-acao">
                     <div class="card-acao-info">
-                        <h4>📋 Prescrições & Formulários</h4>
+                        <h4> Prescrições & Formulários</h4>
                         <p>Baixe e visualize os prontuários salvos durante suas consultas.</p>
                     </div>
                     <button class="btn-acao-secundaria" onclick="abrirMeusArquivos()">Meus Arquivos</button>
@@ -158,112 +155,97 @@
             </div>
         </aside>
 
-        <!-- MODAL FILA DE ESPERA -->
+        <!-- MODAL FILA DE ESPERA (CAMILA) -->
         <div class="modal-overlay" id="modalFila">
             <div class="box-fila">
-                <img src="camila.png" alt="Camila Rocha Ferreira"
-                    onerror="this.onerror=null; this.src='img/camila.png';">
+                <img src="img/camila.png" alt="Camila Rocha Ferreira" onerror="this.onerror=null; this.src='img/maiaFavicon.png';">
                 <h3 style="color: #7f5539; font-size: 18px;">Camila Rocha Ferreira</h3>
                 <p style="font-size: 13px; color: #8c735d; margin-top: 4px;">Plantão Virtual de Emergência</p>
 
                 <div class="spinner-fila" id="spinnerFila"></div>
-                <p style="font-size: 14px; font-weight: bold; color: #7f5539;" id="statusFilaTexto">Iniciando sala
-                    virtual...</p>
-                <p style="font-size: 12px; color: #6b5744; margin-top: 8px;" id="subStatusFila">Conectando ao sistema de
-                    telemedicina...</p>
+                <p style="font-size: 14px; font-weight: bold; color: #7f5539;" id="statusFilaTexto">Iniciando sala virtual...</p>
+                <p style="font-size: 12px; color: #6b5744; margin-top: 8px;" id="subStatusFila">Conectando ao sistema de telemedicina...</p>
 
                 <button class="btn-emergencia" id="btnEntrarChamadaFila"
                     style="display: none; width: 100%; margin-top: 20px; justify-content: center;"
-                    onclick="entrarChamadaDireta('Camila Rocha Ferreira', 'Plantão Emergencial', 'camila.png')">
-                    🎥 Entrar na Sala com a Médica
+                    onclick="entrarChamadaDireta('Camila Rocha Ferreira', 'Plantão Emergencial', 'img/camila.png')">
+                     Entrar na Sala com a Médica
                 </button>
-                <button
-                    style="background: none; border: none; color: #a4442c; margin-top: 15px; cursor: pointer; font-size: 12px;"
+                <button style="background: none; border: none; color: #a4442c; margin-top: 15px; cursor: pointer; font-size: 12px;"
                     onclick="fecharFila()">Cancelar</button>
             </div>
         </div>
 
-        <!-- MODAL SALA DE VÍDEO + CHAT AO VIVO + FORMULÁRIO EXTENSO -->
+        <!-- MODAL SALA DE VÍDEO COMPARTILHADO -->
         <div class="modal-overlay" id="modalVideo">
             <div class="modal-video-box">
                 <div class="header-sala-modal">
                     <div>
-                        <strong id="modalNomeMedico">Médico</strong> - <span id="modalEspecialidade"
-                            style="font-size: 13px; opacity: 0.8;">Atendimento Virtual</span>
+                        <strong id="modalNomeMedico">Médico</strong> - <span id="modalEspecialidade" style="font-size: 13px; opacity: 0.8;">Atendimento Virtual</span>
                     </div>
                     <span style="font-size: 13px; color: #a5d6a7;" id="modalTimer">00:00</span>
                 </div>
 
                 <div class="corpo-chamada-split">
-                    <!-- Vídeo -->
+                    <!-- Área do Vídeo -->
                     <div class="area-video-left">
                         <div class="container-video-modal">
-                            <img id="modalImgMedico" src="ana.png" class="video-principal-modal" alt="Médico"
-                                onerror="this.onerror=null; this.src='img/ana.png';">
+                            <img id="modalImgMedico" src="img/maiaFavicon.png" class="video-principal-modal" alt="Médico"
+                                onerror="this.onerror=null; this.src='img/maiaFavicon.png';">
                             <div class="video-miniatura-modal" id="boxVideoPaciente">
                                 <span>Sua Câmera</span>
                             </div>
                         </div>
 
                         <div class="controles-chamada-modal">
-                            <button class="btn-controle" id="btnMicModal" onclick="toggleMic()"
-                                title="Microfone">🎤</button>
-                            <button class="btn-controle" id="btnCamModal" onclick="toggleCam()"
-                                title="Câmera">📹</button>
-                            <button class="btn-controle btn-desconectar" onclick="encerrarConsultaModal()"
-                                title="Encerrar Chamada">📞</button>
+                            <button class="btn-controle" id="btnMicModal" onclick="toggleMic()" title="Microfone">🎤</button>
+                            <button class="btn-controle" id="btnCamModal" onclick="toggleCam()" title="Câmera">📹</button>
+                            <button class="btn-controle btn-desconectar" onclick="encerrarConsultaModal()" title="Encerrar Chamada">📞</button>
                         </div>
                     </div>
 
-                    <!-- Chat & Forms ampliado -->
+                    <!-- Chat & Prontuário -->
                     <div class="area-painel-right">
                         <div class="tabs-painel-chamada">
-                            <button class="btn-tab-chamada ativo" id="tabChat" onclick="alternarTabChamada('chat')">💬
-                                Chat ao Vivo</button>
-                            <button class="btn-tab-chamada" id="tabForm" onclick="alternarTabChamada('form')">📋 Form /
-                                Prontuário</button>
+                            <button class="btn-tab-chamada ativo" id="tabChat" onclick="alternarTabChamada('chat')"> Chat ao Vivo</button>
+                            <button class="btn-tab-chamada" id="tabForm" onclick="alternarTabChamada('form')"> Form / Prontuário</button>
                         </div>
 
-                        <!-- Tab 1: Chat -->
+                        <!-- Tab Chat -->
                         <div class="conteudo-tab ativo" id="boxTabChat">
                             <div class="direct-body" id="corpoChatChamada" style="flex-grow: 1;">
                                 <div class="balao-msg recebida">
-                                    Atendimento iniciado! As mensagens trocadas aqui e as anotações do formulário ficam
-                                    vinculadas ao seu prontuário.
+                                    Atendimento iniciado! As mensagens trocadas aqui e as anotações do formulário ficam vinculadas ao seu prontuário.
                                     <span class="tempo-msg">Agora</span>
                                 </div>
                             </div>
                             <div class="direct-footer" style="padding: 6px 0 0 0; border: none;">
-                                <input type="text" class="input-direct" id="inputChatChamada"
-                                    placeholder="Enviar no chat ao vivo...">
+                                <input type="text" class="input-direct" id="inputChatChamada" placeholder="Enviar no chat ao vivo...">
                                 <button class="btn-enviar-direct" onclick="enviarChatChamada()">➔</button>
                             </div>
                         </div>
 
-                        <!-- Tab 2: Formulário Clínico -->
+                        <!-- Tab Formulário -->
                         <div class="conteudo-tab" id="boxTabForm">
-                            <div class="alerta-salvamento" id="alertaSalvamento">✅ Prontuário atualizado com sucesso! A
-                                consulta continua ativa.</div>
+                            <div class="alerta-salvamento" id="alertaSalvamento"> Prontuário atualizado com sucesso!</div>
 
                             <form class="form-consulta" id="formAtendimento" onsubmit="event.preventDefault();">
-                                <div class="form-secao-titulo">👤 1. Identificação da Paciente / Bebê</div>
+                                <div class="form-secao-titulo"> 1. Identificação da Paciente / Bebê</div>
                                 <div class="form-grid-duplo">
                                     <div class="form-grupo">
                                         <label>Nome do Paciente:</label>
-                                        <input type="text" id="formNomePaciente" placeholder="Ex: bat">
+                                        <input type="text" id="formNomePaciente" placeholder="Ex: Maria Silva">
                                     </div>
                                     <div class="form-grupo">
                                         <label>Fase / Semanas ou Idade:</label>
-                                        <input type="text" id="formFasePaciente"
-                                            placeholder="Ex: Gestante / 28ª semana">
+                                        <input type="text" id="formFasePaciente" placeholder="Ex: Gestante / 28ª semana">
                                     </div>
                                 </div>
 
-                                <div class="form-secao-titulo">🩺 2. Triagem & Sintomas</div>
+                                <div class="form-secao-titulo"> 2. Triagem & Sintomas</div>
                                 <div class="form-grupo">
                                     <label>Queixa Principal / Motivo da Consulta:</label>
-                                    <input type="text" id="formSintomas"
-                                        placeholder="Ex: Acompanhamento perinatal, ansiedade, rotina..." required>
+                                    <input type="text" id="formSintomas" placeholder="Ex: Acompanhamento perinatal, ansiedade, rotina..." required>
                                 </div>
                                 <div class="form-grid-duplo">
                                     <div class="form-grupo">
@@ -280,7 +262,7 @@
                                     </div>
                                 </div>
 
-                                <div class="form-secao-titulo">⚠️ 3. Histórico & Alergias</div>
+                                <div class="form-secao-titulo"> 3. Histórico & Alergias</div>
                                 <div class="form-grid-duplo">
                                     <div class="form-grupo">
                                         <label>Alergias Conhecidas:</label>
@@ -292,26 +274,18 @@
                                     </div>
                                 </div>
 
-                                <div class="form-secao-titulo">📝 4. Avaliação Médica & Prescrição</div>
+                                <div class="form-secao-titulo"> 4. Orientação Médica </div>
                                 <div class="form-grupo">
-                                    <label>Parecer / Diagnóstico Preliminar:</label>
-                                    <textarea id="formAvaliacaoMedica" rows="2"
-                                        placeholder="Observações médicas..."></textarea>
-                                </div>
-                                <div class="form-grupo">
-                                    <label>Prescrição & Orientações:</label>
-                                    <textarea id="formOrientacoes" rows="2" placeholder="Orientações e recomendações..."
-                                        required></textarea>
+                                    <label>Orientações:</label>
+                                    <textarea id="formOrientacoes" rows="2" placeholder="Orientações e recomendações..." required></textarea>
                                 </div>
 
                                 <div class="botoes-form-box">
-                                    <button type="button" class="btn-salvar-rascunho"
-                                        onclick="salvarFormularioConsulta(false)">
-                                        💾 Salvar Rascunho / Atualizar (Sem Sair)
+                                    <button type="button" class="btn-salvar-rascunho" onclick="salvarFormularioConsulta(false)">
+                                         Salvar Rascunho / Atualizar
                                     </button>
-                                    <button type="button" class="btn-finalizar-tudo"
-                                        onclick="salvarFormularioConsulta(true)">
-                                        ✅ Finalizar Consulta e Salvar Prontuário
+                                    <button type="button" class="btn-finalizar-tudo" onclick="salvarFormularioConsulta(true)">
+                                         Finalizar Consulta e Salvar Prontuário
                                     </button>
                                 </div>
                             </form>
@@ -321,22 +295,70 @@
             </div>
         </div>
 
-        <!-- MODAL MEUS ARQUIVOS -->
+        <!-- MODAL MEUS ARQUIVOS (LISTA COM ÍCONES E DATAS) -->
         <div class="modal-overlay" id="modalArquivos">
             <div class="box-arquivos">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                    <h3 style="color: #7f5539;">📋 Meus Prontuários e Formis Salvos</h3>
-                    <button onclick="fecharMeusArquivos()"
-                        style="background: none; border: none; font-size: 20px; cursor: pointer; color: #7f5539;">✕</button>
+                    <h3 style="color: #7f5539;">Meus Prontuários Salvos</h3>
+                    <button onclick="fecharMeusArquivos()" style="background: none; border: none; font-size: 20px; cursor: pointer; color: #7f5539;">✕</button>
                 </div>
-                <div id="listaArquivosSalvos"></div>
+                <div id="listaArquivosSalvos">Nenhum arquivo recente.</div>
+            </div>
+        </div>
+
+       <!-- MODAL CARTEIRINHA DIGITAL -->
+<div class="modal-overlay" id="modalCarteirinha">
+    <div class="box-carteirinha-modal">
+        <button class="btn-fechar-carteirinha" onclick="fecharCarteirinha()">✕</button>
+        <div class="carteirinha-card">
+            <div class="carteirinha-topo">
+                <div class="carteirinha-brand">
+                    <img src="./img/maia care.png" alt="Maia Care" class="carteirinha-logo" onerror="this.onerror=null; this.src='img/maiaFavicon.png';">
+                    <span>Maia Care</span>
+                </div>
+                <span class="badge-carteirinha">ATIVA</span>
+            </div>
+            <div class="carteirinha-chip">
+                <span class="categoria-tag">Materno-Infantil</span>
+            </div>
+            <div class="carteirinha-corpo">
+                <div class="campo-cartao">
+                    <label>TITULAR DO PLANO</label>
+                    <h3 id="carteirinhaNome">Usuário</h3>
+                </div>
+                <div class="carteirinha-grid">
+                    <div class="campo-cartao">
+                        <label>MATRÍCULA</label>
+                        <p>MC-9482-2026</p>
+                    </div>
+                    <div class="campo-cartao">
+                        <label>VALIDADE</label>
+                        <p>12/2028</p>
+                    </div>
+                </div>
+            </div>
+            <div class="carteirinha-rodape">
+                <span>Rede Credenciada Virtual</span>
+                <span class="code-tag"> MaiaCare Health</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+        <!-- MODAL DETALHE DO RELATÓRIO / PRONTUÁRIO -->
+        <div class="modal-overlay" id="modalDetalheRelatorio">
+            <div class="box-arquivos" style="max-width: 550px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                    <h3 style="color: #7f5539;">📄 Relatório da Consulta</h3>
+                    <button onclick="fecharDetalhesRelatorio()" style="background: none; border: none; font-size: 20px; cursor: pointer; color: #7f5539;">✕</button>
+                </div>
+                <div id="corpoDetalheRelatorio"></div>
             </div>
         </div>
     </div>
 
-
+    <script src="https://meet.jit.si/external_api.js"></script>
+    <script src="./js/telemedicina.js"></script>
 </body>
-
-<script src="./js/telemedicina.js"></script>
 
 </html>

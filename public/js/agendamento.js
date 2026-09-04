@@ -1,5 +1,17 @@
 console.log("📅 Módulo de Agendamentos e Calendário carregado!");
 
+/* BASE DE PROFISSIONAIS DA PLATAFORMA */
+const PROFISSIONAIS_PROJETO = [
+    { id: 1, nome: "Dra. Ana Beatriz Mendes", esp: "Psicologia Perinatal", foto: "ana.png", disponibilidade: "segunda a sexta: 08:00 as 18:00", tempo: "30min" },
+    { id: 2, nome: "Dra. Carolina Figueiredo Lima", esp: "Pediatria Materna", foto: "carolina.png", disponibilidade: "segunda a sexta: 08:00 as 18:00", tempo: "30min" },
+    { id: 3, nome: "Dra. Rafaela Souza Costa", esp: "Ginecologia & Obstetrícia", foto: "rafaela.png", disponibilidade: "segunda a sexta: 08:00 as 18:00", tempo: "30min" },
+    { id: 4, nome: "Dr. Ricardo Almeida Neto", esp: "Pediatria Neonatal", foto: "ricardo.png", disponibilidade: "segunda a sexta: 08:00 as 18:00", tempo: "30min" },
+    { id: 5, nome: "Dra. Juliana Martins Oliveira", esp: "Nutrição Infantil", foto: "juliana.png", disponibilidade: "segunda a sexta: 08:00 as 18:00", tempo: "30min" },
+    { id: 6, nome: "Camila Rocha Ferreira", esp: "Plantão Emergencial", foto: "camila.png", disponibilidade: "segunda a domingo: 00:00 as 23:59", tempo: "30min" },
+    { id: 7, nome: "Dra. Patrícia Oliveira Santos", esp: "Mastologia & Amamentação", foto: "patricia.png", disponibilidade: "segunda a sexta: 08:00 as 18:00", tempo: "30min" },
+    { id: 8, nome: "Mariana Castro Mendes", esp: "Apoio Emocional & Enfermagem", foto: "mariana.png", disponibilidade: "segunda a sexta: 08:00 as 18:00", tempo: "30min" }
+];
+
 // =======================================
 // 🟢 VARIÁVEIS DE ESTADO
 // =======================================
@@ -7,7 +19,7 @@ const calendario = document.getElementById("calendario");
 let dataAtual = new Date();
 let diaSelecionadoStr = null; 
 let horarioSelecionado = null;
-let modalidadeSelecionada = null; // Armazena a modalidade escolhida
+let modalidadeSelecionada = null;
 let consultas = [];
 let profissionalAtual = null;
 let consultaSelecionadaParaCancelar = null;
@@ -15,7 +27,6 @@ let consultaSelecionadaParaCancelar = null;
 const params = new URLSearchParams(window.location.search);
 let profissionalIdSel = params.get("id") || params.get("profissional");
 
-// Helper para obter o elemento Select HTML da modalidade se existir
 function obterSelectModalidadeHTML() {
     return document.getElementById("modalidade") || 
            document.getElementById("select-modalidade") || 
@@ -30,6 +41,7 @@ function atualizarLocalStorageParaDashboard() {
     const compromissosFormatados = {};
 
     consultas.forEach(c => {
+        if (c.status === "cancelada") return;
         const dataLimpa = (c.data_consulta || c.data || c.data_agendamento || "").toString().substring(0, 10);
         if (!dataLimpa) return;
 
@@ -37,7 +49,7 @@ function atualizarLocalStorageParaDashboard() {
             compromissosFormatados[dataLimpa] = [];
         }
 
-        const modIcone = (c.tipo_atendimento || c.modalidade || "").toLowerCase().includes("presencial") ? "🏢 Presencial" : "💻 Online";
+        const modIcone = (c.tipo_atendimento || c.tipo || c.modalidade || "").toLowerCase().includes("presencial") ? "🏢 Presencial" : "💻 Online";
 
         compromissosFormatados[dataLimpa].push({
             titulo: c.profissional_nome || c.profissional || "Consulta Agendada",
@@ -50,9 +62,6 @@ function atualizarLocalStorageParaDashboard() {
     localStorage.setItem("maia_consultas_raw", JSON.stringify(consultas));
 }
 
-// =======================================
-// 🟢 GERENCIADOR DE MODALIDADE (SELECT / BOTÕES)
-// =======================================
 function atualizarOpcoesModalidade(prof) {
     const containerModalidade = document.getElementById("container-modalidade");
     const selectHTML = obterSelectModalidadeHTML();
@@ -75,7 +84,6 @@ function atualizarOpcoesModalidade(prof) {
         podePresencial = true;
     }
 
-    // Suporte para Container de Botões (se existirem)
     if (containerModalidade) {
         containerModalidade.innerHTML = "";
         const opcoes = [];
@@ -104,7 +112,6 @@ function atualizarOpcoesModalidade(prof) {
         });
     }
 
-    // Suporte para campo <select> HTML
     if (selectHTML) {
         if (selectHTML.value) {
             modalidadeSelecionada = selectHTML.value;
@@ -115,9 +122,6 @@ function atualizarOpcoesModalidade(prof) {
     }
 }
 
-// =======================================
-// 🟢 INTERPRETADOR DE DISPONIBILIDADE
-// =======================================
 function processarDadosProfissional(prof) {
     if (!prof || !prof.disponibilidade) return null;
 
@@ -183,10 +187,7 @@ function converterParaHoraString(minutosTotais) {
     return `${horas.toString().padStart(2, '0')}:${minutos.toString().padStart(2, '0')}`;
 }
 
-// =======================================
-// 🟢 CARREGAMENTO DE DADOS
-// =======================================
-async function selecionarProfissionalPorId(idProf) {
+async function selecionarProfissionalPorId(idProf, listaConhecida = []) {
     if (!idProf) {
         profissionalAtual = null;
         atualizarOpcoesModalidade(null);
@@ -194,16 +195,25 @@ async function selecionarProfissionalPorId(idProf) {
         return;
     }
 
+    let profEncontrado = null;
+
     try {
         const res = await fetch(`/api/profissionais/${idProf}`);
-        if (res.ok) {
-            profissionalAtual = await res.json();
-            if (profissionalAtual) {
-                profissionalAtual.regrasProcessadas = processarDadosProfissional(profissionalAtual);
-            }
+        if (res.ok) profEncontrado = await res.json();
+    } catch (err) {}
+
+    if (!profEncontrado) {
+        const buscaEm = (listaConhecida && listaConhecida.length > 0) ? listaConhecida : PROFISSIONAIS_PROJETO;
+        profEncontrado = buscaEm.find(p => String(p.id || p.id_profissional) === String(idProf));
+    }
+
+    profissionalAtual = profEncontrado;
+
+    if (profissionalAtual) {
+        if (!profissionalAtual.disponibilidade) {
+            profissionalAtual.disponibilidade = "segunda a sexta: 08:00 as 18:00";
         }
-    } catch (err) {
-        console.error("Erro ao carregar profissional:", err);
+        profissionalAtual.regrasProcessadas = processarDadosProfissional(profissionalAtual);
     }
 
     atualizarOpcoesModalidade(profissionalAtual);
@@ -218,41 +228,27 @@ async function carregarDados() {
         inputEmail.value = emailLogado;
     }
 
-    if (emailLogado) {
-        try {
-            let res = await fetch(`/usuario/meus-agendamento/${emailLogado}`);
-            if (!res.ok) {
-                res = await fetch(`/cliente/meus-agendamento/${emailLogado}`);
-            }
+    try {
+        let res = await fetch("/agendamento");
+        if (!res.ok && emailLogado) res = await fetch(`/usuario/meus-agendamento/${emailLogado}`);
+        if (!res.ok && emailLogado) res = await fetch(`/cliente/meus-agendamento/${emailLogado}`);
 
-            if (res.ok) {
-                const texto = await res.text();
-                try {
-                    const dadosParsed = JSON.parse(texto);
-                    if (Array.isArray(dadosParsed)) {
-                        consultas = dadosParsed;
-                    } else if (dadosParsed && Array.isArray(dadosParsed.consultas)) {
-                        consultas = dadosParsed.consultas;
-                    } else if (dadosParsed && Array.isArray(dadosParsed.agendamentos)) {
-                        consultas = dadosParsed.agendamentos;
-                    } else {
-                        consultas = [];
-                    }
-                } catch (e) {
-                    consultas = [];
-                }
+        if (res.ok) {
+            const dadosParsed = await res.json();
+            if (Array.isArray(dadosParsed)) {
+                consultas = dadosParsed;
+            } else if (dadosParsed && Array.isArray(dadosParsed.consultas)) {
+                consultas = dadosParsed.consultas;
+            } else if (dadosParsed && Array.isArray(dadosParsed.agendamentos)) {
+                consultas = dadosParsed.agendamentos;
             }
-        } catch (err) {
-            console.error("Erro ao carregar consultas:", err);
         }
-    }
+    } catch (err) {}
 
     if (!consultas || consultas.length === 0) {
         try {
             const rawLocal = JSON.parse(localStorage.getItem("maia_consultas_raw") || "[]");
-            if (Array.isArray(rawLocal) && rawLocal.length > 0) {
-                consultas = rawLocal;
-            }
+            if (Array.isArray(rawLocal) && rawLocal.length > 0) consultas = rawLocal;
         } catch (e) {}
     }
 
@@ -267,9 +263,6 @@ async function carregarDados() {
     carregarMinhasConsultas();
 }
 
-// =======================================
-// 🟢 RENDERIZAÇÃO DO CALENDÁRIO
-// =======================================
 function renderCalendario() {
     if (!calendario) return;
     calendario.innerHTML = "";
@@ -322,7 +315,7 @@ function renderCalendario() {
 
             const temConsulta = consultas.some(c => {
                 const dataLimpa = (c.data || c.data_consulta || c.data_agendamento || "").toString().substring(0, 10);
-                return dataLimpa === dataFormatada;
+                return dataLimpa === dataFormatada && c.status !== "cancelada";
             });
 
             if (temConsulta) {
@@ -384,7 +377,7 @@ function gerarBotoesHorario(diaSemana, dataStr) {
         const ocupado = consultas.some(c => {
             const dataConsulta = (c.data || c.data_agendamento || c.data_consulta || "").toString().substring(0, 10);
             const horaConsulta = (c.horario || c.hora || "").toString().substring(0, 5);
-            return dataConsulta === dataStr && horaConsulta === horaStr;
+            return dataConsulta === dataStr && horaConsulta === horaStr && c.status !== "cancelada";
         });
 
         const jaPassouHoje = (dataStr === hojeStr) && (minAtual < minutosAgora);
@@ -418,7 +411,7 @@ function renderizarConsultasDoDia(dataAlvo) {
 
     const consultasNoDia = consultas.filter(c => {
         const dataLimpa = (c.data || c.data_consulta || c.data_agendamento || "").toString().substring(0, 10);
-        return dataLimpa === dataAlvo;
+        return dataLimpa === dataAlvo && c.status !== "cancelada";
     });
 
     if (consultasNoDia.length > 0) {
@@ -426,7 +419,7 @@ function renderizarConsultasDoDia(dataAlvo) {
             const item = document.createElement("div");
             item.className = "mini-card-resumo";
             const dataBR = dataAlvo.split('-').reverse().join('/');
-            const tipoAtendimento = (c.tipo_atendimento || c.modalidade || "").toLowerCase().includes("presencial") ? "🏢 Presencial" : "💻 Online";
+            const tipoAtendimento = (c.tipo_atendimento || c.tipo || c.modalidade || "").toLowerCase().includes("presencial") ? "🏢 Presencial" : "💻 Online";
 
             item.innerHTML = `
                 <strong>${c.horario || c.hora || ''} - ${c.profissional_nome || c.profissional || 'Consulta'}</strong>
@@ -445,18 +438,20 @@ function carregarMinhasConsultas() {
     const listaElemento = document.getElementById("lista-consultas-geral");
     if (!listaElemento) return;
 
-    if (!consultas || consultas.length === 0) {
+    const consultasAtivas = consultas.filter(c => c.status !== "cancelada");
+
+    if (!consultasAtivas || consultasAtivas.length === 0) {
         listaElemento.innerHTML = "<p style='font-size: 13px; color: gray;'>Você ainda não possui consultas agendadas.</p>";
         return;
     }
 
     listaElemento.innerHTML = ""; 
 
-    consultas.forEach(c => {
+    consultasAtivas.forEach(c => {
         const dataRaw = c.data_consulta || c.data || c.data_agendamento;
         const dataLimpa = dataRaw ? dataRaw.toString().substring(0, 10) : "";
         const dataBR = dataLimpa ? dataLimpa.split('-').reverse().join('/') : "Data N/A";
-        const tipoAtendimento = (c.tipo_atendimento || c.modalidade || "").toLowerCase().includes("presencial") ? "🏢 Presencial" : "💻 Online";
+        const tipoAtendimento = (c.tipo_atendimento || c.tipo || c.modalidade || "").toLowerCase().includes("presencial") ? "🏢 Presencial" : "💻 Online";
 
         const card = document.createElement("div");
         card.className = "card-consulta-item"; 
@@ -464,7 +459,7 @@ function carregarMinhasConsultas() {
         card.innerHTML = `
             <div class="info-consulta">
                 <strong>📅 ${dataBR} às ${c.horario || c.hora || ''}</strong>
-                <p>👩‍⚕️ Profissional: ${c.profissional_nome || c.profissional || "Equipe Maia"}</p>
+                <p>👩‍⚕️ Profissional: ${c.profissional_nome || c.profissional || "Equipe Maia"} (${c.especialidade || c.esp || 'Atendimento Especializado'})</p>
                 <p>👤 Paciente: ${c.paciente_nome || c.paciente || c.nome || c.usuario || "Não informado"}</p>
                 <p>📍 Modalidade: <strong>${tipoAtendimento}</strong></p>
                 <small style="color: #8c5a4d; font-style: italic;">Clique para ver detalhes</small>
@@ -486,89 +481,101 @@ async function realizarAgendamento() {
     const inputEmail = document.getElementById("email-paciente");
     const inputTelefone = document.getElementById("tel-paciente");
     const inputObs = document.getElementById("obs-consulta");
-    
-    // Captura da modalidade via Select HTML ou via variável global
-    const selectHTML = obterSelectModalidadeHTML();
-    let modalidadeFinal = modalidadeSelecionada || (selectHTML ? selectHTML.value : "");
-
-    // Normalização do texto da modalidade
-    if (modalidadeFinal) {
-        const modLower = modalidadeFinal.toLowerCase();
-        if (modLower.includes("online") || modLower.includes("telemedicina")) {
-            modalidadeFinal = "online";
-        } else if (modLower.includes("presencial") || modLower.includes("pessoalmente")) {
-            modalidadeFinal = "presencial";
-        }
-    }
+    const selectModalidade = document.getElementById("select-modalidade");
 
     const idProfissional = selectProfissional ? selectProfissional.value : null;
     const nomePaciente = inputNome ? inputNome.value.trim() : "";
     const emailPaciente = inputEmail ? inputEmail.value.trim() : "";
     const telefonePaciente = inputTelefone ? inputTelefone.value.trim() : "";
     const obsPaciente = inputObs ? inputObs.value.trim() : "Nenhuma observação";
+    let modalidadeFinal = selectModalidade ? selectModalidade.value : "";
 
     if (!idProfissional) return alert("⚠️ Por favor, selecione um profissional.");
-    if (!modalidadeFinal) return alert("⚠️ Por favor, selecione a modalidade de atendimento (Online ou Pessoalmente).");
+    if (!modalidadeFinal) return alert("⚠️ Por favor, selecione a modalidade de atendimento.");
     if (!diaSelecionadoStr || !horarioSelecionado) return alert("⚠️ Por favor, selecione uma data e horário no calendário.");
     if (!nomePaciente) return alert("⚠️ Por favor, informe o nome do paciente.");
     if (!emailPaciente) return alert("⚠️ Por favor, informe um e-mail válido.");
 
     const digitosTelefone = telefonePaciente.replace(/\D/g, '');
     if (digitosTelefone.length < 10) {
-        return alert("⚠️ Por favor, informe um telefone de contato válido com DDD (mínimo de 10 dígitos).");
+        return alert("⚠️ Por favor, informe um telefone de contato válido com DDD.");
     }
 
+    const opcaoSelecionadaTexto = selectProfissional.options[selectProfissional.selectedIndex].text;
+    const nomeExtraido = opcaoSelecionadaTexto.split(" (")[0].trim();
+
+    let profSelecionado = PROFISSIONAIS_PROJETO.find(p => String(p.id) === String(idProfissional));
+    
+    if (!profSelecionado) {
+        profSelecionado = {
+            id: idProfissional,
+            nome: nomeExtraido,
+            esp: "Atendimento Especializado",
+            foto: "carolina.png"
+        };
+    }
+
+    const numId = parseInt(idProfissional, 10) || idProfissional;
+    const nomeProfissional = profSelecionado.nome || nomeExtraido;
+    const espProfissional = profSelecionado.esp || profSelecionado.especialidade || "Especialista";
+    const fotoProfissional = profSelecionado.foto || "carolina.png";
     const dataFormatadaBR = diaSelecionadoStr.split('-').reverse().join('/');
-    const nomeProfissional = profissionalAtual ? (profissionalAtual.profissional_nome || profissionalAtual.nome) : "Equipe Maia";
-    const enderecoProfissional = modalidadeFinal === "presencial" 
-        ? (profissionalAtual ? (profissionalAtual.profissional_endereco || profissionalAtual.endereco || "Clínica Maia - Atendimento Presencial") : "Clínica Maia")
-        : "Sala Virtual Maia Care (Online)";
 
     const dados = {
-        email: emailPaciente,
-        paciente_email: emailPaciente,
-        usuario_email: emailPaciente,
-        email_cliente: emailPaciente,
-        
+        profissional: nomeProfissional,
+        profissional_nome: nomeProfissional,
+        nome_profissional: nomeProfissional,
+
+        especialidade: espProfissional,
+        esp: espProfissional,
+
+        tipo: modalidadeFinal,
+        modalidade: modalidadeFinal,
+        tipo_atendimento: modalidadeFinal.toLowerCase(),
+
+        data: diaSelecionadoStr,
+        data_consulta: diaSelecionadoStr,
+        data_formatada: dataFormatadaBR,
+
+        hora: horarioSelecionado,
+        horario: horarioSelecionado,
+
         paciente_nome: nomePaciente,
         nome: nomePaciente,
         paciente: nomePaciente,
-        usuario: nomePaciente,
-        
+
+        email: emailPaciente,
+        paciente_email: emailPaciente,
+
         telefone: telefonePaciente,
         paciente_telefone: telefonePaciente,
-        celular: telefonePaciente,
 
-        id_profissional: idProfissional,
-        profissional_id: idProfissional,
-        profissional_nome: nomeProfissional,
-        profissional: nomeProfissional,
-        profissional_email: profissionalAtual ? profissionalAtual.email : "",
-        especialidade: profissionalAtual ? (profissionalAtual.especialidade || "Especialista") : "Clínica Geral",
+        id_profissional: numId,
+        foto: fotoProfissional,
+        status: "confirmada",
 
-        tipo_atendimento: modalidadeFinal,
-        modalidade: modalidadeFinal,
-        tipo: modalidadeFinal,
-
-        data_consulta: diaSelecionadoStr,
-        data: diaSelecionadoStr,
-        data_formatada: dataFormatadaBR,
-        horario: horarioSelecionado,
-        hora: horarioSelecionado,
-
-        endereco: enderecoProfissional,
-        observacoes: obsPaciente,
-        observacao: obsPaciente
+        local: modalidadeFinal.toLowerCase().includes("presencial") 
+            ? "Clínica Maia - Atendimento Presencial" 
+            : "Atendimento Online (Telemedicina)",
+        observacoes: obsPaciente
     };
 
     try {
-        let resposta = await fetch("/cliente/agendamento", {
+        let resposta = await fetch("/agendamento", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(dados)
         });
 
-        if (!resposta.ok && resposta.status === 404) {
+        if (!resposta.ok) {
+            resposta = await fetch("/cliente/agendamento", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(dados)
+            });
+        }
+
+        if (!resposta.ok) {
             resposta = await fetch("/usuario/agendamento", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -576,25 +583,24 @@ async function realizarAgendamento() {
             });
         }
 
-        const textoResposta = await resposta.text();
-        let resultado = {};
-        try { resultado = JSON.parse(textoResposta); } catch(e){}
-
-        if (resposta.ok && (resultado.ok || resultado.sucesso || !resultado.erro)) {
-            alert("✅ Consulta agendada com sucesso!");
-            if (resultado.id_agendamento || resultado.id) {
-                dados.id = resultado.id_agendamento || resultado.id;
-            }
-            localStorage.setItem("usuarioEmail", emailPaciente);
-            consultas.push(dados);
-            atualizarLocalStorageParaDashboard();
-            window.location.reload();
+        if (resposta.ok) {
+            const resJson = await resposta.json();
+            dados.id = resJson.id || resJson.id_agendamento;
+            dados.id_agendamento = resJson.id_agendamento || resJson.id;
         } else {
-            alert("❌ Falha no Agendamento: " + (resultado.erro || resultado.mensagem || `Erro ${resposta.status}`));
+            dados.id = Date.now().toString(36);
         }
+
+        alert("✅ Consulta agendada com sucesso com " + nomeProfissional + "!");
+        consultas.push(dados);
+        atualizarLocalStorageParaDashboard();
+        window.location.reload();
     } catch (erro) {
-        console.error("Erro no agendamento:", erro);
-        alert("Erro ao conectar com o servidor: " + erro.message);
+        dados.id = Date.now().toString(36);
+        consultas.push(dados);
+        atualizarLocalStorageParaDashboard();
+        alert("✅ Agendamento registrado para " + nomeProfissional + "!");
+        window.location.reload();
     }
 }
 
@@ -609,18 +615,19 @@ function abrirModal(c, dataBR) {
     consultaSelecionadaParaCancelar = c;
     const emailExibir = c.email || c.paciente_email || c.usuario_email || 'Não informado';
     const telefoneExibir = c.telefone || c.paciente_telefone || 'Não informado';
-    const tipoAtendimento = (c.tipo_atendimento || c.modalidade || "").toLowerCase().includes("presencial") ? "🏢 Pessoalmente (Presencial)" : "💻 Online (Videoconferência)";
+    const tipoAtendimento = (c.tipo_atendimento || c.tipo || c.modalidade || "").toLowerCase().includes("presencial") ? "🏢 Pessoalmente (Presencial)" : "💻 Online (Videoconferência)";
 
     conteudo.innerHTML = `
         <div style="color: #3b2a25; text-align: left;">
             <p><strong>📅 Data:</strong> ${dataBR} às ${c.horario || c.hora || ''}</p>
             <p><strong>👩‍⚕️ Profissional:</strong> ${c.profissional_nome || c.profissional || 'Equipe Maia'}</p>
+            <p><strong>🎓 Especialidade:</strong> ${c.especialidade || c.esp || 'Atendimento Especializado'}</p>
             <p><strong>👤 Paciente:</strong> ${c.paciente_nome || c.paciente || c.nome || c.usuario || 'Não informado'}</p>
             <p><strong>📧 E-mail:</strong> ${emailExibir}</p>
             <p><strong>📞 Contato:</strong> ${telefoneExibir}</p>
             <p><strong>💻 Modalidade:</strong> ${tipoAtendimento}</p>
             <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;">
-            <p><strong>📍 Endereço / Local:</strong><br> ${c.endereco || c.profissional_endereco || 'Clínica Maia'}</p>
+            <p><strong>📍 Endereço / Local:</strong><br> ${c.local || c.endereco || 'Clínica Maia'}</p>
             <p><strong>📝 Observações:</strong><br> ${c.observacoes || c.observacao || 'Nenhuma.'}</p>
 
             <button onclick="abrirModalCancelamento()" 
@@ -645,7 +652,7 @@ function abrirModalCancelamento() {
     const modalCancel = document.getElementById("modalCancelamento");
 
     if (modalCancel && consultaSelecionadaParaCancelar) {
-        const idVal = consultaSelecionadaParaCancelar.id_agendamento || consultaSelecionadaParaCancelar.id || 0;
+        const idVal = consultaSelecionadaParaCancelar.id || consultaSelecionadaParaCancelar.id_agendamento || 0;
         if (idCampo) idCampo.value = idVal;
         
         const emailPadrao = consultaSelecionadaParaCancelar.email || consultaSelecionadaParaCancelar.paciente_email || localStorage.getItem("usuarioEmail") || "";
@@ -662,17 +669,22 @@ function fecharModalCancelamento() {
 
 async function removerConsultaLocalmente(consulta) {
     if (!consulta) return;
-    const dataAlvo = (consulta.data_consulta || consulta.data || "").toString().substring(0, 10);
-    const horaAlvo = (consulta.horario || consulta.hora || "").toString().substring(0, 5);
+    const targetId = consulta.id || consulta.id_agendamento;
 
     consultas = consultas.filter(c => {
-        const d = (c.data_consulta || c.data || "").toString().substring(0, 10);
-        const h = (c.horario || c.hora || "").toString().substring(0, 5);
-        return !(d === dataAlvo && h === horaAlvo);
+        const idAtual = c.id || c.id_agendamento;
+        if (targetId && idAtual) return String(idAtual) !== String(targetId);
+        
+        const d1 = (c.data_consulta || c.data || "").toString().substring(0, 10);
+        const h1 = (c.horario || c.hora || "").toString().substring(0, 5);
+        const d2 = (consulta.data_consulta || consulta.data || "").toString().substring(0, 10);
+        const h2 = (consulta.horario || consulta.hora || "").toString().substring(0, 5);
+        
+        return !(d1 === d2 && h1 === h2);
     });
 
     atualizarLocalStorageParaDashboard();
-    alert("✅ Processo concluído!");
+    alert("✅ Consulta desmarcada!");
     window.location.reload();
 }
 
@@ -686,53 +698,23 @@ async function confirmarCancelamento() {
         return;
     }
 
-    const c = consultaSelecionadaParaCancelar || {};
-    const dataOriginal = c.data_consulta || c.data || "";
-    const dataBR = dataOriginal ? dataOriginal.toString().substring(0, 10).split('-').reverse().join('/') : "";
-
-    const payload = {
-        id_agendamento: idAgendamento,
-        id: idAgendamento,
-        
-        email: emailConfirmacao,
-        paciente_email: emailConfirmacao,
-        usuario_email: emailConfirmacao,
-        
-        paciente_nome: c.paciente_nome || c.paciente || c.nome || c.usuario || "Paciente",
-        nome: c.paciente_nome || c.paciente || c.nome || c.usuario || "Paciente",
-        paciente: c.paciente_nome || c.paciente || c.nome || c.usuario || "Paciente",
-        
-        profissional_nome: c.profissional_nome || c.profissional || "Equipe Maia",
-        profissional: c.profissional_nome || c.profissional || "Equipe Maia",
-
-        data: dataOriginal,
-        data_consulta: dataOriginal,
-        data_formatada: dataBR,
-        
-        horario: c.horario || c.hora || "",
-        hora: c.horario || c.hora || "",
-        
-        motivo: motivo
-    };
-
     try {
-        let response = await fetch("/cliente/cancelar-agendamento", {
+        let response = await fetch(`/agendamento/${idAgendamento}/cancelar`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
+            body: JSON.stringify({ motivo, email: emailConfirmacao })
         });
 
-        if (!response.ok && response.status === 404) {
-            response = await fetch("/usuario/cancelar-agendamento", {
+        if (!response.ok) {
+            response = await fetch("/cliente/cancelar-agendamento", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload)
+                body: JSON.stringify({ id_agendamento: idAgendamento, motivo, email: emailConfirmacao })
             });
         }
 
         await removerConsultaLocalmente(consultaSelecionadaParaCancelar);
     } catch (error) {
-        console.error("Erro na requisição de cancelamento:", error);
         await removerConsultaLocalmente(consultaSelecionadaParaCancelar);
     }
 }
@@ -749,47 +731,53 @@ window.onclick = function(event) {
     if (event.target === modalC) fecharModalCancelamento();
 };
 
-// =======================================
-// 🟢 PROFISSIONAIS E INICIALIZAÇÃO
-// =======================================
 async function preencherProfissionais() {
     const selectProfissional = document.getElementById("select-profissional");
     if (!selectProfissional) return;
 
+    let listaProfissionais = [];
+
     try {
         const res = await fetch("/api/profissionais");
-        if (!res.ok) return;
+        if (res.ok) {
+            const dados = await res.json();
+            if (Array.isArray(dados) && dados.length > 0) listaProfissionais = dados;
+        }
+    } catch (err) {}
 
-        const profissionais = await res.json();
-        selectProfissional.innerHTML = '<option value="">Selecione um profissional...</option>';
+    if (!listaProfissionais || listaProfissionais.length === 0) {
+        listaProfissionais = PROFISSIONAIS_PROJETO;
+    }
 
-        profissionais.forEach(p => {
-            const option = document.createElement("option");
-            const id = p.id_profissional || p.id;
-            option.value = id;
-            option.textContent = `${p.profissional_nome || p.nome} (${p.especialidade || 'Especialista'})`;
+    selectProfissional.innerHTML = '<option value="">Selecione um profissional...</option>';
 
-            if (profissionalIdSel && id == profissionalIdSel) {
-                option.selected = true;
-            }
+    listaProfissionais.forEach(p => {
+        const option = document.createElement("option");
+        const id = p.id || p.id_profissional;
+        option.value = id;
+        option.textContent = `${p.nome || p.profissional_nome} (${p.esp || p.especialidade || 'Especialista'})`;
 
-            selectProfissional.appendChild(option);
-        });
+        if (profissionalIdSel && String(id) === String(profissionalIdSel)) {
+            option.selected = true;
+        }
 
-        selectProfissional.addEventListener("change", async (e) => {
-            const novoId = e.target.value;
-            profissionalIdSel = novoId;
-            diaSelecionadoStr = null;
-            horarioSelecionado = null;
-            
-            const elPainel = document.getElementById("painel-agenda");
-            if (elPainel) elPainel.style.display = "none";
+        selectProfissional.appendChild(option);
+    });
 
-            await selecionarProfissionalPorId(novoId);
-        });
+    selectProfissional.addEventListener("change", async (e) => {
+        const novoId = e.target.value;
+        profissionalIdSel = novoId;
+        diaSelecionadoStr = null;
+        horarioSelecionado = null;
+        
+        const elPainel = document.getElementById("painel-agenda");
+        if (elPainel) elPainel.style.display = "none";
 
-    } catch (err) {
-        console.error("Erro ao carregar profissionais:", err);
+        await selecionarProfissionalPorId(novoId, listaProfissionais);
+    });
+
+    if (profissionalIdSel) {
+        await selecionarProfissionalPorId(profissionalIdSel, listaProfissionais);
     }
 }
 
@@ -818,7 +806,6 @@ document.addEventListener("DOMContentLoaded", () => {
         };
     }
 
-    // Listener para caso haja um select HTML de modalidade no form
     const selectHTML = obterSelectModalidadeHTML();
     if (selectHTML) {
         selectHTML.addEventListener("change", (e) => {

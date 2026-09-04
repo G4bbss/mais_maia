@@ -540,6 +540,7 @@ export const meusAgendamentos = async (req, res) => {
         a.id_agendamento,
         a.USUARIO_id_usuario,
         a.PROFISSIONAL_id_profissional,
+        profissional_nome,
         DATE_FORMAT(a.data_agendamento, '%Y-%m-%d') AS data_agendamento,
         DATE_FORMAT(a.data_agendamento, '%Y-%m-%d') AS data_consulta,
         DATE_FORMAT(a.data_agendamento, '%d/%m/%Y') AS data_formatada,
@@ -554,14 +555,13 @@ export const meusAgendamentos = async (req, res) => {
         COALESCE(a.telefone_paciente, u.paciente_telefone, 'Não informado') AS telefone_paciente,
         COALESCE(a.telefone_paciente, u.paciente_telefone, 'Não informado') AS telefone,
         COALESCE(a.endereco_profissional, 'Clínica Maia') AS endereco_profissional,
-        COALESCE(a.endereco_profissional, 'Clínica Maia') AS endereco,
-        'Dra. Ana Beatriz Mendes (Psicologia Perinatal)' AS profissional_nome
+        COALESCE(a.endereco_profissional, 'Clínica Maia') AS endereco
        FROM agendamento a
        LEFT JOIN usuario u ON a.USUARIO_id_usuario = u.id_usuario OR a.email_paciente = u.email
-       WHERE a.email_paciente = ? 
-          OR u.email = ?
+       LEFT JOIN profissional p ON a.PROFISSIONAL_id_profissional = p.id_profissional
+       WHERE tipo_atendimento = 'online' AND a.email_paciente = ? 
        ORDER BY a.data_agendamento ASC, a.horario ASC`,
-      [emailParam, emailParam]
+      [emailParam]
     );
 
     return res.json(consultas);

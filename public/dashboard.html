@@ -6,434 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel - Maia</title>
     <link rel="icon" href="img/maiaFavicon.png" type="image/png">
-
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: "Segoe UI", Arial, sans-serif;
-            background: linear-gradient(to right, #f5ebe0, #e6ccb2);
-            color: #4a3c31;
-            min-height: 100vh;
-        }
-
-        a {
-            text-decoration: none;
-        }
-
-        /* ===================== LAYOUT GERAL ===================== */
-        .app {
-            display: flex;
-            min-height: 100vh;
-        }
-
-        /* ===================== SIDEBAR ===================== */
-        .sidebar {
-            width: 240px;
-            flex-shrink: 0;
-            background-color: #7f5539;
-            color: #fff;
-            padding: 30px 20px;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .sidebar .logo {
-            font-size: 22px;
-            font-weight: bold;
-            color: #fff;
-            margin-bottom: 40px;
-        }
-
-        .sidebar .logo span {
-            color: #e6ccb2;
-        }
-
-        .sidebar nav {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            flex-grow: 1;
-        }
-
-        .sidebar nav a {
-            color: #f5ebe0;
-            font-size: 14px;
-            padding: 11px 14px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            transition: background-color 0.25s;
-        }
-
-        .sidebar nav a:hover,
-        .sidebar nav a.ativo {
-            background-color: rgba(255, 255, 255, 0.14);
-        }
-
-        .sidebar .rodape-sidebar {
-            font-size: 11px;
-            color: #e6ccb2;
-            opacity: 0.7;
-        }
-
-        /* ===================== CONTEÚDO ===================== */
-        .conteudo {
-            flex-grow: 1;
-            padding: 30px 40px;
-            max-width: 1100px;
-        }
-
-        /* Barra superior */
-        .topbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-            gap: 14px;
-        }
-
-        .saudacao h1 {
-            font-size: 24px;
-            color: #7f5539;
-        }
-
-        .saudacao p {
-            font-size: 13px;
-            color: #6b5744;
-        }
-
-        /* Menu da engrenagem */
-        .conta {
-            position: relative;
-        }
-
-        .conta-botao {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background-color: #fffaf6;
-            border: 1px solid #e6ccb2;
-            border-radius: 30px;
-            padding: 6px 16px 6px 6px;
-            cursor: pointer;
-        }
-
-        .avatar-mini {
-            width: 34px;
-            height: 34px;
-            border-radius: 50%;
-            background-color: #e6ccb2;
-            color: #7f5539;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 13px;
-        }
-
-        .conta-botao span.nome-mini {
-            font-size: 13px;
-            font-weight: bold;
-            color: #4a3c31;
-        }
-
-        .icone-engrenagem {
-            font-size: 16px;
-        }
-
-        .conta-menu {
-            position: absolute;
-            right: 0;
-            top: calc(100% + 8px);
-            background-color: #fffaf6;
-            border-radius: 10px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-            width: 190px;
-            overflow: hidden;
-            display: none;
-            z-index: 20;
-        }
-
-        .conta-menu.aberto {
-            display: block;
-        }
-
-        .conta-menu a,
-        .conta-menu button {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            width: 100%;
-            text-align: left;
-            padding: 12px 16px;
-            font-size: 13px;
-            color: #4a3c31;
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-family: inherit;
-        }
-
-        .conta-menu a:hover,
-        .conta-menu button:hover {
-            background-color: #f5ebe0;
-        }
-
-        .conta-menu .sair {
-            color: #a4442c;
-            border-top: 1px solid #f0e3d3;
-        }
-
-        /* ===================== GRID PRINCIPAL ===================== */
-        .grid-principal {
-            display: grid;
-            grid-template-columns: 1.15fr 1fr;
-            gap: 24px;
-        }
-
-        .painel-card {
-            background-color: #fffaf6;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-            padding: 24px;
-        }
-
-        .painel-card h2 {
-            font-size: 16px;
-            color: #7f5539;
-            margin-bottom: 16px;
-        }
-
-        /* Check-in emocional */
-        .checkin p {
-            font-size: 13px;
-            color: #6b5744;
-            margin-bottom: 14px;
-        }
-
-        .checkin-opcoes {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .checkin-opcoes button {
-            flex: 1;
-            min-width: 70px;
-            background-color: #f5ebe0;
-            border: 1px solid #e6ccb2;
-            border-radius: 10px;
-            padding: 12px 8px;
-            font-size: 22px;
-            cursor: pointer;
-            transition: transform 0.2s, background-color 0.2s;
-        }
-
-        .checkin-opcoes button:hover {
-            background-color: #e6ccb2;
-            transform: translateY(-2px);
-        }
-
-        .checkin-opcoes .rotulo {
-            display: block;
-            font-size: 11px;
-            margin-top: 4px;
-            color: #6b5744;
-        }
-
-        /* Calendário */
-        .calendario-cabecalho {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 14px;
-        }
-
-        .calendario-cabecalho button {
-            background: none;
-            border: none;
-            font-size: 16px;
-            color: #7f5539;
-            cursor: pointer;
-            padding: 4px 8px;
-        }
-
-        .calendario-grade {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 6px;
-            text-align: center;
-        }
-
-        .calendario-grade .dia-semana {
-            font-size: 11px;
-            font-weight: bold;
-            color: #9c6644;
-            padding-bottom: 4px;
-        }
-
-        .calendario-grade .dia {
-            position: relative;
-            padding: 8px 0;
-            border-radius: 8px;
-            font-size: 13px;
-            color: #4a3c31;
-        }
-
-        .calendario-grade .dia.vazio {
-            visibility: hidden;
-        }
-
-        .calendario-grade .dia.hoje {
-            background-color: #7f5539;
-            color: #fff;
-            font-weight: bold;
-        }
-
-        .calendario-grade .dia.compromisso::after {
-            content: "";
-            position: absolute;
-            bottom: 3px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 5px;
-            height: 5px;
-            border-radius: 50%;
-            background-color: #9c6644;
-        }
-
-        .calendario-grade .dia.hoje.compromisso::after {
-            background-color: #fff;
-        }
-
-        .lista-compromissos {
-            margin-top: 18px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .compromisso-item {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-            font-size: 13px;
-        }
-
-        .compromisso-data {
-            background-color: #f5ebe0;
-            color: #7f5539;
-            font-weight: bold;
-            border-radius: 8px;
-            padding: 6px 10px;
-            font-size: 12px;
-            min-width: 46px;
-            text-align: center;
-        }
-
-        .compromisso-item strong {
-            display: block;
-            color: #4a3c31;
-        }
-
-        .compromisso-item span {
-            color: #6b5744;
-            font-size: 12px;
-        }
-
-        .lista-compromissos .vazio {
-            font-size: 13px;
-            color: #6b5744;
-            text-align: center;
-            padding: 10px 0;
-        }
-
-        /* Feed */
-        .feed {
-            grid-column: 1 / -1;
-        }
-
-        .feed-lista {
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-        }
-
-        .feed-item {
-            display: flex;
-            gap: 14px;
-            padding: 14px;
-            border-radius: 10px;
-            background-color: #f5ebe0;
-        }
-
-        .feed-icone {
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
-            background-color: #fffaf6;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 17px;
-            flex-shrink: 0;
-        }
-
-        .feed-texto strong {
-            display: block;
-            font-size: 13px;
-            color: #4a3c31;
-        }
-
-        .feed-texto span {
-            font-size: 12px;
-            color: #6b5744;
-        }
-
-        /* ===================== RESPONSIVO ===================== */
-        @media (max-width: 900px) {
-            .app {
-                flex-direction: column;
-            }
-
-            .sidebar {
-                width: 100%;
-                flex-direction: row;
-                align-items: center;
-                padding: 16px 20px;
-                gap: 20px;
-            }
-
-            .sidebar .logo {
-                margin-bottom: 0;
-            }
-
-            .sidebar nav {
-                flex-direction: row;
-                flex-wrap: wrap;
-                flex-grow: 1;
-            }
-
-            .sidebar .rodape-sidebar {
-                display: none;
-            }
-
-            .conteudo {
-                padding: 24px 20px;
-            }
-
-            .grid-principal {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+<link rel="stylesheet" href="./style/dashboard.css">
+   
 </head>
 
 <body>
@@ -446,14 +20,69 @@
                 <a href="./diario.html"> Diário Emocional</a>
                 <a href="./agendamento.html"> Agendamentos</a>
                 <a href="./telemedicina.html"> Telemedicina</a>
-                <a href="./rede-apoio.html"> Rede de Apoio</a>
+                <a href="./redeapoio.html"> Rede de Apoio</a>
                 <a href="./profissionais.html"> Profissionais</a>
-                  <a href="./mural.html"> Profissionais</a>
+                <a href="./mural.html"> Mural</a>
             </nav>
             <span class="rodape-sidebar">© 2026 Maia</span>
         </aside>
 
-        <!-- ===================== CONTEÚDO ===================== -->
+        <!-- ===================== BARRA LATERAL DE ACESSIBILIDADE ===================== -->
+        <div class="barra-acessibilidade">
+            <div style="position: relative;">
+                <button class="btn-acessibilidade" onclick="togglePainelContraste()" title="Ajustar Contraste">
+                    🌓
+                </button>
+                <div id="painelContraste" class="painel-ajuste-contraste">
+                    <label for="rangeContraste">Contraste: <span id="valorContrasteTxt">100%</span></label>
+                    <input type="range" id="rangeContraste" min="30" max="100" value="100" oninput="ajustarContraste(this.value)">
+                </div>
+            </div>
+            <button class="btn-acessibilidade" onclick="iniciarChatAssistente()" title="Abrir Chat com Camila">
+                🤖
+            </button>
+        </div>
+
+        <!-- ===================== WIDGET DA ASSISTENTE VIRTUAL ===================== -->
+        <div class="assistente-widget" id="widgetAssistente">
+            <div class="assistente-balao" id="balaoAssistente">
+                <h4>Olá! :)</h4>
+                <p>Sou a Camila, Assistente Virtual da plataforma Maia e estou aqui para te ajudar.</p>
+                <div class="assistente-acoes">
+                    <button class="btn-iniciar-chat" onclick="iniciarChatAssistente()">INICIAR CHAT</button>
+                    <button class="btn-fechar-balao" onclick="fecharBalaoAssistente()">Fechar</button>
+                </div>
+            </div>
+            <div class="assistente-avatar-box" onclick="iniciarChatAssistente()">
+                <button class="btn-fechar-total" title="Minimizar Assistente" onclick="fecharAssistenteTotal(event)">✕</button>
+                <img src="img/camila.png" alt="Camila Assistente Virtual" onerror="this.onerror=null; this.src='img/maiaFavicon.png';">
+            </div>
+        </div>
+
+        <!-- ===================== MINITELA DE CHAT FLUTUANTE ===================== -->
+        <div class="chat-modal-box" id="chatModal">
+            <div class="chat-modal-header">
+                <div class="chat-modal-user">
+                    <img src="img/camila.png" alt="Camila" onerror="this.onerror=null; this.src='img/maiaFavicon.png';">
+                    <div>
+                        <strong>Camila</strong>
+                        <span>Assistente Virtual Maia</span>
+                    </div>
+                </div>
+                <button class="chat-modal-close" onclick="fecharChatModal()" title="Fechar Chat">✕</button>
+            </div>
+            <div class="chat-modal-body" id="chatModalMessages">
+                <div class="mensagem-chat camila">
+                    Olá! Sou a Camila, sua assistente virtual. Como posso te ajudar hoje?
+                </div>
+            </div>
+            <div class="chat-modal-footer">
+                <input type="text" id="chatInput" placeholder="Digite sua mensagem..." onkeypress="tratarKeyInput(event)">
+                <button onclick="enviarMensagemChat()">Enviar</button>
+            </div>
+        </div>
+
+        <!-- ===================== CONTEÚDO PRINCIPAL ===================== -->
         <main class="conteudo">
             <div class="topbar">
                 <div class="saudacao">
@@ -495,12 +124,8 @@
                         <h2 id="mesAtual">Mês</h2>
                         <button id="mesSeguinte">›</button>
                     </div>
-                    <div class="calendario-grade" id="grade">
-                        <!-- Preenchido via JavaScript -->
-                    </div>
-                    <div class="lista-compromissos" id="listaCompromissos">
-                        <!-- Preenchido via JavaScript -->
-                    </div>
+                    <div class="calendario-grade" id="grade"></div>
+                    <div class="lista-compromissos" id="listaCompromissos"></div>
                 </div>
 
                 <!-- Feed -->
@@ -541,206 +166,20 @@
         </main>
     </div>
 
+    <!-- ===================== WIDGET VLIBRAS ===================== -->
+    <div vw class="enabled">
+        <div vw-access-button class="active"></div>
+        <div vw-plugin-wrapper>
+            <div class="vw-plugin-top-wrapper"></div>
+        </div>
+    </div>
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
     <script>
-        const nomesMeses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
-            "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
-        const diasSemana = ["D", "S", "T", "Q", "Q", "S", "S"];
-
-        let dataAtual = new Date();
-        let compromissosMap = {};
-
-        // ---------- Carrega os dados do usuário logado ----------
-        fetch("/cliente/me")
-            .then(function (resposta) {
-                if (!resposta.ok) throw new Error("Não autenticado");
-                return resposta.json();
-            })
-            .then(function (usuario) {
-                const primeiroNome = (usuario.Nome || usuario.nome || "Mamãe").split(" ")[0];
-                document.getElementById("saudacaoNome").textContent = "Olá, " + primeiroNome + "! 👋";
-                document.getElementById("nomeMini").textContent = primeiroNome;
-                document.getElementById("avatarMini").textContent = primeiroNome.charAt(0).toUpperCase();
-
-                const fase = (usuario.Fase || usuario.fase) === "gestante" ? "Gestante" : "Puérpera";
-                const semanasVal = usuario.SemanasGestacao || usuario.semanas_gestacao;
-                const semanas = semanasVal ? " · " + semanasVal + " semanas" : "";
-                document.getElementById("saudacaoFase").textContent = fase + semanas;
-
-                const emailUser = usuario.Email || usuario.email;
-                if (emailUser) {
-                    localStorage.setItem("usuarioEmail", emailUser);
-                }
-                
-                carregarCompromissosDoServidor(emailUser);
-            })
-            .catch(function () {
-                // Tenta recuperar do localStorage se der erro na sessão
-                const emailSalvo = localStorage.getItem("usuarioEmail");
-                carregarCompromissosDoServidor(emailSalvo);
-            });
-
-        // ---------- Carrega e Sincroniza os Agendamentos ----------
-        async function carregarCompromissosDoServidor(email) {
-            // Primeiro lê do LocalStorage para agilidade visual instantânea
-            try {
-                const local = JSON.parse(localStorage.getItem("maia_compromissos") || "{}");
-                if (local && Object.keys(local).length > 0) {
-                    compromissosMap = local;
-                }
-            } catch (e) {}
-
-            desenharCalendario();
-
-            // Busca os dados atualizados da API no servidor
-            if (email) {
-                try {
-                    let res = await fetch(`/usuario/meus-agendamento/${email}`);
-                    if (!res.ok) res = await fetch(`/cliente/meus-agendamento/${email}`);
-
-                    if (res.ok) {
-                        const dados = await res.json();
-                        const lista = Array.isArray(dados) ? dados : (dados.consultas || dados.agendamentos || []);
-
-                        compromissosMap = {};
-                        lista.forEach(c => {
-                            const dataRaw = (c.data_consulta || c.data || c.data_agendamento || "").toString().substring(0, 10);
-                            if (!dataRaw) return;
-
-                            if (!compromissosMap[dataRaw]) {
-                                compromissosMap[dataRaw] = [];
-                            }
-
-                            compromissosMap[dataRaw].push({
-                                titulo: c.profissional_nome || c.profissional || "Consulta Agendada",
-                                horario: c.horario || c.hora || "",
-                                detalhe: (c.horario || c.hora ? (c.horario || c.hora) + " - " : "") + 
-                                         "Paciente: " + (c.paciente_nome || c.paciente || c.nome || c.usuario || "Não informado")
-                            });
-                        });
-
-                        localStorage.setItem("maia_compromissos", JSON.stringify(compromissosMap));
-                        desenharCalendario();
-                    }
-                } catch (err) {
-                    console.error("Erro ao sincronizar compromissos com o servidor:", err);
-                }
-            }
-        }
-
-        // ---------- Desenha o Calendário ----------
-        function desenharCalendario() {
-            const ano = dataAtual.getFullYear();
-            const mes = dataAtual.getMonth();
-            const hoje = new Date();
-
-            document.getElementById("mesAtual").textContent = nomesMeses[mes] + " " + ano;
-
-            const grade = document.getElementById("grade");
-            grade.innerHTML = "";
-
-            diasSemana.forEach(function (letra) {
-                const cabecalho = document.createElement("div");
-                cabecalho.className = "dia-semana";
-                cabecalho.textContent = letra;
-                grade.appendChild(cabecalho);
-            });
-
-            const primeiroDiaSemana = new Date(ano, mes, 1).getDay();
-            const totalDias = new Date(ano, mes + 1, 0).getDate();
-
-            for (let i = 0; i < primeiroDiaSemana; i++) {
-                const vazio = document.createElement("div");
-                vazio.className = "dia vazio";
-                grade.appendChild(vazio);
-            }
-
-            for (let dia = 1; dia <= totalDias; dia++) {
-                const celula = document.createElement("div");
-                celula.className = "dia";
-
-                const ehHoje = ano === hoje.getFullYear() && mes === hoje.getMonth() && dia === hoje.getDate();
-                if (ehHoje) celula.classList.add("hoje");
-
-                const mesFmt = String(mes + 1).padStart(2, '0');
-                const diaFmt = String(dia).padStart(2, '0');
-                const dataIso = `${ano}-${mesFmt}-${diaFmt}`;
-
-                if (compromissosMap[dataIso] && compromissosMap[dataIso].length > 0) {
-                    celula.classList.add("compromisso");
-                }
-
-                celula.textContent = dia;
-                grade.appendChild(celula);
-            }
-
-            // Lista de próximos compromissos do mês selecionado
-            const lista = document.getElementById("listaCompromissos");
-            lista.innerHTML = "";
-
-            const prefixoMes = `${ano}-${String(mes + 1).padStart(2, '0')}`;
-            const diasComCompromisso = Object.keys(compromissosMap)
-                .filter(d => d.startsWith(prefixoMes) && compromissosMap[d].length > 0)
-                .sort();
-
-            if (diasComCompromisso.length === 0) {
-                const vazio = document.createElement("p");
-                vazio.className = "vazio";
-                vazio.textContent = "Nenhum compromisso agendado ainda.";
-                lista.appendChild(vazio);
-                return;
-            }
-
-            diasComCompromisso.forEach(function (dataIso) {
-                const numDia = parseInt(dataIso.split('-')[2]);
-                const listaItems = compromissosMap[dataIso];
-
-                listaItems.forEach(info => {
-                    const item = document.createElement("div");
-                    item.className = "compromisso-item";
-                    item.innerHTML =
-                        '<div class="compromisso-data">' + numDia + ' ' + nomesMeses[mes].substring(0, 3) + '</div>' +
-                        '<div><strong>' + info.titulo + '</strong><span>' + info.detalhe + '</span></div>';
-                    lista.appendChild(item);
-                });
-            });
-        }
-
-        // ---------- NAVEGAÇÃO DE MESES ----------
-        document.getElementById("mesAnterior").addEventListener("click", function () {
-            dataAtual.setMonth(dataAtual.getMonth() - 1);
-            desenharCalendario();
-        });
-
-        document.getElementById("mesSeguinte").addEventListener("click", function () {
-            dataAtual.setMonth(dataAtual.getMonth() + 1);
-            desenharCalendario();
-        });
-
-        // ---------- OUTROS EVENTOS ----------
-        const botaoConta = document.getElementById("botaoConta");
-        const menuConta = document.getElementById("menuConta");
-
-        botaoConta.addEventListener("click", function (evento) {
-            evento.stopPropagation();
-            menuConta.classList.toggle("aberto");
-        });
-
-        document.addEventListener("click", function () {
-            menuConta.classList.remove("aberto");
-        });
-
-        document.getElementById("botaoSair").addEventListener("click", function () {
-            fetch("/cliente/logout", { method: "POST" }).then(function () {
-                window.location.href = "/";
-            });
-        });
-
-        document.querySelectorAll(".checkin-opcoes button").forEach(function (botao) {
-            botao.addEventListener("click", function () {
-                window.location.href = "./diario.html";
-            });
-        });
+        new window.VLibras.Widget('https://vlibras.gov.br/app');
     </script>
+
+<script src="./js/dashboard.js"></script>
+   
 </body>
 
 </html>

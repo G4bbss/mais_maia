@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rede de Apoio - Maia Care</title>
+    <link rel="icon" href="img/maiaFavicon.png" type="image/png">
+    
+    <!-- CSS Leaflet (Mini Mapa) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: linear-gradient(to right, #f5ebe0, #e6ccb2);
+            color: #4a3c31;
+            min-height: 100vh;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        .app {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 240px;
+            flex-shrink: 0;
+            background-color: #7f5539;
+            color: #fff;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar .logo {
+            font-size: 22px;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 40px;
+        }
+
+        .sidebar .logo span {
+            color: #e6ccb2;
+        }
+
+        .sidebar nav {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex-grow: 1;
+        }
+
+        .sidebar nav a {
+            color: #f5ebe0;
+            font-size: 14px;
+            padding: 11px 14px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: background-color 0.25s;
+        }
+
+        .sidebar nav a:hover,
+        .sidebar nav a.ativo {
+            background-color: rgba(255, 255, 255, 0.14);
+        }
+
+        /* Conteúdo Principal */
+        .conteudo {
+            flex-grow: 1;
+            padding: 40px;
+            max-width: 1100px;
+        }
+
+        .titulo-pagina {
+            font-size: 28px;
+            color: #7f5539;
+            margin-bottom: 24px;
+        }
+
+        .grid-agendamento {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .card-secao {
+            background-color: #fffaf6;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            margin-bottom: 24px;
+        }
+
+        .card-secao h2 {
+            font-size: 18px;
+            color: #7f5539;
+            margin-bottom: 16px;
+        }
+
+        /* Formulário */
+        .form-grupo {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 14px;
+        }
+
+        .form-grupo label {
+            font-size: 13px;
+            font-weight: bold;
+            color: #7f5539;
+        }
+
+        .form-grupo input,
+        .form-grupo select,
+        .form-grupo textarea {
+            padding: 10px;
+            border: 1px solid #e6ccb2;
+            border-radius: 8px;
+            background-color: #fff;
+            font-size: 14px;
+            color: #4a3c31;
+            outline: none;
+            font-family: inherit;
+        }
+
+        .form-linha-dupla {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .btn-submit {
+            background-color: #7f5539;
+            color: white;
+            border: none;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-weight: bold;
+            width: 100%;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-submit:hover {
+            background-color: #9c6644;
+        }
+
+        .btn-secundario {
+            background-color: #e6ccb2;
+            color: #7f5539;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 12px;
+        }
+
+        .btn-secundario:hover {
+            background-color: #d8b79c;
+        }
+
+        .btn-cancelar {
+            background-color: #b91c1c;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 12px;
+            margin-top: 8px;
+            transition: background 0.2s;
+            width: 100%;
+        }
+
+        .btn-cancelar:hover {
+            background-color: #991b1b;
+        }
+
+        .aviso-proximidade {
+            font-size: 12px;
+            color: #d97706;
+            font-weight: bold;
+            margin-top: -8px;
+            margin-bottom: 10px;
+            display: none;
+        }
+
+        /* Cards Limpos das Voluntárias */
+        .grid-voluntarias-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+        }
+
+        .card-voluntaria-item {
+            background-color: #fff;
+            border: 1px solid #e6ccb2;
+            padding: 18px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            transition: 0.2s;
+        }
+
+        .card-voluntaria-item:hover {
+            border-color: #7f5539;
+            box-shadow: 0 4px 10px rgba(127, 85, 57, 0.15);
+        }
+
+        .voluntaria-perfil-topo {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .voluntaria-foto {
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #7f5539;
+            background-color: #f5ebe0;
+        }
+
+        .voluntaria-nome-link {
+            font-size: 17px;
+            color: #7f5539;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .voluntaria-nome-link:hover {
+            color: #9c6644;
+        }
+
+        .voluntaria-endereco-curto {
+            font-size: 12px;
+            color: #666;
+            margin-top: 2px;
+        }
+
+        .card-acoes-botoes {
+            display: flex;
+            gap: 8px;
+            margin-top: auto;
+        }
+
+        /* NAVEGAÇÃO POR ABAS NO PAINEL DIREITO */
+        .aba-container {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 14px;
+            border-bottom: 2px solid #e6ccb2;
+            padding-bottom: 8px;
+        }
+
+        .btn-aba {
+            background: none;
+            border: none;
+            font-weight: bold;
+            color: #7f5539;
+            padding: 8px 12px;
+            cursor: pointer;
+            border-radius: 6px;
+            font-size: 13px;
+            transition: 0.2s;
+        }
+
+        .btn-aba.ativa {
+            background-color: #7f5539;
+            color: #fff;
+        }
+
+        /* Painel Chatbot */
+        .box-chatbot {
+            background: #fffaf6;
+            border: 1px solid #e6ccb2;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            height: 320px;
+            overflow: hidden;
+        }
+
+        .chatbot-header {
+            background: #7f5539;
+            color: white;
+            padding: 10px 14px;
+            font-size: 13px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chatbot-mensagens {
+            flex-grow: 1;
+            padding: 12px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            font-size: 13px;
+        }
+
+        .balao-chat {
+            max-width: 85%;
+            padding: 9px 13px;
+            border-radius: 12px;
+            line-height: 1.4;
+        }
+
+        .balao-chat.recebida {
+            background-color: #e6ccb2;
+            color: #4a3c31;
+            align-self: flex-start;
+        }
+
+        .balao-chat.enviada {
+            background-color: #7f5539;
+            color: #fff;
+            align-self: flex-end;
+        }
+
+        .chatbot-footer {
+            display: flex;
+            border-top: 1px solid #e6ccb2;
+            background: #fff;
+        }
+
+        .chatbot-footer input {
+            flex-grow: 1;
+            border: none;
+            padding: 10px 12px;
+            font-size: 13px;
+            outline: none;
+        }
+
+        .chatbot-footer button {
+            background: #7f5539;
+            color: white;
+            border: none;
+            padding: 0 16px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+
+        .chatbot-footer button:hover {
+            background: #5c3e29;
+        }
+
+        .card-em-andamento-info {
+            background: #fff;
+            border: 1px solid #e6ccb2;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 12px;
+            font-size: 12px;
+        }
+
+        #mapaMini {
+            width: 100%;
+            height: 220px;
+            border-radius: 8px;
+            margin-top: 10px;
+            z-index: 1;
+        }
+
+        /* Modal de Informações */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        .modal-conteudo {
+            background: #fffaf6;
+            margin: 6% auto;
+            padding: 24px;
+            border-radius: 16px;
+            max-width: 520px;
+            position: relative;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+
+        .fechar-modal {
+            position: absolute;
+            top: 12px;
+            right: 16px;
+            font-size: 22px;
+            cursor: pointer;
+            color: #7f5539;
+            font-weight: bold;
+        }
+
+        @media(max-width: 850px) {
+            .grid-agendamento {
+                grid-template-columns: 1fr;
+            }
+
+            .app {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <a href="./dashboard.html" class="logo">Ma<span>i</span>a</a>
+            <nav>
+                <a href="./dashboard.html">Painel</a>
+                <a href="./diario.html">Diário Emocional</a>
+                <a href="./agendamento.html">Agendamentos</a>
+                <a href="./telemedicina.html">Telemedicina</a>
+                <a href="./redeapoio.html" class="ativo">Rede de Apoio</a>
+                <a href="./profissionais.html">Profissionais</a>
+                <a href="./mural.html">Mural</a>
+            </nav>
+        </aside>
+
+        <!-- CONTEÚDO PRINCIPAL -->
+        <main class="conteudo">
+            <h1 class="titulo-pagina">🤝 Rede de Apoio Comunitária</h1>
+
+            <div class="grid-agendamento">
+                <!-- FORMULÁRIO DE SOLICITAÇÃO -->
+                <div>
+                    <div class="card-secao">
+                        <h2>📝 Agendar Apoio Presencial</h2>
+                        <form id="formSolicitacao">
+                            <div class="form-grupo">
+                                <label for="enderecoUsuaria">Seu Endereço Completo:</label>
+                                <input type="text" id="enderecoUsuaria" placeholder="Digite seu endereço (ex: Rua das Flores, Centro, Campinas)" required>
+                            </div>
+                            <div class="aviso-proximidade" id="avisoProximidade"></div>
+
+                            <div class="form-grupo">
+                                <label for="selectVoluntaria">Voluntária Recomendada / Selecionada:</label>
+                                <select id="selectVoluntaria" required>
+                                    <option value="">Carregando voluntárias...</option>
+                                </select>
+                            </div>
+
+                            <div class="form-linha-dupla">
+                                <div class="form-grupo">
+                                    <label for="selectDia">Dia Desejado:</label>
+                                    <select id="selectDia" required>
+                                        <option value="Segunda-feira">Segunda-feira</option>
+                                        <option value="Terça-feira">Terça-feira</option>
+                                        <option value="Quarta-feira">Quarta-feira</option>
+                                        <option value="Quinta-feira">Quinta-feira</option>
+                                        <option value="Sexta-feira">Sexta-feira</option>
+                                        <option value="Sábado">Sábado</option>
+                                        <option value="Domingo">Domingo</option>
+                                    </select>
+                                </div>
+                                <div class="form-grupo">
+                                    <label for="selectHora">Horário Disponível:</label>
+                                    <select id="selectHora" required>
+                                        <!-- Preenchido dinamicamente -->
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-grupo">
+                                <label for="txtMotivo">Motivo / Tipo de Ajuda:</label>
+                                <textarea id="txtMotivo" rows="3" placeholder="Ex: Preciso de auxílio com compras e cuidados com o bebê." required></textarea>
+                            </div>
+
+                            <button type="submit" class="btn-submit">Confirmar Agendamento</button>
+                        </form>
+                    </div>
+
+                    <div class="card-secao">
+                        <h2>📍 Localização no Mapa</h2>
+                        <div id="mapaMini"></div>
+                    </div>
+                </div>
+
+                <!-- COLUNA DA DIREITA: CHAT APARTE E SOLICITAÇÕES EM ANDAMENTO -->
+                <div>
+                    <div class="card-secao">
+                        <h2>💬 Atendimento & Comunicação</h2>
+                        
+                        <!-- BOTÕES DAS ABAS DE NAVEGAÇÃO -->
+                        <div class="aba-container">
+                            <button class="btn-aba ativa" id="btnAbaChatDireto" onclick="mudarAba('chatDireto')">💬 Chat Direto (Avulso)</button>
+                            <button class="btn-aba" id="btnAbaAndamento" onclick="mudarAba('andamento')">⏳ Solicitação Ativa</button>
+                        </div>
+
+                        <!-- CONTEÚDO DA ABA 1: CHAT DIRETO APARTE -->
+                        <div id="conteudoAbaChatDireto">
+                            <div class="form-grupo" style="margin-bottom: 10px;">
+                                <label for="selectChatVoluntaria">Conversar com:</label>
+                                <select id="selectChatVoluntaria" onchange="iniciarChatAvulso(this.value)">
+                                    <!-- Preenchido via JS -->
+                                </select>
+                            </div>
+
+                            <div class="box-chatbot">
+                                <div class="chatbot-header">
+                                    <span id="chatDiretoTitulo">💬 Chat com Voluntária</span>
+                                    <span style="font-size: 11px;">● Online</span>
+                                </div>
+                                <div class="chatbot-mensagens" id="chatMsgsDireto">
+                                    <div class="balao-chat recebida">
+                                        Olá! Escolha uma voluntária para conversar abertamente e tirar suas dúvidas sem precisar agendar.
+                                    </div>
+                                </div>
+                                <div class="chatbot-footer">
+                                    <input type="text" id="inputChatDireto" placeholder="Escreva sua mensagem...">
+                                    <button onclick="enviarMensagemAvulsa()">Enviar</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- CONTEÚDO DA ABA 2: SOLICITAÇÃO EM ANDAMENTO E CANCELAMENTO -->
+                        <div id="conteudoAbaAndamento" style="display: none;">
+                            <div id="containerAbaAndamento">
+                                <p style="font-size: 13px; color: #777;">Nenhuma solicitação presencial ativa no momento. Preencha o formulário para agendar.</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARDS DAS VOLUNTÁRIAS -->
+            <div class="card-secao" style="margin-top: 10px;">
+                <h2>👩‍⚕️ Voluntárias Disponíveis</h2>
+                <div class="grid-voluntarias-cards" id="gridVoluntarias">
+                    <!-- Cards dinâmicos -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL DE DETALHES DA VOLUNTÁRIA -->
+    <div class="modal" id="modalVoluntaria">
+        <div class="modal-conteudo">
+            <span class="fechar-modal" onclick="fecharModal()">&times;</span>
+            <div id="conteudoModal"></div>
+        </div>
+    </div>
+
+    <!-- JS Leaflet (Mini Mapa) -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+        /* BANCO DE DADOS DAS VOLUNTÁRIAS */
+        const BANCO_REDE_APOIO = [
+            {
+                id_rede_apoio: 4,
+                nome: "Mariana Alves",
+                telefone: "(19) 98845-2317",
+                email: "mariana.alves.rede@example.com",
+                distancia: "Avenida Doutor Moraes Salles, Centro - CEP: 13010-000",
+                disponibilidade: "Segunda a sexta, das 18h às 21h; sábados pela manhã.",
+                horarios_disponiveis: ["18:00", "19:00", "20:00"],
+                pode_ajudar_com: "Oferecer orientação e acolhimento para gestantes e puérperas, auxiliar com informações sobre os primeiros cuidados com o bebê e amamentação.",
+                foto: "Mariana Alves.jpg",
+                lat: -22.9056,
+                lng: -47.0608
+            },
+            {
+                id_rede_apoio: 5,
+                nome: "Juliana Mendes",
+                telefone: "(19) 99732-6418",
+                email: "naumquerooo@gmail.com",
+                distancia: "Rua Cônego Cipião, Centro - CEP: 13010-010",
+                disponibilidade: "Terças e quintas, das 14h às 19h, e aos domingos à tarde.",
+                horarios_disponiveis: ["14:00", "15:30", "17:00", "18:30"],
+                pode_ajudar_com: "Fazer companhia para mães no pós-parto, ajudar com pequenas tarefas do dia a dia, conversar e oferecer apoio emocional.",
+                foto: "Juliana Mendes.jpg",
+                lat: -22.9030,
+                lng: -47.0580
+            },
+            {
+                id_rede_apoio: 6,
+                nome: "Camila Ferreira",
+                telefone: "(19) 99126-5084",
+                email: "camila.ferreira.rede@example.com",
+                distancia: "Avenida Guilherme Campos, 500, Jardim Santa Genebra - CEP: 13087-901",
+                disponibilidade: "Atendimento remoto durante a semana, das 19h às 22h.",
+                horarios_disponiveis: ["09:00", "11:00", "19:30", "21:00"],
+                pode_ajudar_com: "Oferecer escuta acolhedora e conversar com gestantes e mães que estejam passando por momentos de solidão, ansiedade ou sobrecarga.",
+                foto: "Camila Ferreira.jpg",
+                lat: -22.8550,
+                lng: -47.0620
+            }
+        ];
+
+        /* REGISTRO DE AGENDAMENTOS BLOQUEADOS EM MEMÓRIA */
+        let agendamentosOcupados = [
+            { voluntariaId: 4, dia: "Segunda-feira", hora: "18:00" }
+        ];
+
+        let voluntariasGlobais = [];
+        let voluntariaChatAvulsoAtual = null;
+        let mapaInstancia = null;
+        let marcadorUsuario = null;
+
+        document.addEventListener("DOMContentLoaded", () => {
+            carregarVoluntarias();
+            inicializarMapa();
+            configurarEventos();
+        });
+
+        async function carregarVoluntarias() {
+            try {
+                const response = await fetch('/api/rede-apoio');
+                if (response.ok) {
+                    voluntariasGlobais = await response.json();
+                } else {
+                    voluntariasGlobais = BANCO_REDE_APOIO;
+                }
+            } catch (erro) {
+                voluntariasGlobais = BANCO_REDE_APOIO;
+            }
+
+            renderizarSelects(voluntariasGlobais);
+            renderizarGridVoluntarias(voluntariasGlobais);
+            atualizarHorariosDisponiveis();
+
+            if (voluntariasGlobais.length > 0) {
+                iniciarChatAvulso(voluntariasGlobais[0].id_rede_apoio);
+            }
+        }
+
+        function renderizarSelects(lista) {
+            const selectForm = document.getElementById("selectVoluntaria");
+            const selectChat = document.getElementById("selectChatVoluntaria");
+
+            selectForm.innerHTML = '<option value="">Selecione uma voluntária...</option>';
+            selectChat.innerHTML = '';
+
+            lista.forEach(v => {
+                const opt1 = document.createElement("option");
+                opt1.value = v.id_rede_apoio;
+                opt1.textContent = v.nome;
+                selectForm.appendChild(opt1);
+
+                const opt2 = document.createElement("option");
+                opt2.value = v.id_rede_apoio;
+                opt2.textContent = v.nome;
+                selectChat.appendChild(opt2);
+            });
+
+            if (lista.length > 0) selectForm.value = lista[0].id_rede_apoio;
+        }
+
+        /* ATUALIZA HORÁRIOS DISPONÍVEIS E DESTRAVA CANCELADOS */
+        function atualizarHorariosDisponiveis() {
+            const selectVol = document.getElementById("selectVoluntaria");
+            const selectDia = document.getElementById("selectDia");
+            const selectHora = document.getElementById("selectHora");
+
+            const idVol = parseInt(selectVol.value);
+            const diaSel = selectDia.value;
+
+            selectHora.innerHTML = "";
+
+            const voluntaria = voluntariasGlobais.find(v => v.id_rede_apoio === idVol);
+            if (!voluntaria || !voluntaria.horarios_disponiveis) {
+                selectHora.innerHTML = '<option value="">Nenhum horário disponível</option>';
+                return;
+            }
+
+            voluntaria.horarios_disponiveis.forEach(hora => {
+                const estaOcupado = agendamentosOcupados.some(ag => 
+                    ag.voluntariaId === idVol && ag.dia === diaSel && ag.hora === hora
+                );
+
+                const opt = document.createElement("option");
+                opt.value = hora;
+                
+                if (estaOcupado) {
+                    opt.textContent = `${hora} (❌ Ocupado)`;
+                    opt.disabled = true;
+                } else {
+                    opt.textContent = `🟢 ${hora}`;
+                }
+
+                selectHora.appendChild(opt);
+            });
+        }
+
+        /* NAVEGAÇÃO DE ABAS */
+        function mudarAba(aba) {
+            const btnChat = document.getElementById("btnAbaChatDireto");
+            const btnAndamento = document.getElementById("btnAbaAndamento");
+            const divChat = document.getElementById("conteudoAbaChatDireto");
+            const divAndamento = document.getElementById("conteudoAbaAndamento");
+
+            if (aba === 'chatDireto') {
+                btnChat.classList.add("ativa");
+                btnAndamento.classList.remove("ativa");
+                divChat.style.display = "block";
+                divAndamento.style.display = "none";
+            } else {
+                btnAndamento.classList.add("ativa");
+                btnChat.classList.remove("ativa");
+                divAndamento.style.display = "block";
+                divChat.style.display = "none";
+            }
+        }
+
+        /* CHAT DIRETO / AVULSO */
+        function iniciarChatAvulso(idVoluntaria) {
+            idVoluntaria = parseInt(idVoluntaria);
+            voluntariaChatAvulsoAtual = voluntariasGlobais.find(v => v.id_rede_apoio === idVoluntaria);
+
+            if (!voluntariaChatAvulsoAtual) return;
+
+            document.getElementById("selectChatVoluntaria").value = idVoluntaria;
+            document.getElementById("chatDiretoTitulo").textContent = `💬 Chat Direto com ${voluntariaChatAvulsoAtual.nome}`;
+            
+            const msgs = document.getElementById("chatMsgsDireto");
+            msgs.innerHTML = `
+                <div class="balao-chat recebida">
+                    Olá! Sou a ${voluntariaChatAvulsoAtual.nome}. Como posso te ajudar ou orientar hoje? Sinta-se à vontade para perguntar.
+                </div>
+            `;
+
+            mudarAba('chatDireto');
+        }
+
+        async function enviarMensagemAvulsa() {
+            const input = document.getElementById("inputChatDireto");
+            const texto = input.value.trim();
+            if (!texto || !voluntariaChatAvulsoAtual) return;
+
+            const containerMsgs = document.getElementById("chatMsgsDireto");
+
+            const userMsg = document.createElement("div");
+            userMsg.className = "balao-chat enviada";
+            userMsg.textContent = texto;
+            containerMsgs.appendChild(userMsg);
+            input.value = "";
+            containerMsgs.scrollTop = containerMsgs.scrollHeight;
+
+            const carregando = document.createElement("div");
+            carregando.className = "balao-chat recebida";
+            carregando.innerHTML = "<em>Digitando...</em>";
+            containerMsgs.appendChild(carregando);
+            containerMsgs.scrollTop = containerMsgs.scrollHeight;
+
+            try {
+                const response = await fetch("/api/chatbot", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        mensagem: texto,
+                        profissional: voluntariaChatAvulsoAtual.nome,
+                        especialidade: "Apoio Voluntário Comunitário"
+                    })
+                });
+                const dados = await response.json();
+                carregando.textContent = dados.resposta || "Obrigada pelo contato! Em breve trarei mais orientações para você.";
+            } catch (err) {
+                carregando.textContent = `Olá! Recebi sua mensagem: "${texto}". Estou aqui para te apoiar!`;
+            }
+            containerMsgs.scrollTop = containerMsgs.scrollHeight;
+        }
+
+        /* PROXIMIDADE E CONFIRMAÇÃO DE AGENDAMENTO */
+        function configurarEventos() {
+            const inputEndereco = document.getElementById("enderecoUsuaria");
+            const selectVol = document.getElementById("selectVoluntaria");
+            const selectDia = document.getElementById("selectDia");
+            const form = document.getElementById("formSolicitacao");
+
+            selectVol.addEventListener("change", atualizarHorariosDisponiveis);
+            selectDia.addEventListener("change", atualizarHorariosDisponiveis);
+
+            inputEndereco.addEventListener("change", async () => {
+                const endereco = inputEndereco.value.trim();
+                if (endereco.length < 5) return;
+
+                const aviso = document.getElementById("avisoProximidade");
+                aviso.style.display = "block";
+                aviso.textContent = "🔍 Localizando no mapa e buscando a voluntária mais próxima...";
+
+                try {
+                    const resp = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(endereco)}`);
+                    const dados = await resp.json();
+
+                    if (dados && dados.length > 0) {
+                        const userLat = parseFloat(dados[0].lat);
+                        const userLng = parseFloat(dados[0].lon);
+
+                        if (marcadorUsuario) mapaInstancia.removeLayer(marcadorUsuario);
+                        marcadorUsuario = L.marker([userLat, userLng], {
+                            icon: L.icon({
+                                iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-gold.png',
+                                shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                                iconSize: [25, 41],
+                                iconAnchor: [12, 41],
+                                popupAnchor: [1, -34],
+                                shadowSize: [41, 41]
+                            })
+                        }).addTo(mapaInstancia).bindPopup("<b>Sua Localização</b>").openPopup();
+
+                        let maisProxima = null;
+                        let menorDistancia = Infinity;
+
+                        voluntariasGlobais.forEach(v => {
+                            const dist = calcularDistanciaHaversine(userLat, userLng, v.lat, v.lng);
+                            if (dist < menorDistancia) {
+                                menorDistancia = dist;
+                                maisProxima = v;
+                            }
+                        });
+
+                        if (maisProxima) {
+                            selectVol.value = maisProxima.id_rede_apoio;
+                            atualizarHorariosDisponiveis();
+                            aviso.textContent = `📍 Direcionado para ${maisProxima.nome} (a aprox. ${menorDistancia.toFixed(1)} km).`;
+                            
+                            const bounds = L.latLngBounds([
+                                [userLat, userLng],
+                                [maisProxima.lat, maisProxima.lng]
+                            ]);
+                            mapaInstancia.fitBounds(bounds, { padding: [30, 30] });
+                        }
+                    } else {
+                        aviso.textContent = "⚠️ Endereço não localizado no mapa, selecione a voluntária manualmente.";
+                    }
+                } catch (e) {
+                    aviso.textContent = "⚠️ Seleção manual disponível.";
+                }
+            });
+
+            form.addEventListener("submit", (e) => {
+                e.preventDefault();
+
+                const endereco = document.getElementById("enderecoUsuaria").value;
+                const idVoluntaria = parseInt(selectVol.value);
+                const dia = selectDia.value;
+                const hora = document.getElementById("selectHora").value;
+                const motivo = document.getElementById("txtMotivo").value;
+
+                if (!hora) {
+                    alert("Selecione um horário válido.");
+                    return;
+                }
+
+                const voluntaria = voluntariasGlobais.find(v => v.id_rede_apoio === idVoluntaria);
+                if (!voluntaria) return;
+
+                // Bloqueia o horário
+                agendamentosOcupados.push({ voluntariaId: idVoluntaria, dia: dia, hora: hora });
+
+                // Renderiza o painel com botão de cancelamento
+                exibirPainelAndamento(voluntaria, dia, hora, endereco, motivo);
+
+                atualizarHorariosDisponiveis();
+                alert(`Agendamento realizado com ${voluntaria.nome} para ${dia} às ${hora}!`);
+            });
+
+            document.getElementById("inputChatDireto").addEventListener("keypress", (e) => {
+                if (e.key === "Enter") enviarMensagemAvulsa();
+            });
+        }
+
+        function calcularDistanciaHaversine(lat1, lon1, lat2, lon2) {
+            const R = 6371;
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+                      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        }
+
+        /* CARDS DAS VOLUNTÁRIAS */
+        function renderizarGridVoluntarias(lista) {
+            const grid = document.getElementById("gridVoluntarias");
+            grid.innerHTML = "";
+
+            lista.forEach(v => {
+                const card = document.createElement("div");
+                card.className = "card-voluntaria-item";
+                card.innerHTML = `
+                    <div class="voluntaria-perfil-topo">
+                        <img src="img/${v.foto}" class="voluntaria-foto" alt="${v.nome}" onerror="this.src='img/maiaFavicon.png';">
+                        <div>
+                            <span class="voluntaria-nome-link" onclick="abrirModalDetalhes(${v.id_rede_apoio})">${v.nome}</span>
+                            <p class="voluntaria-endereco-curto">📍 ${v.distancia}</p>
+                        </div>
+                    </div>
+                    <div class="card-acoes-botoes">
+                        <button class="btn-secundario" style="flex: 1;" onclick="abrirModalDetalhes(${v.id_rede_apoio})">Ver Informações</button>
+                        <button class="btn-submit" style="flex: 1;" onclick="iniciarChatAvulso(${v.id_rede_apoio})">💬 Conversar</button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function abrirModalDetalhes(id) {
+            const v = voluntariasGlobais.find(item => item.id_rede_apoio === id);
+            if (!v) return;
+
+            const conteudo = document.getElementById("conteudoModal");
+            conteudo.innerHTML = `
+                <div class="voluntaria-perfil-topo" style="margin-bottom: 16px;">
+                    <img src="img/${v.foto}" class="voluntaria-foto" style="width: 75px; height: 75px;" alt="${v.nome}" onerror="this.src='img/maiaFavicon.png';">
+                    <div>
+                        <h2 style="color: #7f5539; font-size: 20px;">${v.nome}</h2>
+                        <p style="font-size: 13px; color: #555;"><strong>📞 Telefone:</strong> ${v.telefone}</p>
+                        <p style="font-size: 13px; color: #555;"><strong>✉️ E-mail:</strong> ${v.email}</p>
+                    </div>
+                </div>
+                <div style="font-size: 14px; color: #4a3c31; display: flex; flex-direction: column; gap: 10px;">
+                    <p><strong>📍 Endereço:</strong> ${v.distancia}</p>
+                    <p><strong>🕒 Disponibilidade:</strong> ${v.disponibilidade}</p>
+                    <hr style="border: none; border-top: 1px solid #e6ccb2; margin: 5px 0;">
+                    <p><strong>🤝 Como pode ajudar:</strong><br>${v.pode_ajudar_com}</p>
+                    <button class="btn-submit" style="margin-top: 10px;" onclick="fecharModal(); iniciarChatAvulso(${v.id_rede_apoio});">💬 Conversar Diretamente com ${v.nome}</button>
+                </div>
+            `;
+
+            document.getElementById("modalVoluntaria").style.display = "block";
+        }
+
+        function fecharModal() {
+            document.getElementById("modalVoluntaria").style.display = "none";
+        }
+
+        /* EXIBE SOLICITAÇÃO PRESENCIAL EM ANDAMENTO E BOTÃO DE CANCELAMENTO */
+        function exibirPainelAndamento(voluntaria, dia, hora, endereco, motivo) {
+            const container = document.getElementById("containerAbaAndamento");
+            container.innerHTML = `
+                <div class="card-em-andamento-info">
+                    <span style="display:inline-block; background:#e6ccb2; color:#7f5539; font-size:10px; font-weight:bold; padding:2px 8px; border-radius:10px; margin-bottom:6px;">
+                        ● AGENDAMENTO CONFIRMADO
+                    </span>
+                    <h3 style="color: #7f5539; font-size: 15px;">Com: ${voluntaria.nome}</h3>
+                    <p><strong>Data/Hora:</strong> ${dia} às ${hora}</p>
+                    <p><strong>Local:</strong> ${endereco}</p>
+                    <p><strong>Motivo:</strong> ${motivo}</p>
+                    
+                    <!-- BOTÃO PARA CANCELAR O AGENDAMENTO -->
+                    <button class="btn-cancelar" onclick="cancelarAgendamento(${voluntaria.id_rede_apoio}, '${dia}', '${hora}')">❌ Cancelar Agendamento</button>
+                </div>
+
+                <div class="box-chatbot">
+                    <div class="chatbot-header">
+                        <span>💬 Chat da Visita Agendada</span>
+                        <span style="font-size: 11px;">● Online</span>
+                    </div>
+                    <div class="chatbot-mensagens" id="chatMsgsAndamento">
+                        <div class="balao-chat recebida">
+                            Olá! Confirmando o agendamento de nossa visita para ${dia} às ${hora}. Qualquer ajuste no ponto de encontro pode me enviar por aqui.
+                        </div>
+                    </div>
+                    <div class="chatbot-footer">
+                        <input type="text" id="inputChatAndamento" placeholder="Escreva sobre o agendamento...">
+                        <button onclick="enviarMensagemAndamento('${voluntaria.nome}')">Enviar</button>
+                    </div>
+                </div>
+            `;
+
+            mudarAba('andamento');
+
+            document.getElementById("inputChatAndamento").addEventListener("keypress", (e) => {
+                if (e.key === "Enter") enviarMensagemAndamento(voluntaria.nome);
+            });
+        }
+
+        /* LÓGICA PARA CANCELAR AGENDAMENTO E LIBERAR O HORÁRIO */
+        function cancelarAgendamento(idVoluntaria, dia, hora) {
+            if (!confirm("Tem certeza que deseja cancelar esta solicitação? O horário será liberado novamente.")) {
+                return;
+            }
+
+            // 1. Remove do registro de ocupados
+            const index = agendamentosOcupados.findIndex(
+                ag => ag.voluntariaId === idVoluntaria && ag.dia === dia && ag.hora === hora
+            );
+            if (index !== -1) {
+                agendamentosOcupados.splice(index, 1);
+            }
+
+            // 2. Reseta o contêiner do painel de andamento
+            const container = document.getElementById("containerAbaAndamento");
+            container.innerHTML = `
+                <p style="font-size: 13px; color: #777;">Nenhuma solicitação presencial ativa no momento. Preencha o formulário para agendar.</p>
+            `;
+
+            // 3. Atualiza os horários para reexibir a opção liberada no select
+            atualizarHorariosDisponiveis();
+
+            // 4. Retorna para o chat avulso
+            mudarAba('chatDireto');
+
+            alert("Solicitação cancelada com sucesso! O horário foi liberado.");
+        }
+
+        async function enviarMensagemAndamento(nomeVoluntaria) {
+            const input = document.getElementById("inputChatAndamento");
+            const texto = input.value.trim();
+            if (!texto) return;
+
+            const containerMsgs = document.getElementById("chatMsgsAndamento");
+
+            const userMsg = document.createElement("div");
+            userMsg.className = "balao-chat enviada";
+            userMsg.textContent = texto;
+            containerMsgs.appendChild(userMsg);
+            input.value = "";
+            containerMsgs.scrollTop = containerMsgs.scrollHeight;
+
+            const carregando = document.createElement("div");
+            carregando.className = "balao-chat recebida";
+            carregando.innerHTML = "<em>Digitando...</em>";
+            containerMsgs.appendChild(carregando);
+            containerMsgs.scrollTop = containerMsgs.scrollHeight;
+
+            try {
+                const response = await fetch("/api/chatbot", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        mensagem: texto,
+                        profissional: nomeVoluntaria,
+                        especialidade: "Apoio Voluntário Comunitário"
+                    })
+                });
+                const dados = await response.json();
+                carregando.textContent = dados.resposta || "Anotado! Nos vemos no horário combinado.";
+            } catch (err) {
+                carregando.textContent = "Anotado! Em breve confirmamos mais detalhes da nossa visita.";
+            }
+            containerMsgs.scrollTop = containerMsgs.scrollHeight;
+        }
+
+        function inicializarMapa() {
+            mapaInstancia = L.map('mapaMini').setView([-22.8900, -47.0600], 11);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap'
+            }).addTo(mapaInstancia);
+
+            BANCO_REDE_APOIO.forEach(v => {
+                L.marker([v.lat, v.lng]).addTo(mapaInstancia)
+                    .bindPopup(`<b>${v.nome}</b><br>${v.distancia}`);
+            });
+        }
+    </script>
+</body>
+
+</html>
