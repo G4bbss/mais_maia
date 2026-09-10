@@ -17,7 +17,7 @@ const PROFISSIONAIS_PROJETO = [
 // =======================================
 const calendario = document.getElementById("calendario");
 let dataAtual = new Date();
-let diaSelecionadoStr = null; 
+let diaSelecionadoStr = null;
 let horarioSelecionado = null;
 let modalidadeSelecionada = null;
 let consultas = [];
@@ -28,10 +28,10 @@ const params = new URLSearchParams(window.location.search);
 let profissionalIdSel = params.get("id") || params.get("profissional");
 
 function obterSelectModalidadeHTML() {
-    return document.getElementById("modalidade") || 
-           document.getElementById("select-modalidade") || 
-           document.getElementById("modalidade-atendimento") || 
-           document.querySelector('select[name="modalidade"]');
+    return document.getElementById("modalidade") ||
+        document.getElementById("select-modalidade") ||
+        document.getElementById("modalidade-atendimento") ||
+        document.querySelector('select[name="modalidade"]');
 }
 
 // =======================================
@@ -49,7 +49,7 @@ function atualizarLocalStorageParaDashboard() {
             compromissosFormatados[dataLimpa] = [];
         }
 
-        const modIcone = (c.tipo_atendimento || c.tipo || c.modalidade || "").toLowerCase().includes("presencial") ? "🏢 Presencial" : "💻 Online";
+        const modIcone = (c.tipo_atendimento || c.tipo || c.modalidade || "").toLowerCase().includes("presencial") ? " Presencial" : " Online";
 
         compromissosFormatados[dataLimpa].push({
             titulo: c.profissional_nome || c.profissional || "Consulta Agendada",
@@ -75,7 +75,7 @@ function atualizarOpcoesModalidade(prof) {
     }
 
     const modalidadeTexto = (prof.modalidade || prof.modalidades || prof.tipo_atendimento || prof.atendimento || "ambos").toLowerCase();
-    
+
     let podeOnline = modalidadeTexto.includes("online") || modalidadeTexto.includes("ambos") || modalidadeTexto.includes("híbrido") || modalidadeTexto.includes("hibrido") || prof.online === true;
     let podePresencial = modalidadeTexto.includes("presencial") || modalidadeTexto.includes("pessoalmente") || modalidadeTexto.includes("ambos") || modalidadeTexto.includes("híbrido") || modalidadeTexto.includes("hibrido") || prof.presencial === true;
 
@@ -87,8 +87,8 @@ function atualizarOpcoesModalidade(prof) {
     if (containerModalidade) {
         containerModalidade.innerHTML = "";
         const opcoes = [];
-        if (podeOnline) opcoes.push({ valor: "online", texto: "💻 Online" });
-        if (podePresencial) opcoes.push({ valor: "presencial", texto: "🏢 Pessoalmente" });
+        if (podeOnline) opcoes.push({ valor: "online", texto: " Online" });
+        if (podePresencial) opcoes.push({ valor: "presencial", texto: " Pessoalmente" });
 
         opcoes.forEach((opt, index) => {
             const btn = document.createElement("button");
@@ -125,9 +125,9 @@ function atualizarOpcoesModalidade(prof) {
 function processarDadosProfissional(prof) {
     if (!prof || !prof.disponibilidade) return null;
 
-    const mapaDias = { 
-        "domingo": 0, "segunda": 1, "terca": 2, "terça": 2, 
-        "quarta": 3, "quinta": 4, "sexta": 5, "sabado": 6, "sábado": 6 
+    const mapaDias = {
+        "domingo": 0, "segunda": 1, "terca": 2, "terça": 2,
+        "quarta": 3, "quinta": 4, "sexta": 5, "sabado": 6, "sábado": 6
     };
     let regrasGeradas = {};
 
@@ -200,7 +200,7 @@ async function selecionarProfissionalPorId(idProf, listaConhecida = []) {
     try {
         const res = await fetch(`/api/profissionais/${idProf}`);
         if (res.ok) profEncontrado = await res.json();
-    } catch (err) {}
+    } catch (err) { }
 
     if (!profEncontrado) {
         const buscaEm = (listaConhecida && listaConhecida.length > 0) ? listaConhecida : PROFISSIONAIS_PROJETO;
@@ -243,13 +243,13 @@ async function carregarDados() {
                 consultas = dadosParsed.agendamentos;
             }
         }
-    } catch (err) {}
+    } catch (err) { }
 
     if (!consultas || consultas.length === 0) {
         try {
             const rawLocal = JSON.parse(localStorage.getItem("maia_consultas_raw") || "[]");
             if (Array.isArray(rawLocal) && rawLocal.length > 0) consultas = rawLocal;
-        } catch (e) {}
+        } catch (e) { }
     }
 
     atualizarLocalStorageParaDashboard();
@@ -419,7 +419,7 @@ function renderizarConsultasDoDia(dataAlvo) {
             const item = document.createElement("div");
             item.className = "mini-card-resumo";
             const dataBR = dataAlvo.split('-').reverse().join('/');
-            const tipoAtendimento = (c.tipo_atendimento || c.tipo || c.modalidade || "").toLowerCase().includes("presencial") ? "🏢 Presencial" : "💻 Online";
+            const tipoAtendimento = (c.tipo_atendimento || c.tipo || c.modalidade || "").toLowerCase().includes("presencial") ? " Presencial" : " Online";
 
             item.innerHTML = `
                 <strong>${c.horario || c.hora || ''} - ${c.profissional_nome || c.profissional || 'Consulta'}</strong>
@@ -445,23 +445,23 @@ function carregarMinhasConsultas() {
         return;
     }
 
-    listaElemento.innerHTML = ""; 
+    listaElemento.innerHTML = "";
 
     consultasAtivas.forEach(c => {
         const dataRaw = c.data_consulta || c.data || c.data_agendamento;
         const dataLimpa = dataRaw ? dataRaw.toString().substring(0, 10) : "";
         const dataBR = dataLimpa ? dataLimpa.split('-').reverse().join('/') : "Data N/A";
-        const tipoAtendimento = (c.tipo_atendimento || c.tipo || c.modalidade || "").toLowerCase().includes("presencial") ? "🏢 Presencial" : "💻 Online";
+        const tipoAtendimento = (c.tipo_atendimento || c.tipo || c.modalidade || "").toLowerCase().includes("presencial") ? " Presencial" : " Online";
 
         const card = document.createElement("div");
-        card.className = "card-consulta-item"; 
+        card.className = "card-consulta-item";
 
         card.innerHTML = `
             <div class="info-consulta">
-                <strong>📅 ${dataBR} às ${c.horario || c.hora || ''}</strong>
-                <p>👩‍⚕️ Profissional: ${c.profissional_nome || c.profissional || "Equipe Maia"} (${c.especialidade || c.esp || 'Atendimento Especializado'})</p>
-                <p>👤 Paciente: ${c.paciente_nome || c.paciente || c.nome || c.usuario || "Não informado"}</p>
-                <p>📍 Modalidade: <strong>${tipoAtendimento}</strong></p>
+                <strong> ${dataBR} às ${c.horario || c.hora || ''}</strong>
+                <p> Profissional: ${c.profissional_nome || c.profissional || "Equipe Maia"} (${c.especialidade || c.esp || 'Atendimento Especializado'})</p>
+                <p> Paciente: ${c.paciente_nome || c.paciente || c.nome || c.usuario || "Não informado"}</p>
+                <p> Modalidade: <strong>${tipoAtendimento}</strong></p>
                 <small style="color: #8c5a4d; font-style: italic;">Clique para ver detalhes</small>
             </div>
             <div class="status-badge" style="background:#28a745; color:white; padding:4px 8px; border-radius:12px; font-size:11px;">Confirmada</div>
@@ -490,22 +490,22 @@ async function realizarAgendamento() {
     const obsPaciente = inputObs ? inputObs.value.trim() : "Nenhuma observação";
     let modalidadeFinal = selectModalidade ? selectModalidade.value : "";
 
-    if (!idProfissional) return alert("⚠️ Por favor, selecione um profissional.");
-    if (!modalidadeFinal) return alert("⚠️ Por favor, selecione a modalidade de atendimento.");
-    if (!diaSelecionadoStr || !horarioSelecionado) return alert("⚠️ Por favor, selecione uma data e horário no calendário.");
-    if (!nomePaciente) return alert("⚠️ Por favor, informe o nome do paciente.");
-    if (!emailPaciente) return alert("⚠️ Por favor, informe um e-mail válido.");
+    if (!idProfissional) return alert(" Por favor, selecione um profissional.");
+    if (!modalidadeFinal) return alert(" Por favor, selecione a modalidade de atendimento.");
+    if (!diaSelecionadoStr || !horarioSelecionado) return alert(" Por favor, selecione uma data e horário no calendário.");
+    if (!nomePaciente) return alert(" Por favor, informe o nome do paciente.");
+    if (!emailPaciente) return alert(" Por favor, informe um e-mail válido.");
 
     const digitosTelefone = telefonePaciente.replace(/\D/g, '');
     if (digitosTelefone.length < 10) {
-        return alert("⚠️ Por favor, informe um telefone de contato válido com DDD.");
+        return alert(" Por favor, informe um telefone de contato válido com DDD.");
     }
 
     const opcaoSelecionadaTexto = selectProfissional.options[selectProfissional.selectedIndex].text;
     const nomeExtraido = opcaoSelecionadaTexto.split(" (")[0].trim();
 
     let profSelecionado = PROFISSIONAIS_PROJETO.find(p => String(p.id) === String(idProfissional));
-    
+
     if (!profSelecionado) {
         profSelecionado = {
             id: idProfissional,
@@ -554,8 +554,8 @@ async function realizarAgendamento() {
         foto: fotoProfissional,
         status: "confirmada",
 
-        local: modalidadeFinal.toLowerCase().includes("presencial") 
-            ? "Clínica Maia - Atendimento Presencial" 
+        local: modalidadeFinal.toLowerCase().includes("presencial")
+            ? "Clínica Maia - Atendimento Presencial"
             : "Atendimento Online (Telemedicina)",
         observacoes: obsPaciente
     };
@@ -591,7 +591,7 @@ async function realizarAgendamento() {
             dados.id = Date.now().toString(36);
         }
 
-        alert("✅ Consulta agendada com sucesso com " + nomeProfissional + "!");
+        alert(" Consulta agendada com sucesso com " + nomeProfissional + "!");
         consultas.push(dados);
         atualizarLocalStorageParaDashboard();
         window.location.reload();
@@ -599,7 +599,7 @@ async function realizarAgendamento() {
         dados.id = Date.now().toString(36);
         consultas.push(dados);
         atualizarLocalStorageParaDashboard();
-        alert("✅ Agendamento registrado para " + nomeProfissional + "!");
+        alert(" Agendamento registrado para " + nomeProfissional + "!");
         window.location.reload();
     }
 }
@@ -615,24 +615,24 @@ function abrirModal(c, dataBR) {
     consultaSelecionadaParaCancelar = c;
     const emailExibir = c.email || c.paciente_email || c.usuario_email || 'Não informado';
     const telefoneExibir = c.telefone || c.paciente_telefone || 'Não informado';
-    const tipoAtendimento = (c.tipo_atendimento || c.tipo || c.modalidade || "").toLowerCase().includes("presencial") ? "🏢 Pessoalmente (Presencial)" : "💻 Online (Videoconferência)";
+    const tipoAtendimento = (c.tipo_atendimento || c.tipo || c.modalidade || "").toLowerCase().includes("presencial") ? " Pessoalmente (Presencial)" : " Online (Videoconferência)";
 
     conteudo.innerHTML = `
         <div style="color: #3b2a25; text-align: left;">
-            <p><strong>📅 Data:</strong> ${dataBR} às ${c.horario || c.hora || ''}</p>
-            <p><strong>👩‍⚕️ Profissional:</strong> ${c.profissional_nome || c.profissional || 'Equipe Maia'}</p>
-            <p><strong>🎓 Especialidade:</strong> ${c.especialidade || c.esp || 'Atendimento Especializado'}</p>
-            <p><strong>👤 Paciente:</strong> ${c.paciente_nome || c.paciente || c.nome || c.usuario || 'Não informado'}</p>
-            <p><strong>📧 E-mail:</strong> ${emailExibir}</p>
-            <p><strong>📞 Contato:</strong> ${telefoneExibir}</p>
-            <p><strong>💻 Modalidade:</strong> ${tipoAtendimento}</p>
+            <p><strong> Data:</strong> ${dataBR} às ${c.horario || c.hora || ''}</p>
+            <p><strong> Profissional:</strong> ${c.profissional_nome || c.profissional || 'Equipe Maia'}</p>
+            <p><strong> Especialidade:</strong> ${c.especialidade || c.esp || 'Atendimento Especializado'}</p>
+            <p><strong> Paciente:</strong> ${c.paciente_nome || c.paciente || c.nome || c.usuario || 'Não informado'}</p>
+            <p><strong> E-mail:</strong> ${emailExibir}</p>
+            <p><strong> Contato:</strong> ${telefoneExibir}</p>
+            <p><strong> Modalidade:</strong> ${tipoAtendimento}</p>
             <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;">
-            <p><strong>📍 Endereço / Local:</strong><br> ${c.local || c.endereco || 'Clínica Maia'}</p>
-            <p><strong>📝 Observações:</strong><br> ${c.observacoes || c.observacao || 'Nenhuma.'}</p>
+            <p><strong> Endereço / Local:</strong><br> ${c.local || c.endereco || 'Clínica Maia'}</p>
+            <p><strong> Observações:</strong><br> ${c.observacoes || c.observacao || 'Nenhuma.'}</p>
 
             <button onclick="abrirModalCancelamento()" 
                 style="margin-top: 20px; background: #fff; border: 1px solid #d9534f; color: #d9534f; padding: 10px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold;">
-                ❌ Desmarcar Consulta
+                 Desmarcar Consulta
             </button>
         </div>
     `;
@@ -654,7 +654,7 @@ function abrirModalCancelamento() {
     if (modalCancel && consultaSelecionadaParaCancelar) {
         const idVal = consultaSelecionadaParaCancelar.id || consultaSelecionadaParaCancelar.id_agendamento || 0;
         if (idCampo) idCampo.value = idVal;
-        
+
         const emailPadrao = consultaSelecionadaParaCancelar.email || consultaSelecionadaParaCancelar.paciente_email || localStorage.getItem("usuarioEmail") || "";
         if (emailCampo) emailCampo.value = emailPadrao;
 
@@ -674,17 +674,17 @@ async function removerConsultaLocalmente(consulta) {
     consultas = consultas.filter(c => {
         const idAtual = c.id || c.id_agendamento;
         if (targetId && idAtual) return String(idAtual) !== String(targetId);
-        
+
         const d1 = (c.data_consulta || c.data || "").toString().substring(0, 10);
         const h1 = (c.horario || c.hora || "").toString().substring(0, 5);
         const d2 = (consulta.data_consulta || consulta.data || "").toString().substring(0, 10);
         const h2 = (consulta.horario || consulta.hora || "").toString().substring(0, 5);
-        
+
         return !(d1 === d2 && h1 === h2);
     });
 
     atualizarLocalStorageParaDashboard();
-    alert("✅ Consulta desmarcada!");
+    alert(" Consulta desmarcada!");
     window.location.reload();
 }
 
@@ -694,7 +694,7 @@ async function confirmarCancelamento() {
     const emailConfirmacao = document.getElementById("email-confirmacao-cancelamento")?.value;
 
     if (!motivo || !emailConfirmacao) {
-        alert("⚠️ Preencha o e-mail e o motivo do cancelamento.");
+        alert(" Preencha o e-mail e o motivo do cancelamento.");
         return;
     }
 
@@ -724,7 +724,7 @@ window.fecharModalCancelamento = fecharModalCancelamento;
 window.abrirModalCancelamento = abrirModalCancelamento;
 window.confirmarCancelamento = confirmarCancelamento;
 
-window.onclick = function(event) {
+window.onclick = function (event) {
     const modalD = document.getElementById("modalDetalhes");
     const modalC = document.getElementById("modalCancelamento");
     if (event.target === modalD) fecharModal();
@@ -743,7 +743,7 @@ async function preencherProfissionais() {
             const dados = await res.json();
             if (Array.isArray(dados) && dados.length > 0) listaProfissionais = dados;
         }
-    } catch (err) {}
+    } catch (err) { }
 
     if (!listaProfissionais || listaProfissionais.length === 0) {
         listaProfissionais = PROFISSIONAIS_PROJETO;
@@ -769,7 +769,7 @@ async function preencherProfissionais() {
         profissionalIdSel = novoId;
         diaSelecionadoStr = null;
         horarioSelecionado = null;
-        
+
         const elPainel = document.getElementById("painel-agenda");
         if (elPainel) elPainel.style.display = "none";
 
@@ -794,15 +794,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const bNext = document.getElementById("btn-next");
 
     if (bPrev) {
-        bPrev.onclick = () => { 
-            dataAtual.setMonth(dataAtual.getMonth() - 1); 
-            renderCalendario(); 
+        bPrev.onclick = () => {
+            dataAtual.setMonth(dataAtual.getMonth() - 1);
+            renderCalendario();
         };
     }
     if (bNext) {
-        bNext.onclick = () => { 
-            dataAtual.setMonth(dataAtual.getMonth() + 1); 
-            renderCalendario(); 
+        bNext.onclick = () => {
+            dataAtual.setMonth(dataAtual.getMonth() + 1);
+            renderCalendario();
         };
     }
 
@@ -816,3 +816,27 @@ document.addEventListener("DOMContentLoaded", () => {
     preencherProfissionais();
     carregarDados();
 });
+
+
+//Script de bloqueio e formatação estrita do telefone 
+const inputTelPaciente = document.getElementById('tel-paciente');
+
+if (inputTelPaciente) {
+    inputTelPaciente.addEventListener('input', (e) => {
+        let valor = e.target.value.replace(/\D/g, '');
+
+        if (valor.length > 11) {
+            valor = valor.slice(0, 11);
+        }
+
+        if (valor.length > 6) {
+            e.target.value = `(${valor.slice(0, 2)}) ${valor.slice(2, 7)}-${valor.slice(7)}`;
+        } else if (valor.length > 2) {
+            e.target.value = `(${valor.slice(0, 2)}) ${valor.slice(2)}`;
+        } else if (valor.length > 0) {
+            e.target.value = `(${valor.slice(0, 2)}`;
+        } else {
+            e.target.value = '';
+        }
+    });
+}

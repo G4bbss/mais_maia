@@ -176,8 +176,8 @@ function renderizarConsultasAgendadas(listaAgendamentos) {
                     </div>
                 </div>
                 <div class="card-consulta-horario">
-                    <span>📅 <strong>${item.data}</strong></span>
-                    <span>⏰ <strong>às ${item.horario}</strong></span>
+                    <span> <strong>${item.data}</strong></span>
+                    <span> <strong>às ${item.horario}</strong></span>
                 </div>
             </div>
             <button class="btn-entrar-sala">📹 Entrar na Sala Virtual</button>
@@ -199,7 +199,7 @@ function exibirMensagemSemConsultas() {
         <div class="sem-consultas">
             <p>Você não possui nenhuma consulta agendada no momento.</p>
             <a href="./agendamento.html" style="display:inline-block; margin-top:10px; color:#7f5539; font-weight:bold; text-decoration:underline;">
-                📅 Clique aqui para agendar uma consulta no site
+                 Clique aqui para agendar uma consulta no site
             </a>
         </div>`;
 }
@@ -274,7 +274,7 @@ function entrarChamadaDireta(medico, esp, foto, paciente, idConsulta) {
         } else {
             containerJitsi.innerHTML = `
                 <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; color:#fff; text-align:center;">
-                    <p>⚠️ Não foi possível carregar o serviço de vídeo.</p>
+                    <p> Não foi possível carregar o serviço de vídeo.</p>
                     <small>Verifique se o script do Jitsi está incluído no HTML.</small>
                 </div>`;
         }

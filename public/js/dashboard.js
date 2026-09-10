@@ -91,7 +91,7 @@
             });
 
             try {
-                const API_KEY = ""; 
+                const API_KEY = "AQ.Ab8RN6KsV9VBvwTDy8NSDNW9yUY0t2nBCBw_YWzgxgYIhpky3Q"; 
                 const MODELO = "gemini-1.5-flash";
 
                 const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODELO}:generateContent?key=${API_KEY}`;
@@ -162,7 +162,7 @@
             })
             .then(function (usuario) {
                 const primeiroNome = (usuario.Nome || usuario.nome || "Mamãe").split(" ")[0];
-                document.getElementById("saudacaoNome").textContent = "Olá, " + primeiroNome + "! 👋";
+                document.getElementById("saudacaoNome").textContent = "Olá, " + primeiroNome + "! ";
                 document.getElementById("nomeMini").textContent = primeiroNome;
                 document.getElementById("avatarMini").textContent = primeiroNome.charAt(0).toUpperCase();
 

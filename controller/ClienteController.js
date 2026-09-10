@@ -3,7 +3,6 @@ import pool from "../config/banco.js";
 import { OAuth2Client } from "google-auth-library";
 import nodemailer from "nodemailer";
 
-// --- CONFIGURAÇÕES DO GOOGLE E EMAIL ---
 const GOOGLE_CLIENT_ID = "910310455755-ecuctmqtfutt440jbjebr97jdj1pgkk5.apps.googleusercontent.com";
 const googleClient = new OAuth2Client(GOOGLE_CLIENT_ID);
 
@@ -31,7 +30,10 @@ const emailStyle = `
     background-color: #fdfdfd;
 `;
 
-// ===================== Cadastro de Usuário =====================
+function gerarChaveAcesso10() {
+  return Math.floor(1000000000 + Math.random() * 9000000000).toString();
+}
+
 export const cadastrar = async (req, res) => {
   try {
     const { Nome, Email, Senha, DataNascimento, Fase, SemanasGestacao, Telefone, Termos, Foto } = req.body;
@@ -67,8 +69,6 @@ export const cadastrar = async (req, res) => {
       ]
     );
 
-    console.log(`🔑 CÓDIGO DE VERIFICAÇÃO GERADO PARA [${Email}]: ${codigoVerificacao}`);
-
     try {
       await transporter.sendMail({
         from: `"Equipe Maia" <${EMAIL_SISTEMA}>`,
@@ -85,9 +85,8 @@ export const cadastrar = async (req, res) => {
           </div>
         `
       });
-      console.log(`✉️ E-mail enviado com sucesso para: ${Email}`);
     } catch (erroEmail) {
-      console.error("⚠️ Falha ao enviar o e-mail pelo Nodemailer:", erroEmail.message);
+      console.error("⚠️ Falha ao enviar e-mail de cadastro:", erroEmail.message);
     }
 
     return res.redirect(`/verificacao?email=${encodeURIComponent(Email)}`);
@@ -98,7 +97,6 @@ export const cadastrar = async (req, res) => {
   }
 };
 
-// ===================== Verificar Código de E-mail =====================
 export const verificarCodigo = async (req, res) => {
   try {
     const { email, codigoDigitado } = req.body;
@@ -120,7 +118,6 @@ export const verificarCodigo = async (req, res) => {
   }
 };
 
-// ===================== Autenticação com o Google =====================
 export const googleAuth = async (req, res) => {
   try {
     const { token } = req.body;
@@ -176,7 +173,6 @@ export const googleAuth = async (req, res) => {
   }
 };
 
-// ===================== Login =====================
 export const login = async (req, res) => {
   try {
     const { Email, Senha } = req.body;
@@ -207,27 +203,41 @@ export const login = async (req, res) => {
   }
 };
 
-// ===================== Logout =====================
 export const logout = (req, res) => {
   req.session.destroy(() => {
     return res.redirect("/");
   });
 };
 
-// ===================== Dados do usuário logado =====================
 export const meusDados = async (req, res) => {
   try {
-    const [linhas] = await pool.execute(
-      `SELECT id_usuario, paciente_nome AS Nome, email AS Email, data_nascimento AS DataNascimento,
-              fase AS Fase, semanas_gestacao AS SemanasGestacao, paciente_telefone AS Telefone,
-              status_risco AS StatusRisco, foto AS Foto
-         FROM usuario WHERE email = ?`,
+    const [usuarios] = await pool.execute(
+      `SELECT 
+         id_usuario, 
+         paciente_nome AS Nome, 
+         email AS Email, 
+         data_nascimento AS DataNascimento,
+         fase AS Fase, 
+         semanas_gestacao AS SemanasGestacao, 
+         paciente_telefone AS Telefone,
+         status_risco AS StatusRisco, 
+         foto AS Foto
+       FROM usuario
+       WHERE email = ?`,
       [req.session.usuarioEmail]
     );
 
-    const usuario = linhas[0];
+    const usuario = usuarios[0];
     if (!usuario) return res.status(404).json({ erro: "Usuário não encontrado" });
 
+    const [contatos] = await pool.execute(
+      `SELECT id_contato, nome, email, telefone, parentesco
+       FROM contato_apoio
+       WHERE USUARIO_id_usuario = ?`,
+      [usuario.id_usuario]
+    );
+
+    usuario.contatos = contatos;
     return res.json(usuario);
 
   } catch (erro) {
@@ -236,14 +246,21 @@ export const meusDados = async (req, res) => {
   }
 };
 
-// ===================== Página de perfil =====================
 export const paginaPerfil = async (req, res) => {
   try {
     const [linhas] = await pool.execute(
-      `SELECT id_usuario, paciente_nome AS Nome, email AS Email, data_nascimento AS DataNascimento,
-              fase AS Fase, semanas_gestacao AS SemanasGestacao, paciente_telefone AS Telefone,
-              status_risco AS StatusRisco, foto AS Foto
-         FROM usuario WHERE email = ?`,
+      `SELECT 
+         id_usuario, 
+         paciente_nome AS Nome, 
+         email AS Email, 
+         data_nascimento AS DataNascimento,
+         fase AS Fase, 
+         semanas_gestacao AS SemanasGestacao, 
+         paciente_telefone AS Telefone,
+         status_risco AS StatusRisco, 
+         foto AS Foto
+       FROM usuario
+       WHERE email = ?`,
       [req.session.usuarioEmail]
     );
 
@@ -258,15 +275,26 @@ export const paginaPerfil = async (req, res) => {
   }
 };
 
-// ===================== Atualizar perfil =====================
 export const atualizarPerfil = async (req, res) => {
   try {
-    const { Nome, Telefone, Fase, SemanasGestacao } = req.body;
+    const { Nome, Telefone, Fase, SemanasGestacao, contatos } = req.body;
     const emailUsuario = req.session.usuarioEmail;
 
     if (!emailUsuario) {
       return res.status(401).json({ ok: false, erro: "Sessão expirada. Faça login novamente." });
     }
+
+    const [usuarios] = await pool.execute(
+      "SELECT id_usuario, paciente_nome FROM usuario WHERE email = ?",
+      [emailUsuario]
+    );
+
+    if (usuarios.length === 0) {
+      return res.status(404).json({ ok: false, erro: "Usuário não encontrado." });
+    }
+
+    const idUsuario = usuarios[0].id_usuario;
+    const nomePaciente = Nome || usuarios[0].paciente_nome || "Paciente Maia";
 
     await pool.execute(
       `UPDATE usuario
@@ -274,17 +302,90 @@ export const atualizarPerfil = async (req, res) => {
               paciente_telefone = COALESCE(?, paciente_telefone),
               fase = COALESCE(?, fase),
               semanas_gestacao = COALESCE(?, semanas_gestacao)
-        WHERE email = ?`,
+        WHERE id_usuario = ?`,
       [
         Nome || null,
         Telefone || null,
         Fase || null,
         SemanasGestacao === undefined || SemanasGestacao === "" ? null : SemanasGestacao,
-        emailUsuario
+        idUsuario
       ]
     );
 
-    return res.json({ ok: true, mensagem: "Perfil atualizado com sucesso!" });
+    if (Array.isArray(contatos)) {
+      const idsManter = contatos.map(c => c.id_contato).filter(Boolean);
+      if (idsManter.length > 0) {
+        const placeholders = idsManter.map(() => '?').join(',');
+        await pool.execute(
+          `DELETE FROM contato_apoio WHERE USUARIO_id_usuario = ? AND id_contato NOT IN (${placeholders})`,
+          [idUsuario, ...idsManter]
+        );
+      } else {
+        await pool.execute("DELETE FROM contato_apoio WHERE USUARIO_id_usuario = ?", [idUsuario]);
+      }
+
+      for (const c of contatos) {
+        const nomeFinal = c.nome || "";
+        const emailFinal = c.email || "";
+        const telFinal = c.telefone || "";
+        const parentescoFinal = c.parentesco || "Não informado";
+
+        if (!nomeFinal && !emailFinal && !telFinal) continue;
+
+        if (c.id_contato) {
+          await pool.execute(
+            `UPDATE contato_apoio
+                SET nome = ?, telefone = ?, email = ?, parentesco = ?
+              WHERE id_contato = ? AND USUARIO_id_usuario = ?`,
+            [nomeFinal, telFinal, emailFinal, parentescoFinal, c.id_contato, idUsuario]
+          );
+        } else {
+          const chaveAcesso = gerarChaveAcesso10();
+
+          const [insertRes] = await pool.execute(
+            `INSERT INTO contato_apoio (USUARIO_id_usuario, nome, telefone, email, parentesco, chave_acesso)
+             VALUES (?, ?, ?, ?, ?, ?)`,
+            [idUsuario, nomeFinal, telFinal, emailFinal, parentescoFinal, chaveAcesso]
+          );
+
+          let chaveParaEnvio = chaveAcesso;
+          const [chaveQuery] = await pool.execute(
+            "SELECT chave_acesso FROM contato_apoio WHERE id_contato = ?",
+            [insertRes.insertId]
+          );
+          if (chaveQuery.length > 0 && chaveQuery[0].chave_acesso) {
+            chaveParaEnvio = chaveQuery[0].chave_acesso;
+          }
+
+          if (emailFinal && emailFinal.trim() !== "") {
+            try {
+              await transporter.sendMail({
+                from: `"Equipe Maia" <${EMAIL_SISTEMA}>`,
+                to: emailFinal,
+                subject: `Você foi cadastrado(a) como rede de apoio de ${nomePaciente} - Maia`,
+                html: `
+                  <div style="${emailStyle}">
+                    <h2 style="color: #8c5a4d; margin-top: 0;">Rede de Apoio Maia</h2>
+                    <p>Olá, <b>${nomeFinal || "Contato de Confiança"}</b>!</p>
+                    <p><b>${nomePaciente}</b> cadastrou você como sua <b>Rede de Apoio</b> na plataforma <b>Maia</b>.</p>
+                    <p>Sua chave de acesso exclusiva é:</p>
+                    <div style="background-color: #f9f9f9; padding: 20px; text-align: center; border-radius: 8px; margin: 20px 0;">
+                      <span style="font-size: 30px; font-weight: bold; letter-spacing: 5px; color: #8c5a4d;">${chaveParaEnvio}</span>
+                    </div>
+                    <p style="font-size: 12px; color: #999;">Guarde este código em local seguro para acessar a área da rede de apoio na plataforma.</p>
+                  </div>
+                `
+              });
+              console.log(`📧 E-mail com chave enviado para o contato: ${emailFinal}`);
+            } catch (erroEmail) {
+              console.error("⚠️ Erro ao enviar e-mail para contato de apoio:", erroEmail.message);
+            }
+          }
+        }
+      }
+    }
+
+    return res.json({ ok: true, mensagem: "Perfil e contatos atualizados com sucesso!" });
 
   } catch (erro) {
     console.error("Erro ao atualizar perfil:", erro.message);
@@ -292,7 +393,6 @@ export const atualizarPerfil = async (req, res) => {
   }
 };
 
-// ===================== Solicitar Recuperação de Senha =====================
 export const solicitarRecuperacaoSenha = async (req, res) => {
   try {
     const { Email } = req.body;
@@ -328,7 +428,6 @@ export const solicitarRecuperacaoSenha = async (req, res) => {
       `
     });
 
-    console.log(`🔑 CÓDIGO DE REDEFINIÇÃO ENVIADO PARA [${Email}]: ${codigoRedefinicao}`);
     return res.json({ ok: true, mensagem: "E-mail de redefinição enviado com sucesso!" });
 
   } catch (erro) {
@@ -337,7 +436,6 @@ export const solicitarRecuperacaoSenha = async (req, res) => {
   }
 };
 
-// ===================== Redefinir Senha Com Código =====================
 export const redefinirSenha = async (req, res) => {
   try {
     const { Email, Codigo, NovaSenha } = req.body;
@@ -370,9 +468,6 @@ export const redefinirSenha = async (req, res) => {
   }
 };
 
-// ===================== AGENDAMENTOS DE CONSULTAS =====================
-
-// 🟢 Criar Agendamento (Com validação estrita de 11 dígitos no telefone)
 export const agendarConsulta = async (req, res) => {
   try {
     const {
@@ -411,7 +506,6 @@ export const agendarConsulta = async (req, res) => {
       return res.status(400).json({ ok: false, erro: "E-mail, data e horário são obrigatórios." });
     }
 
-    // Busca dados do cadastro do usuário para garantir Telefone e Nome caso não venham do formulário
     const [usuarios] = await pool.execute(
       "SELECT id_usuario, paciente_nome, paciente_telefone FROM usuario WHERE email = ?",
       [emailFinal]
@@ -423,7 +517,6 @@ export const agendarConsulta = async (req, res) => {
     const nomeFinal = nome_paciente || paciente_nome || paciente || nome || usuarioBd.paciente_nome || "Paciente";
     const rawTelefone = telefone_paciente || telefone || usuarioBd.paciente_telefone || "";
 
-    // 🔴 VALIDAÇÃO OBRIGATÓRIA DE TELEFONE (Apenas números e exatamente 11 dígitos)
     const telApenasNumeros = String(rawTelefone).replace(/\D/g, "");
 
     if (telApenasNumeros.length !== 11) {
@@ -433,14 +526,12 @@ export const agendarConsulta = async (req, res) => {
       });
     }
 
-    // Formata o telefone para exibição: (XX) XXXXX-XXXX
     const telFormatado = `(${telApenasNumeros.substring(0, 2)}) ${telApenasNumeros.substring(2, 7)}-${telApenasNumeros.substring(7)}`;
 
     const obsFinal = observacoes || observacao || "Nenhuma.";
     const nomeProf = profissional_nome || profissional || "Dra. Ana Beatriz Mendes (Psicologia Perinatal)";
     const enderecoProf = endereco_profissional || endereco || "Clínica Maia";
 
-    // Trata formatação de data (YYYY-MM-DD para o banco e DD/MM/YYYY para o e-mail)
     let dataBanco = dataInput;
     if (typeof dataBanco === "string" && dataBanco.includes("/")) {
       const partes = dataBanco.split("/");
@@ -463,7 +554,6 @@ export const agendarConsulta = async (req, res) => {
 
     const idProf = id_profissional || profissional_id || 1;
 
-    // Salva o agendamento no banco com todas as informações
     const [resultado] = await pool.execute(
       `INSERT INTO agendamento 
         (USUARIO_id_usuario, PROFISSIONAL_id_profissional, data_agendamento, horario, tipo_atendimento, status, observacoes, email_paciente, nome_paciente, telefone_paciente, endereco_profissional)
@@ -483,7 +573,6 @@ export const agendarConsulta = async (req, res) => {
       ]
     );
 
-    // Envia o e-mail de confirmação contendo todos os detalhes
     try {
       await transporter.sendMail({
         from: `"Equipe Maia" <${EMAIL_SISTEMA}>`,
@@ -508,7 +597,6 @@ export const agendarConsulta = async (req, res) => {
           </div>
         `
       });
-      console.log(`📧 E-mail de agendamento enviado com sucesso para: ${emailFinal}`);
     } catch (erroEmail) {
       console.error("⚠️ Falha ao enviar e-mail de agendamento:", erroEmail.message);
     }
@@ -526,7 +614,6 @@ export const agendarConsulta = async (req, res) => {
   }
 };
 
-// 🟢 Buscar Agendamentos do Usuário
 export const meusAgendamentos = async (req, res) => {
   try {
     const emailParam = req.params.email || req.query.email || req.session?.usuarioEmail;
@@ -556,11 +643,11 @@ export const meusAgendamentos = async (req, res) => {
         COALESCE(a.telefone_paciente, u.paciente_telefone, 'Não informado') AS telefone,
         COALESCE(a.endereco_profissional, 'Clínica Maia') AS endereco_profissional,
         COALESCE(a.endereco_profissional, 'Clínica Maia') AS endereco
-       FROM agendamento a
-       LEFT JOIN usuario u ON a.USUARIO_id_usuario = u.id_usuario OR a.email_paciente = u.email
-       LEFT JOIN profissional p ON a.PROFISSIONAL_id_profissional = p.id_profissional
-       WHERE tipo_atendimento = 'online' AND a.email_paciente = ? 
-       ORDER BY a.data_agendamento ASC, a.horario ASC`,
+        FROM agendamento a
+        LEFT JOIN usuario u ON a.USUARIO_id_usuario = u.id_usuario OR a.email_paciente = u.email
+        LEFT JOIN profissional p ON a.PROFISSIONAL_id_profissional = p.id_profissional
+        WHERE tipo_atendimento = 'online' AND a.email_paciente = ? 
+        ORDER BY a.data_agendamento ASC, a.horario ASC`,
       [emailParam]
     );
 
@@ -572,7 +659,6 @@ export const meusAgendamentos = async (req, res) => {
   }
 };
 
-// 🟢 Cancelar Agendamento e Enviar E-mail
 export const cancelarAgendamento = async (req, res) => {
   try {
     const body = req.body || {};
@@ -582,7 +668,6 @@ export const cancelarAgendamento = async (req, res) => {
       return res.status(400).json({ ok: false, erro: "ID do agendamento é obrigatório." });
     }
 
-    // Busca os dados do agendamento formatados no MySQL antes de excluir
     const [agendamentos] = await pool.execute(
       `SELECT 
         a.id_agendamento,
@@ -592,8 +677,8 @@ export const cancelarAgendamento = async (req, res) => {
         TIME_FORMAT(a.horario, '%H:%i') AS horario_formatado,
         a.endereco_profissional,
         a.observacoes
-       FROM agendamento a
-       WHERE a.id_agendamento = ?`,
+        FROM agendamento a
+        WHERE a.id_agendamento = ?`,
       [idAgendamento]
     );
 
@@ -614,11 +699,8 @@ export const cancelarAgendamento = async (req, res) => {
       return res.status(400).json({ ok: false, erro: "E-mail do paciente não encontrado." });
     }
 
-    // Remove a consulta do banco
     await pool.execute("DELETE FROM agendamento WHERE id_agendamento = ?", [idAgendamento]);
-    console.log(`🗑️ Agendamento ID ${idAgendamento} deletado do banco.`);
 
-    // Envia o e-mail de cancelamento
     await transporter.sendMail({
       from: `"Equipe Maia" <${EMAIL_SISTEMA}>`,
       to: emailDestino,
@@ -639,8 +721,6 @@ export const cancelarAgendamento = async (req, res) => {
       `
     });
 
-    console.log(`📧 E-mail de cancelamento enviado com sucesso para: ${emailDestino}`);
-
     return res.json({ ok: true, mensagem: "Consulta cancelada e e-mail enviado com sucesso!" });
 
   } catch (erro) {
@@ -648,3 +728,10 @@ export const cancelarAgendamento = async (req, res) => {
     return res.status(500).json({ ok: false, erro: "Erro ao processar cancelamento: " + erro.message });
   }
 };
+
+
+
+
+
+
+

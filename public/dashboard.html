@@ -6,8 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel - Maia</title>
     <link rel="icon" href="img/maiaFavicon.png" type="image/png">
-<link rel="stylesheet" href="./style/dashboard.css">
-   
+    <link rel="stylesheet" href="./style/dashboard.css">
+
 </head>
 
 <body>
@@ -16,13 +16,14 @@
         <aside class="sidebar">
             <a href="/dashboard" class="logo">Ma<span>i</span>a</a>
             <nav>
-                <a href="./dashboard.html" class="ativo"> Painel</a>
-                <a href="./diario.html"> Diário Emocional</a>
                 <a href="./agendamento.html"> Agendamentos</a>
-                <a href="./telemedicina.html"> Telemedicina</a>
-                <a href="./redeapoio.html"> Rede de Apoio</a>
-                <a href="./profissionais.html"> Profissionais</a>
+                <a href="./diario.html"> Diário Emocional</a>
+                <a href="./perfil.html"> Meu Perfil</a>
                 <a href="./mural.html"> Mural</a>
+                <a href="./dashboard.html" class="ativo"> Painel</a>
+                <a href="./profissionais.html"> Profissionais</a>
+                <a href="./redeapoio.html"> Rede de Apoio</a>
+                <a href="./telemedicina.html"> Telemedicina</a>
             </nav>
             <span class="rodape-sidebar">© 2026 Maia</span>
         </aside>
@@ -35,7 +36,8 @@
                 </button>
                 <div id="painelContraste" class="painel-ajuste-contraste">
                     <label for="rangeContraste">Contraste: <span id="valorContrasteTxt">100%</span></label>
-                    <input type="range" id="rangeContraste" min="30" max="100" value="100" oninput="ajustarContraste(this.value)">
+                    <input type="range" id="rangeContraste" min="30" max="100" value="100"
+                        oninput="ajustarContraste(this.value)">
                 </div>
             </div>
             <button class="btn-acessibilidade" onclick="iniciarChatAssistente()" title="Abrir Chat com Camila">
@@ -54,8 +56,10 @@
                 </div>
             </div>
             <div class="assistente-avatar-box" onclick="iniciarChatAssistente()">
-                <button class="btn-fechar-total" title="Minimizar Assistente" onclick="fecharAssistenteTotal(event)">✕</button>
-                <img src="img/camila.png" alt="Camila Assistente Virtual" onerror="this.onerror=null; this.src='img/maiaFavicon.png';">
+                <button class="btn-fechar-total" title="Minimizar Assistente"
+                    onclick="fecharAssistenteTotal(event)">✕</button>
+                <img src="img/camila.png" alt="Camila Assistente Virtual"
+                    onerror="this.onerror=null; this.src='img/maiaFavicon.png';">
             </div>
         </div>
 
@@ -77,7 +81,8 @@
                 </div>
             </div>
             <div class="chat-modal-footer">
-                <input type="text" id="chatInput" placeholder="Digite sua mensagem..." onkeypress="tratarKeyInput(event)">
+                <input type="text" id="chatInput" placeholder="Digite sua mensagem..."
+                    onkeypress="tratarKeyInput(event)">
                 <button onclick="enviarMensagemChat()">Enviar</button>
             </div>
         </div>
@@ -97,7 +102,7 @@
                         <span class="icone-engrenagem">⚙️</span>
                     </button>
                     <div class="conta-menu" id="menuConta">
-                        <a href="/perfil">✏️ Editar perfil</a>
+                        <a href="./perfil.html">✏️ Editar perfil</a>
                         <button id="botaoSair">🚪 Sair</button>
                     </div>
                 </div>
@@ -133,28 +138,28 @@
                     <h2>Novidades para você</h2>
                     <div class="feed-lista">
                         <div class="feed-item">
-                            <div class="feed-icone">🗓️</div>
+                            <div class="feed-icone"></div>
                             <div class="feed-texto">
                                 <strong>Consulta confirmada</strong>
                                 <span>Sua consulta com a Dra. Camila Rocha foi confirmada para esta semana.</span>
                             </div>
                         </div>
                         <div class="feed-item">
-                            <div class="feed-icone">🤝</div>
+                            <div class="feed-icone"></div>
                             <div class="feed-texto">
                                 <strong>Nova voluntária na sua região</strong>
                                 <span>Juliana Alves está disponível para acompanhamento noturno perto de você.</span>
                             </div>
                         </div>
                         <div class="feed-item">
-                            <div class="feed-icone">💡</div>
+                            <div class="feed-icone"></div>
                             <div class="feed-texto">
                                 <strong>Dica da semana</strong>
                                 <span>Exercícios de assoalho pélvico: veja como começar com segurança.</span>
                             </div>
                         </div>
                         <div class="feed-item">
-                            <div class="feed-icone">📖</div>
+                            <div class="feed-icone"></div>
                             <div class="feed-texto">
                                 <strong>Diário emocional</strong>
                                 <span>Você ainda não fez seu registro de hoje. Que tal reservar 2 minutos?</span>
@@ -178,8 +183,8 @@
         new window.VLibras.Widget('https://vlibras.gov.br/app');
     </script>
 
-<script src="./js/dashboard.js"></script>
-   
+    <script src="./js/dashboard.js"></script>
+
 </body>
 
 </html>

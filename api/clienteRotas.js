@@ -38,5 +38,9 @@ router.post("/agendamento", clienteController.agendarConsulta);
 router.get("/meus-agendamento/:email", clienteController.meusAgendamentos);
 router.post("/cancelar-agendamento", clienteController.cancelarAgendamento);
 
+
+
+
+
 // ✅ Exportação padrão para funcionar com ES Modules
 export default router;

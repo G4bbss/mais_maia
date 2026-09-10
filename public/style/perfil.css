@@ -1,132 +1,320 @@
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 
-        body {
-            font-family: "Segoe UI", Arial, sans-serif;
-            background: linear-gradient(to right, #f5ebe0, #e6ccb2);
-            color: #4a3c31;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            padding: 40px 20px;
-        }
+body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: linear-gradient(to right, #f5ebe0, #e6ccb2);
+    color: #4a3c31;
+    min-height: 100vh;
+}
 
-        .container {
-            width: 100%;
-            max-width: 560px;
-        }
+a {
+    text-decoration: none;
+}
 
-        .voltar {
-            display: inline-block;
-            margin-bottom: 18px;
-            font-size: 13px;
-            color: #7f5539;
-            font-weight: bold;
-        }
+.app {
+    display: flex;
+    min-height: 100vh;
+}
 
-        .voltar:hover {
-            color: #9c6644;
-        }
+.sidebar {
+    width: 240px;
+    flex-shrink: 0;
+    background-color: #7f5539;
+    color: #fff;
+    padding: 30px 20px;
+    display: flex;
+    flex-direction: column;
+}
 
-        .cartao {
-            background-color: #fffaf6;
-            border-radius: 12px;
-            box-shadow: 0 0 25px rgba(0, 0, 0, 0.15);
-            padding: 40px;
-        }
+.sidebar .logo {
+    font-size: 22px;
+    font-weight: bold;
+    color: #fff;
+    margin-bottom: 40px;
+}
 
-        .cabecalho-perfil {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            margin-bottom: 30px;
-        }
+.sidebar .logo span {
+    color: #e6ccb2;
+}
 
-        .avatar-grande {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background-color: #e6ccb2;
-            color: #7f5539;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 22px;
-            font-weight: bold;
-            flex-shrink: 0;
-        }
+.sidebar nav {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex-grow: 1;
+}
 
-        .cabecalho-perfil h2 {
-            color: #7f5539;
-            font-size: 20px;
-        }
+.sidebar nav a {
+    color: #f5ebe0;
+    font-size: 14px;
+    padding: 11px 14px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: background-color 0.25s;
+}
 
-        .cabecalho-perfil p {
-            font-size: 13px;
-            color: #6b5744;
-        }
+.sidebar nav a:hover,
+.sidebar nav a.ativo {
+    background-color: rgba(255, 255, 255, 0.14);
+}
 
-        form {
-            display: flex;
-            flex-direction: column;
-        }
+.sidebar .rodape-sidebar {
+    font-size: 11px;
+    color: #e6ccb2;
+    opacity: 0.7;
+}
 
-        label {
-            margin-top: 14px;
-            font-weight: bold;
-            font-size: 13px;
-        }
+.conteudo {
+    flex-grow: 1;
+    padding: 40px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
 
-        input,
-        select {
-            padding: 10px;
-            margin-top: 6px;
-            border: 1px solid #d9c5b2;
-            border-radius: 5px;
-            background-color: #f5ebe0;
-            color: #4a3c31;
-            font-size: 14px;
-        }
+.container {
+    width: 100%;
+    max-width: 560px;
+}
 
-        input:disabled {
-            opacity: 0.6;
-        }
+.cartao {
+    background-color: #fffaf6;
+    border-radius: 12px;
+    box-shadow: 0 4px 25px rgba(0, 0, 0, 0.12);
+    padding: 40px;
+}
 
-        .ajuda {
-            font-size: 11px;
-            color: #6b5744;
-            font-weight: normal;
-            margin-top: 4px;
-        }
+.cabecalho-perfil {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 30px;
+}
 
-        input[type="submit"] {
-            background-color: #7f5539;
-            color: #fff;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 26px;
-            border: none;
-        }
+.avatar-grande {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: #e6ccb2;
+    color: #7f5539;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: bold;
+    flex-shrink: 0;
+}
 
-        input[type="submit"]:hover {
-            background-color: #9c6644;
-        }
+.cabecalho-perfil h2 {
+    color: #7f5539;
+    font-size: 20px;
+}
 
-        .mensagem {
-            margin-top: 14px;
-            font-size: 13px;
-            text-align: center;
-            display: none;
-        }
+.cabecalho-perfil p {
+    font-size: 13px;
+    color: #6b5744;
+}
 
-        .mensagem.sucesso {
-            color: #2f5233;
-        }
+form {
+    display: flex;
+    flex-direction: column;
+}
 
-        .mensagem.erro {
-            color: #a4442c;
-        }
-    
+label {
+    margin-top: 14px;
+    font-weight: bold;
+    font-size: 13px;
+    color: #4a3c31;
+}
+
+input,
+select {
+    padding: 10px 12px;
+    margin-top: 6px;
+    border: 1px solid #d9c5b2;
+    border-radius: 6px;
+    background-color: #f5ebe0;
+    color: #4a3c31;
+    font-size: 14px;
+    outline: none;
+    width: 100%;
+    transition: border-color 0.2s, background-color 0.2s;
+}
+
+input:focus,
+select:focus {
+    border-color: #7f5539;
+    background-color: #fffaf6;
+}
+
+.ajuda {
+    font-size: 11px;
+    color: #6b5744;
+    font-weight: normal;
+    margin-top: 4px;
+}
+
+input[type="submit"] {
+    background-color: #7f5539;
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 26px;
+    border: none;
+    padding: 12px;
+    border-radius: 6px;
+    transition: background-color 0.2s;
+}
+
+input[type="submit"]:hover {
+    background-color: #9c6644;
+}
+
+.mensagem {
+    margin-top: 14px;
+    font-size: 13px;
+    text-align: center;
+    display: none;
+}
+
+.mensagem.sucesso {
+    color: #2f5233;
+}
+
+.mensagem.erro {
+    color: #a4442c;
+}
+
+.secao-divisor {
+    margin-top: 28px;
+    margin-bottom: 12px;
+    padding-top: 20px;
+    border-top: 1px solid #e6ccb2;
+}
+
+.secao-divisor h3 {
+    font-size: 15px;
+    color: #7f5539;
+    font-weight: bold;
+}
+
+.ajuda-secao {
+    font-size: 12px;
+    color: #6b5744;
+    margin-top: 4px;
+    margin-bottom: 10px;
+}
+
+.bloco-contato {
+    background-color: #fcf8f5;
+    border: 1px solid #e6ccb2;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    overflow: hidden;
+}
+
+.cabecalho-contato {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 18px;
+    background-color: #f5ebe0;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.2s;
+}
+
+.cabecalho-contato:hover {
+    background-color: #e6ccb2;
+}
+
+.titulo-contato {
+    font-weight: bold;
+    color: #7f5539;
+    font-size: 14px;
+}
+
+.icone-seta {
+    font-size: 11px;
+    color: #7f5539;
+}
+
+.corpo-contato {
+    padding: 18px;
+    border-top: 1px solid #e6ccb2;
+}
+
+.btn-remover-contato {
+    background-color: #c62828;
+    color: #fff;
+    border: none;
+    padding: 9px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: bold;
+    margin-top: 16px;
+    align-self: flex-start;
+    transition: background-color 0.2s;
+}
+
+.btn-remover-contato:hover {
+    background-color: #9a1f1f;
+}
+
+.btn-adicionar-contato {
+    background-color: #8c5a4d;
+    color: #fff;
+    border: none;
+    padding: 11px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: bold;
+    margin-top: 6px;
+    margin-bottom: 10px;
+    width: 100%;
+    transition: background-color 0.2s;
+}
+
+.btn-adicionar-contato:hover {
+    background-color: #7f5539;
+}
+
+@media (max-width: 900px) {
+    .app {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        flex-direction: row;
+        align-items: center;
+        padding: 16px 20px;
+        gap: 20px;
+    }
+
+    .sidebar .logo {
+        margin-bottom: 0;
+    }
+
+    .sidebar nav {
+        flex-direction: row;
+        flex-wrap: wrap;
+        flex-grow: 1;
+    }
+
+    .sidebar .rodape-sidebar {
+        display: none;
+    }
+
+    .conteudo {
+        padding: 24px 20px;
+    }
+}

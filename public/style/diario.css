@@ -1,0 +1,367 @@
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: linear-gradient(to right, #f5ebe0, #e6ccb2);
+            color: #4a3c31;
+            min-height: 100vh;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        /* ===================== LAYOUT GERAL ===================== */
+        .app {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ===================== SIDEBAR ===================== */
+        .sidebar {
+            width: 240px;
+            flex-shrink: 0;
+            background-color: #7f5539;
+            color: #fff;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar .logo {
+            font-size: 22px;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 40px;
+        }
+
+        .sidebar .logo span {
+            color: #e6ccb2;
+        }
+
+        .sidebar nav {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex-grow: 1;
+        }
+
+        .sidebar nav a {
+            color: #f5ebe0;
+            font-size: 14px;
+            padding: 11px 14px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: background-color 0.25s;
+        }
+
+        .sidebar nav a:hover,
+        .sidebar nav a.ativo {
+            background-color: rgba(255, 255, 255, 0.14);
+        }
+
+        .sidebar .rodape-sidebar {
+            font-size: 11px;
+            color: #e6ccb2;
+            opacity: 0.7;
+        }
+
+        /* ===================== CONTEÚDO ===================== */
+        .conteudo {
+            flex-grow: 1;
+            padding: 30px 40px;
+            max-width: 900px;
+        }
+
+        /* Topbar */
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 14px;
+        }
+
+        .saudacao h1 {
+            font-size: 24px;
+            color: #7f5539;
+        }
+
+        .saudacao p {
+            font-size: 13px;
+            color: #6b5744;
+        }
+
+        /* Menu da engrenagem */
+        .conta {
+            position: relative;
+        }
+
+        .conta-botao {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background-color: #fffaf6;
+            border: 1px solid #e6ccb2;
+            border-radius: 30px;
+            padding: 6px 16px 6px 6px;
+            cursor: pointer;
+        }
+
+        .avatar-mini {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background-color: #e6ccb2;
+            color: #7f5539;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        .conta-botao span.nome-mini {
+            font-size: 13px;
+            font-weight: bold;
+            color: #4a3c31;
+        }
+
+        .conta-menu {
+            position: absolute;
+            right: 0;
+            top: calc(100% + 8px);
+            background-color: #fffaf6;
+            border-radius: 10px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            width: 190px;
+            overflow: hidden;
+            display: none;
+            z-index: 20;
+        }
+
+        .conta-menu.aberto {
+            display: block;
+        }
+
+        .conta-menu a,
+        .conta-menu button {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            text-align: left;
+            padding: 12px 16px;
+            font-size: 13px;
+            color: #4a3c31;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .conta-menu a:hover,
+        .conta-menu button:hover {
+            background-color: #f5ebe0;
+        }
+
+        .conta-menu .sair {
+            color: #a4442c;
+            border-top: 1px solid #f0e3d3;
+        }
+
+        /* ===================== CARDS E SEÇÕES ===================== */
+        .painel-card {
+            background-color: #fffaf6;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .painel-card h2 {
+            font-size: 18px;
+            color: #7f5539;
+            margin-bottom: 6px;
+        }
+
+        .painel-card p.subtitulo {
+            font-size: 13px;
+            color: #6b5744;
+            margin-bottom: 18px;
+        }
+
+        /* Check-in Emocional */
+        .checkin-opcoes {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .checkin-opcoes button {
+            flex: 1;
+            min-width: 80px;
+            background-color: #f5ebe0;
+            border: 2px solid transparent;
+            border-radius: 12px;
+            padding: 14px 10px;
+            font-size: 26px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .checkin-opcoes button:hover {
+            background-color: #e6ccb2;
+            transform: translateY(-2px);
+        }
+
+        .checkin-opcoes button.selecionado {
+            background-color: #7f5539;
+            color: #fff;
+            border-color: #7f5539;
+        }
+
+        .checkin-opcoes button.selecionado .rotulo {
+            color: #f5ebe0;
+        }
+
+        .checkin-opcoes .rotulo {
+            display: block;
+            font-size: 12px;
+            margin-top: 6px;
+            color: #6b5744;
+            font-weight: 500;
+        }
+
+        /* Área de Texto Privada */
+        .caixa-escrita textarea {
+            width: 100%;
+            height: 120px;
+            border: 1px solid #e6ccb2;
+            border-radius: 10px;
+            padding: 14px;
+            font-family: inherit;
+            font-size: 14px;
+            background-color: #f5ebe0;
+            color: #4a3c31;
+            resize: vertical;
+            outline: none;
+            margin-bottom: 14px;
+        }
+
+        .caixa-escrita textarea:focus {
+            border-color: #7f5539;
+            background-color: #fff;
+        }
+
+        .btn-salvar {
+            background-color: #7f5539;
+            color: #fff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            float: right;
+        }
+
+        .btn-salvar:hover {
+            background-color: #9c6644;
+        }
+
+        /* Clearfix para o botão float */
+        .caixa-escrita::after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+
+        /* Histórico Privado */
+        .historico-lista {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-top: 10px;
+        }
+
+        .item-registro-privado {
+            background-color: #f5ebe0;
+            border-radius: 10px;
+            padding: 16px;
+            border-left: 4px solid #7f5539;
+        }
+
+        .registro-topo {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .registro-humor-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: bold;
+            font-size: 14px;
+            color: #7f5539;
+        }
+
+        .registro-data {
+            font-size: 12px;
+            color: #6b5744;
+        }
+
+        .registro-texto {
+            font-size: 14px;
+            line-height: 1.5;
+            color: #4a3c31;
+            white-space: pre-wrap;
+        }
+
+        /* Responsivo */
+        @media (max-width: 900px) {
+            .app {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                flex-direction: row;
+                align-items: center;
+                padding: 16px 20px;
+                gap: 20px;
+            }
+
+            .sidebar .logo {
+                margin-bottom: 0;
+            }
+
+            .sidebar nav {
+                flex-direction: row;
+                flex-wrap: wrap;
+                flex-grow: 1;
+            }
+
+            .sidebar .rodape-sidebar {
+                display: none;
+            }
+
+            .conteudo {
+                padding: 24px 20px;
+            }
+        }
+    

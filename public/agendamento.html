@@ -16,13 +16,14 @@
         <aside class="sidebar">
             <a href="/dashboard" class="logo">Ma<span>i</span>a</a>
             <nav>
-                <a href="./dashboard.html" class="ativo"> Painel</a>
-                <a href="./diario.html"> Diário Emocional</a>
                 <a href="./agendamento.html"> Agendamentos</a>
-                <a href="./telemedicina.html"> Telemedicina</a>
-                <a href="./redeapoio.html"> Rede de Apoio</a>
-                <a href="./profissionais.html"> Profissionais</a>
+                <a href="./diario.html"> Diário Emocional</a>
+                <a href="./perfil.html"> Meu Perfil</a>
                 <a href="./mural.html"> Mural</a>
+                <a href="./dashboard.html" class="ativo"> Painel</a>
+                <a href="./profissionais.html"> Profissionais</a>
+                <a href="./redeapoio.html"> Rede de Apoio</a>
+                <a href="./telemedicina.html"> Telemedicina</a>
             </nav>
         </aside>
 
@@ -152,30 +153,7 @@
 
     <script src="js/agendamento.js"></script>
 
-    <!-- Script de bloqueio e formatação estrita do telefone -->
-    <script>
-        const inputTelPaciente = document.getElementById('tel-paciente');
 
-        if (inputTelPaciente) {
-            inputTelPaciente.addEventListener('input', (e) => {
-                let valor = e.target.value.replace(/\D/g, '');
-
-                if (valor.length > 11) {
-                    valor = valor.slice(0, 11);
-                }
-
-                if (valor.length > 6) {
-                    e.target.value = `(${valor.slice(0, 2)}) ${valor.slice(2, 7)}-${valor.slice(7)}`;
-                } else if (valor.length > 2) {
-                    e.target.value = `(${valor.slice(0, 2)}) ${valor.slice(2)}`;
-                } else if (valor.length > 0) {
-                    e.target.value = `(${valor.slice(0, 2)}`;
-                } else {
-                    e.target.value = '';
-                }
-            });
-        }
-    </script>
 </body>
 
 </html>
