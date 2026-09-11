@@ -173,39 +173,71 @@ export const googleAuth = async (req, res) => {
   }
 };
 
+
+
+
+
+
 export const login = async (req, res) => {
   try {
-    const { Email, Senha } = req.body;
+    const { email, senha } = req.body;
 
-    if (!Email || !Senha) {
-      return res.status(400).send("E-mail e senha são obrigatórios");
+    if (!email || !senha) {
+      return res.status(400).json({ ok: false, erro: "E-mail e senha são obrigatórios." });
     }
 
-    const [linhas] = await pool.execute("SELECT * FROM usuario WHERE email = ?", [Email]);
-    const usuario = linhas[0];
+    // 1. Verifica se o e-mail pertence a um Profissional
+    const [profissional] = await pool.execute(
+      "SELECT * FROM profissional WHERE email = ?",
+      [email]
+    );
 
-    if (!usuario) {
-      return res.status(401).send("Credenciais inválidas");
+    if (profissional.length > 0) {
+      // Valide a senha do profissional aqui se tiver hash/coluna de senha
+      req.session.usuarioEmail = email;
+      req.session.tipoUsuario = "profissional";
+
+      return res.json({
+        ok: true,
+        tipo: "profissional",
+        redirect: "/painel-profissional"
+      });
     }
 
-    const senhaCorreta = await bcrypt.compare(Senha, usuario.senha);
+    // 2. Se não for profissional, busca na tabela de Usuário (Paciente)
+    const [usuario] = await pool.execute(
+      "SELECT * FROM usuario WHERE email = ?",
+      [email]
+    );
 
-    if (!senhaCorreta) {
-      return res.status(401).send("Credenciais inválidas");
+    if (usuario.length > 0) {
+      // Valide a senha do usuário
+      req.session.usuarioEmail = email;
+      req.session.tipoUsuario = "paciente";
+
+      return res.json({
+        ok: true,
+        tipo: "paciente",
+        redirect: "/dashboard"
+      });
     }
 
-    req.session.usuarioEmail = usuario.email;
-    return res.redirect("/dashboard");
+    // 3. Se não encontrou em nenhuma das duas tabelas
+    return res.status(401).json({ ok: false, erro: "E-mail ou senha inválidos." });
 
   } catch (erro) {
-    console.error("Erro ao fazer login:", erro.message);
-    return res.status(500).send("Erro ao fazer login");
+    console.error("Erro no login:", erro.message);
+    return res.status(500).json({ ok: false, erro: "Erro interno ao realizar login." });
   }
 };
 
+
+
+
+
 export const logout = (req, res) => {
   req.session.destroy(() => {
-    return res.redirect("/");
+    return res.redirect("/index.html");
   });
 };
 
@@ -728,10 +760,3 @@ export const cancelarAgendamento = async (req, res) => {
     return res.status(500).json({ ok: false, erro: "Erro ao processar cancelamento: " + erro.message });
   }
 };
-
-
-
-
-
-
-

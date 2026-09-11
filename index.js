@@ -56,7 +56,10 @@ function exigirLogin(req, res, next) {
 // ===================== Rotas das APIs (Dados JSON) =====================
 backend.use("/cliente", rotasCliente);
 backend.use("/usuario", rotasCliente); // Suporte para rotas atreladas a /usuario
-backend.use("/api/profissionais", profissionalRotas);
+
+// Adicione ou substitua por estas duas linhas abaixo:
+backend.use("/profissional", profissionalRotas); 
+backend.use("/api/profissionais", profissionalRotas); // Mantém compatibilidade caso use em outro lugar
 
 // Rota do Chatbot com IA (com tentativas automáticas em caso de oscilação)
 backend.post("/api/chatbot", async (req, res) => {
@@ -118,6 +121,11 @@ backend.get("/login", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "login.html"));
 });
 
+backend.get("/login-profissional", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "login-profissional.html"));
+});
+
+
 backend.get("/cadastro", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "cadastro.html"));
 });
@@ -129,6 +137,11 @@ backend.get("/verificacao", (req, res) => {
 // Página Visual de Profissionais
 backend.get("/profissionais", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "profissionais.html"));
+});
+
+// Rota do Painel do Profissional
+backend.get("/painel-profissional", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "painel-profissional.html"));
 });
 
 // ===================== Páginas Protegidas =====================

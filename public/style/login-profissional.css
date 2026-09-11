@@ -1,0 +1,191 @@
+        /* Reset básico para incluir padding/borda no cálculo do tamanho */
+        * {
+            box-sizing: border-box;
+        }
+
+        /* Estilo geral do corpo da página */
+        body {
+            margin: 0;
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: linear-gradient(to right, #f5ebe0, #e6ccb2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #4a3c31;
+        }
+
+        /* Container principal que envolve os dois painéis */
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            width: 90%;
+            max-width: 1000px;
+            background-color: #fffaf6;
+            border-radius: 12px;
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        /* Painel esquerdo com mensagem de boas-vindas */
+        .left-panel {
+            flex: 1;
+            min-width: 300px;
+            background-color: #7f5539;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 50px;
+        }
+
+        .left-panel h1 {
+            font-size: 32px;
+            margin-bottom: 15px;
+        }
+
+        .left-panel p {
+            font-size: 15px;
+            max-width: 350px;
+            line-height: 1.5;
+        }
+
+        /* Painel direito com formulário de login */
+        .right-panel {
+            flex: 1;
+            min-width: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 50px;
+        }
+
+        /* Caixa que contém o formulário */
+        .login-box {
+            width: 100%;
+            max-width: 350px;
+            text-align: center;
+        }
+
+        .login-box h2 {
+            color: #7f5539;
+            margin-bottom: 20px;
+        }
+
+        /* Estilo dos campos de entrada */
+        .login-box input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #d9c5b2;
+            border-radius: 5px;
+            font-size: 14px;
+            background-color: #f5ebe0;
+            color: #4a3c31;
+        }
+
+        /* Placeholder dos inputs */
+        .login-box input::placeholder {
+            color: #7f5539;
+        }
+
+        /* Botão de envio */
+        .login-box input[type="submit"] {
+            background-color: #7f5539;
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        /* Efeito hover no botão */
+        .login-box input[type="submit"]:hover {
+            background-color: #9c6644;
+        }
+
+        /* Área do Botão do Google */
+        .google-btn-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 15px;
+        }
+
+        /* Área de opções (checkbox + link) */
+        .options {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            margin: 10px 0;
+            align-items: center;
+        }
+
+        /* Estilo do checkbox e texto */
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        /* Links */
+        .options a {
+            color: #7f5539;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .options a:hover {
+            color: #9c6644;
+            text-decoration: underline;
+        }
+
+        /* Área social */
+        .social {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 14px;
+            color: #7f5539;
+        }
+
+        .social a {
+            color: #7f5539;
+            text-decoration: none;
+            margin: 0 8px;
+        }
+
+        .social a:hover {
+            color: #9c6644;
+        }
+
+        /* Rodapé */
+        footer {
+            text-align: center;
+            font-size: 12px;
+            color: #7f5539;
+            margin-top: 30px;
+        }
+
+        /* Responsividade para telas menores */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .left-panel,
+            .right-panel {
+                align-items: center;
+                text-align: center;
+            }
+
+            .left-panel {
+                padding: 30px;
+            }
+
+            .right-panel {
+                padding: 30px;
+            }
+        }
+    

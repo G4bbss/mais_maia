@@ -7,7 +7,214 @@
     <title>Maia - Rede de Apoio Materno</title>
     <link rel="icon" href="img/maiaFavicon.png" type="image/png">
     <link rel="stylesheet" href="style/style.css">
+    <!-- Ícones FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+    <style>
+        /* ===================== ESTILOS DO MODAL DE SELEÇÃO DE PERFIL ===================== */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.55);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .selection-card {
+            position: relative;
+            width: 100%;
+            max-width: 760px;
+            background-color: #fffaf6;
+            border-radius: 14px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            animation: modalFadeIn 0.3s ease-out;
+        }
+
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 12px;
+            right: 18px;
+            background: none;
+            border: none;
+            font-size: 28px;
+            color: #fff;
+            cursor: pointer;
+            z-index: 10;
+            line-height: 1;
+        }
+
+        .modal-close:hover {
+            color: #e6ccb2;
+        }
+
+        .selection-header {
+            background-color: #7f5539;
+            color: #fff;
+            padding: 16px 28px;
+        }
+
+        .selection-header h2 {
+            font-size: 14px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #e6ccb2;
+        }
+
+        .selection-body {
+            padding: 35px 28px;
+        }
+
+        .selection-body .section-heading {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .selection-body .section-heading .eyebrow {
+            font-size: 12px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #9c6644;
+            font-weight: bold;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .selection-body .section-heading h1 {
+            font-size: 24px;
+            color: #7f5539;
+            margin-bottom: 8px;
+        }
+
+        .selection-body .section-heading p {
+            max-width: 520px;
+            margin: 0 auto;
+            color: #6b5744;
+            font-size: 14px;
+        }
+
+        .profiles-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .profile-option {
+            flex: 1;
+            background-color: #f5ebe0;
+            border: 1px solid #d9c5b2;
+            border-radius: 12px;
+            padding: 24px 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .profile-option:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        .icon-wrapper {
+            width: 58px;
+            height: 58px;
+            border-radius: 50%;
+            background-color: #e6ccb2;
+            color: #7f5539;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 14px;
+        }
+
+        .tag-badge {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: bold;
+            padding: 4px 10px;
+            border-radius: 20px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tag-root {
+            background-color: #ead9f0;
+            color: #55305e;
+        }
+
+        .tag-user {
+            background-color: #dcefdc;
+            color: #2f5233;
+        }
+
+        .profile-option h3 {
+            color: #7f5539;
+            font-size: 19px;
+            margin-bottom: 6px;
+        }
+
+        .profile-option p {
+            font-size: 13px;
+            color: #6b5744;
+            margin-bottom: 20px;
+            flex-grow: 1;
+        }
+
+        .profile-option .btn {
+            width: 100%;
+        }
+
+        .separator-or {
+            font-size: 16px;
+            font-weight: bold;
+            color: #9c6644;
+            padding: 0 8px;
+            user-select: none;
+        }
+
+        @media (max-width: 680px) {
+            .profiles-container {
+                flex-direction: column;
+            }
+
+            .separator-or {
+                margin: 8px 0;
+            }
+
+            .selection-body {
+                padding: 25px 18px;
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -23,25 +230,17 @@
             </nav>
 
             <div class="nav-cta">
-                <a href="/login" class="btn btn-outline">Entrar</a>
+                <a href="#" id="btnEntrar" class="btn btn-outline">Entrar</a>
                 <a href="/cadastro" class="btn btn-filled">Cadastre-se</a>
             </div>
 
             <!--foto de perfil-->
             <div class="header-side" style="display: flex; justify-content: center; align-items: center;">
-                <a href="../perfil.html">
+                <a href="/perfil">
                     <img src="./img/perfil.jpg" class="user-icon" id="foto-cabecalho" alt="Perfil"
                         style="width: 60px; height: 60px; object-fit: cover; border-radius: 50%; border: 3px solid #8B4513;">
                 </a>
             </div>
-        </div>
-
-        <!--<button class="menu-toggle" id="menuToggle" aria-label="Abrir menu">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>-->
-
         </div>
     </header>
 
@@ -342,11 +541,101 @@
         </div>
     </section>
 
+    <!-- ===================== MODAL DE SELEÇÃO DE PERFIL ===================== -->
+    <div id="modalPerfil" class="modal-overlay">
+        <div class="selection-card">
+            <button class="modal-close" id="closeModal" aria-label="Fechar">&times;</button>
+            
+            <div class="selection-header">
+                <h2>Acesso ao Portal Maia</h2>
+            </div>
 
+            <div class="selection-body">
+                <div class="section-heading">
+                    <span class="eyebrow">Múltiplos Perfis Detectados</span>
+                    <h1>Escolha o perfil de acesso</h1>
+                    <p>Selecione com qual nível de permissão você gostaria de navegar no sistema neste momento.</p>
+                </div>
 
-    
+                <div class="profiles-container">
+                    <!-- Opção ROOT -->
+                    <div class="profile-option">
+                        <div class="icon-wrapper">
+                            <i class="fa-solid fa-user-shield"></i>
+                        </div>
+                        <span class="tag-badge tag-profissional">Admin</span>
+                        <h3>Profissional</h3>
+                        <p>Acesso total às configurações avançadas, gestão de usuários e logs do sistema.</p>
+                        <button class="btn btn-filled" onclick="selecionarPerfil('profissional')">
+                            <i class="fa-solid fa-right-to-bracket"></i> Entrar como profissional
+                        </button>
+                    </div>
+
+                    <!-- Separador OU -->
+                    <div class="separator-or">
+                        <span>OU</span>
+                    </div>
+
+                    <!-- Opção USUÁRIO -->
+                    <div class="profile-option">
+                        <div class="icon-wrapper">
+                            <i class="fa-solid fa-user"></i>
+                        </div>
+                        <span class="tag-badge tag-user">Padrão</span>
+                        <h3>Usuário</h3>
+                        <p>Acesso regular às funcionalidades operacionais e rotinas do dia a dia.</p>
+                        <button class="btn btn-outline" onclick="selecionarPerfil('usuario')">
+                            <i class="fa-solid fa-right-to-bracket"></i> Entrar como Usuário
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts externos -->
     <script src="script/script.js"></script>
+
+    <!-- Controladores do Modal e Redirecionamentos -->
+    <script>
+        const btnEntrar = document.getElementById('btnEntrar');
+        const modalPerfil = document.getElementById('modalPerfil');
+        const closeModal = document.getElementById('closeModal');
+
+        // Abre o modal ao clicar no botão "Entrar" do topo
+        if (btnEntrar) {
+            btnEntrar.addEventListener('click', (e) => {
+                e.preventDefault();
+                modalPerfil.classList.add('active');
+            });
+        }
+
+        // Fecha o modal no botão 'X'
+        if (closeModal) {
+            closeModal.addEventListener('click', () => {
+                modalPerfil.classList.remove('active');
+            });
+        }
+
+        // Fecha o modal ao clicar fora da caixa
+        window.addEventListener('click', (e) => {
+            if (e.target === modalPerfil) {
+                modalPerfil.classList.remove('active');
+            }
+        });
+
+        // Função de Redirecionamento
+        function selecionarPerfil(tipoPerfil) {
+            if (tipoPerfil === 'usuario') {
+                // Redireciona para a rota /login existente no backend Node.js
+                window.location.href = '/login';
+            } else if (tipoPerfil === 'profissional') {
+                // Redireciona para a rota /login-profissional existente no backend Node.js
+                window.location.href = '/login-profissional';
+            }
+        }
+    </script>
 
 </body>
 
-</html>
+</html> 

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-BR"> <!-- Define que o documento é HTML5 e está em português do Brasil -->
+
+<head>
+    <meta charset="UTF-8"> <!-- Garante suporte a acentos e caracteres especiais -->
+    <title>Login - Maia</title> <!-- Título da aba do navegador -->
+    <link rel="icon" href="img/maiaFavicon.png" type="image/png">
+<link rel="stylesheet" href="style/login.css"> <!-- Link para o arquivo CSS externo -->
+   
+
+</head>
+
+<body>
+    <!-- Container principal -->
+    <div class="container">
+
+        <!-- Painel esquerdo com mensagem -->
+        <div class="left-panel">
+            <h1>Bem-vinda, mamãe!</h1>
+            <p>Estamos aqui para apoiar você no pós-parto, oferecendo ajuda emocional, física e psicológica.</p>
+        </div>
+
+        <!-- Painel direito com formulário -->
+        <div class="right-panel">
+            <div class="login-box">
+                <h2>Login</h2>
+
+                <!-- Formulário de login -->
+                <form method="POST" action="/cliente/login">
+                    <input type="email" name="Email" placeholder="Endereço de e-mail" required>
+                    <input type="password" name="Senha" placeholder="Senha" required>
+
+                    <!-- Opções extras -->
+                    <div class="options">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="lembrar"> Lembrar-me
+                        </label>
+                        <!-- BOTÃO ESQUECEU A SENHA CORRIGIDO -->
+                        <a href="#" onclick="esqueciMinhaSenha(event)">Esqueceu a senha?</a>
+                    </div>
+
+                    <!-- Botão de envio -->
+                    <input type="submit" value="Entrar">
+                </form>
+
+
+                <!-- Redes sociais -->
+                <div class="social">
+                    <span>Siga:</span>
+                    <a href="https://www.instagram.com/mmaiabrasil/" target="_blank">@mmaiabrasil</a>
+                </div>
+
+                <!-- Rodapé -->
+                <footer>
+                    © 2026 Maia - Todos os direitos reservados
+                </footer>
+            </div>
+        </div>
+    </div>
+
+   <script src="js/login-profissional.js"></script> <!-- Link para o arquivo JS externo -->
+
+</body>
+
+</html>

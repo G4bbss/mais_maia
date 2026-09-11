@@ -118,3 +118,70 @@ async function esqueciMinhaSenha(e) {
 
 window.esqueciMinhaSenha = esqueciMinhaSenha;
 
+/// =========================================================================
+// 3. EVENTOS DOM (INICIALIZAÇÃO E FORMULÁRIO)
+// =========================================================================
+
+document.addEventListener("DOMContentLoaded", () => {
+    // 1. Inicializa o botão Google Sign-In
+    inicializarGoogleSignIn();
+
+    // 2. Restaura dados salvos pelo "Lembrar-me"
+    const savedEmail = localStorage.getItem("email");
+    const savedCheck = localStorage.getItem("lembrar");
+    const emailInput = document.querySelector('input[name="Email"]');
+    const lembrarCheck = document.getElementById("lembrar");
+
+    if (savedEmail && savedCheck === "true") {
+        if (emailInput) emailInput.value = savedEmail;
+        if (lembrarCheck) lembrarCheck.checked = true;
+    }
+
+    // 3. Submissão do formulário consultando o banco via API
+    const formLogin = document.querySelector("form");
+    if (formLogin) {
+        formLogin.addEventListener("submit", async function (e) {
+            e.preventDefault();
+
+            const senhaInput = document.querySelector('input[name="Senha"]');
+            const email = emailInput ? emailInput.value.trim() : "";
+            const senha = senhaInput ? senhaInput.value.trim() : "";
+
+            if (!email || !senha) {
+                alert("Por favor, preencha o e-mail e a senha.");
+                return;
+            }
+
+            try {
+                const res = await fetch("/profissional/login", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email, senha })
+                });
+
+                const data = await res.json();
+
+                if (res.ok && data.ok) {
+                    // Gerenciamento do "Lembrar-me"
+                    if (lembrarCheck) {
+                        if (lembrarCheck.checked && email) {
+                            localStorage.setItem("email", email);
+                            localStorage.setItem("lembrar", "true");
+                        } else {
+                            localStorage.removeItem("email");
+                            localStorage.removeItem("lembrar");
+                        }
+                    }
+
+                    // Redireciona para o painel do profissional
+                    window.location.href = data.redirect || "/painel-profissional";
+                } else {
+                    alert(data.erro || "E-mail ou senha incorretos.");
+                }
+            } catch (erro) {
+                console.error("Erro no login:", erro);
+                alert("Erro ao conectar com o servidor.");
+            }
+        });
+    }
+});
