@@ -760,3 +760,25 @@ export const cancelarAgendamento = async (req, res) => {
     return res.status(500).json({ ok: false, erro: "Erro ao processar cancelamento: " + erro.message });
   }
 };
+
+
+
+
+export async function removerContato(req, res) {
+  try {
+    const emailUsuario = req.session.usuarioEmail;
+    const { id } = req.params; // ID ou índice do contato enviado pela URL
+
+    // Exemplo de lógica (ajuste conforme seu banco de dados/Model):
+    // Se seus contatos tiverem _id:
+    // await ClienteModel.updateOne(
+    //   { Email: emailUsuario },
+    //   { $pull: { contatos: { _id: id } } }
+    // );
+
+    return res.status(200).json({ mensagem: "Contato removido com sucesso!" });
+  } catch (erro) {
+    console.error("Erro ao remover contato:", erro);
+    return res.status(500).json({ erro: "Erro ao remover contato." });
+  }
+}

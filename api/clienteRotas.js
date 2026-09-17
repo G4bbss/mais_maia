@@ -33,14 +33,13 @@ router.get("/perfil", exigirLoginApi, clienteController.paginaPerfil);
 router.post("/perfil", exigirLoginApi, clienteController.atualizarPerfil);
 router.post("/atualizar-perfil", exigirLoginApi, clienteController.atualizarPerfil);
 
+// 🔹 NOVA ROTA: Remover Contato de Apoio
+router.delete("/contato/:id", exigirLoginApi, clienteController.removerContato);
+
 // ===================== Agendamentos =====================
 router.post("/agendamento", clienteController.agendarConsulta);
 router.get("/meus-agendamento/:email", clienteController.meusAgendamentos);
 router.post("/cancelar-agendamento", clienteController.cancelarAgendamento);
-
-
-
-
 
 // ✅ Exportação padrão para funcionar com ES Modules
 export default router;

@@ -163,17 +163,6 @@ backend.get("/telemedicina", exigirLogin, (req, res) => {
   res.sendFile(path.join(__dirname, "public", "telemedicina.html"));
 });
 
-// Páginas em construção
-const paginasEmConstrucao = [
-  "/diario",
-  "/rede-apoio"
-];
-
-paginasEmConstrucao.forEach((rota) => {
-  backend.get(rota, exigirLogin, (req, res) => {
-    res.send("<h2>Página em construção 🛠️</h2>");
-  });
-});
 
 // ===================== Inicialização =====================
 const PORT = process.env.PORT || 3000;

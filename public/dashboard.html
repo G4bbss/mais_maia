@@ -28,23 +28,25 @@
             <span class="rodape-sidebar">© 2026 Maia</span>
         </aside>
 
-        <!-- ===================== BARRA LATERAL DE ACESSIBILIDADE ===================== -->
+       <!-- ===================== BARRA LATERAL DE ACESSIBILIDADE ===================== -->
         <div class="barra-acessibilidade">
             <div style="position: relative;">
-                <button class="btn-acessibilidade" onclick="togglePainelContraste()" title="Ajustar Contraste">
+                <button class="btn-acessibilidade" onclick="toggleMenuTema()" title="Aparência e Contraste">
                     🌓
                 </button>
-                <div id="painelContraste" class="painel-ajuste-contraste">
-                    <label for="rangeContraste">Contraste: <span id="valorContrasteTxt">100%</span></label>
-                    <input type="range" id="rangeContraste" min="30" max="100" value="100"
-                        oninput="ajustarContraste(this.value)">
+                <div id="painelTema" class="painel-ajuste-tema">
+                   
+                    <select id="selectTema" onchange="mudarTema(this.value)">
+                        <option value="claro">Claro</option>
+                        <option value="escuro">Escuro</option>
+                        <option value="alto-contraste">Alto Contraste</option>
+                    </select>
                 </div>
             </div>
             <button class="btn-acessibilidade" onclick="iniciarChatAssistente()" title="Abrir Chat com Camila">
                 🤖
             </button>
         </div>
-
         <!-- ===================== WIDGET DA ASSISTENTE VIRTUAL ===================== -->
         <div class="assistente-widget" id="widgetAssistente">
             <div class="assistente-balao" id="balaoAssistente">

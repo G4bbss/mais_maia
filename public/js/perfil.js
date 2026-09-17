@@ -95,10 +95,37 @@ document.getElementById("btnAdicionarContato").addEventListener("click", functio
     renderizarContatos();
 });
 
-function removerContato(index) {
+async function removerContato(index) {
+    // 1. Remove do array local e atualiza a tela
     listaContatos.splice(index, 1);
     renderizarContatos();
+
+    // 2. Prepara os dados para salvar no banco
+    const dados = {
+        Nome: document.getElementById("nome").value,
+        Telefone: document.getElementById("telefone").value,
+        Fase: document.getElementById("fase").value,
+        SemanasGestacao: document.getElementById("semanas").value,
+        contatos: listaContatos
+    };
+
+    // 3. Atualiza o banco de dados
+    try {
+        const resposta = await fetch("/cliente/perfil", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(dados)
+        });
+
+        if (!resposta.ok) {
+            throw new Error("Erro ao salvar alteração");
+        }
+    } catch (erro) {
+        console.error("Erro ao remover no banco:", erro);
+        alert("Não foi possível salvar a remoção no banco de dados.");
+    }
 }
+
 
 document.getElementById("formPerfil").addEventListener("submit", function (evento) {
     evento.preventDefault();

@@ -1,24 +1,48 @@
-        /* CONTROLE DE CONTRASTE MANUALL */
-        function togglePainelContraste() {
-            const painel = document.getElementById("painelContraste");
-            if (painel) {
-                painel.classList.toggle("aberto");
-            }
-        }
+/* ===================== CONTROLE DE TEMAS ===================== */
 
-        function ajustarContraste(valor) {
-            document.documentElement.style.filter = `contrast(${valor}%)`;
-            const txt = document.getElementById("valorContrasteTxt");
-            if (txt) txt.textContent = `${valor}%`;
-            localStorage.setItem("maia_valor_contraste", valor);
-        }
+function toggleMenuTema() {
+    const painel = document.getElementById("painelTema");
+    if (painel) {
+        painel.style.display = painel.style.display === "block" ? "none" : "block";
+    }
+}
 
-        document.addEventListener("DOMContentLoaded", function () {
-            const contrasteSalvo = localStorage.getItem("maia_valor_contraste") || "100";
-            ajustarContraste(contrasteSalvo);
-            const rangeEl = document.getElementById("rangeContraste");
-            if (rangeEl) rangeEl.value = contrasteSalvo;
-        });
+function mudarTema(nomeTema) {
+    const html = document.documentElement;
+    
+    // Remove classes anteriores
+    html.classList.remove("tema-claro", "tema-escuro", "tema-alto-contraste");
+    
+    // Adiciona o tema escolhido
+    html.classList.add(`tema-${nomeTema}`);
+    
+    // Salva a preferência
+    localStorage.setItem("maia_tema_preferido", nomeTema);
+}
+
+// Carrega o tema salvo ao iniciar
+document.addEventListener("DOMContentLoaded", function () {
+    const temaSalvo = localStorage.getItem("maia_tema_preferido") || "claro";
+    mudarTema(temaSalvo);
+    
+    const selectEl = document.getElementById("selectTema");
+    if (selectEl) {
+        selectEl.value = temaSalvo;
+    }
+});
+
+// Fecha o painel de tema se o usuário clicar fora dele
+document.addEventListener("click", function (e) {
+    const painel = document.getElementById("painelTema");
+    const btnTema = e.target.closest(".btn-acessibilidade");
+    
+    if (painel && !painel.contains(e.target) && !btnTema) {
+        painel.style.display = "none";
+    }
+});
+
+
+
 
         /* FUNÇÕES DA ASSISTENTE VIRTUAL & CHAT CONTROLES */
         function fecharBalaoAssistente() {
