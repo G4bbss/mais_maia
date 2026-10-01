@@ -1,7 +1,5 @@
-
-
 // =========================================================================
-// 2. RECUPERAÇÃO DE SENHA
+// 1. RECUPERAÇÃO DE SENHA (REDE DE APOIO)
 // =========================================================================
 
 /**
@@ -12,12 +10,12 @@ async function esqueciMinhaSenha(e) {
 
     const emailInput = document.querySelector('input[name="Email"]');
     const emailValor = emailInput ? emailInput.value.trim() : "";
-    const email = prompt("Digite seu e-mail cadastrado para redefinir a senha:", emailValor);
+    const email = prompt("Digite seu e-mail cadastrado na Rede de Apoio para redefinir a senha:", emailValor);
 
     if (!email || !email.trim()) return;
 
     try {
-        const res = await fetch("/cliente/esqueci-senha", {
+        const res = await fetch("/rede-apoio/esqueci-senha", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ Email: email.trim() })
@@ -34,7 +32,7 @@ async function esqueciMinhaSenha(e) {
             const novaSenha = prompt("Digite a sua nova senha:");
             if (!novaSenha || !novaSenha.trim()) return;
 
-            const resRedefinir = await fetch("/cliente/redefinir-senha", {
+            const resRedefinir = await fetch("/rede-apoio/redefinir-senha", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -55,24 +53,22 @@ async function esqueciMinhaSenha(e) {
             alert(data.erro || "Não foi possível processar a solicitação.");
         }
     } catch (erro) {
-        console.error("Erro na recuperação de senha:", erro);
+        console.error("Erro na recuperação de senha da Rede de Apoio:", erro);
         alert("Erro ao conectar com o servidor.");
     }
 }
 
 window.esqueciMinhaSenha = esqueciMinhaSenha;
 
-/// =========================================================================
-// 3. EVENTOS DOM (INICIALIZAÇÃO E FORMULÁRIO)
+// =========================================================================
+// 2. EVENTOS DOM (INICIALIZAÇÃO E FORMULÁRIO)
 // =========================================================================
 
 document.addEventListener("DOMContentLoaded", () => {
-    // 1. Inicializa o botão Google Sign-In
-    inicializarGoogleSignIn();
 
-    // 2. Restaura dados salvos pelo "Lembrar-me"
-    const savedEmail = localStorage.getItem("email");
-    const savedCheck = localStorage.getItem("lembrar");
+    // 1. Restaura dados salvos pelo "Lembrar-me" (Usando chave exclusiva para Rede de Apoio)
+    const savedEmail = localStorage.getItem("email_rede_apoio");
+    const savedCheck = localStorage.getItem("lembrar_rede_apoio");
     const emailInput = document.querySelector('input[name="Email"]');
     const lembrarCheck = document.getElementById("lembrar");
 
@@ -81,7 +77,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (lembrarCheck) lembrarCheck.checked = true;
     }
 
-    // 3. Submissão do formulário consultando o banco via API
+    // 2. Submissão do formulário consultando o banco na tabela rede_apoio via API
     const formLogin = document.querySelector("form");
     if (formLogin) {
         formLogin.addEventListener("submit", async function (e) {
@@ -97,7 +93,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             try {
-                const res = await fetch("/profissional/login", {
+                const res = await fetch("/rede-apoio/login", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ email, senha })
@@ -109,21 +105,21 @@ document.addEventListener("DOMContentLoaded", () => {
                     // Gerenciamento do "Lembrar-me"
                     if (lembrarCheck) {
                         if (lembrarCheck.checked && email) {
-                            localStorage.setItem("email", email);
-                            localStorage.setItem("lembrar", "true");
+                            localStorage.setItem("email_rede_apoio", email);
+                            localStorage.setItem("lembrar_rede_apoio", "true");
                         } else {
-                            localStorage.removeItem("email");
-                            localStorage.removeItem("lembrar");
+                            localStorage.removeItem("email_rede_apoio");
+                            localStorage.removeItem("lembrar_rede_apoio");
                         }
                     }
 
-                    // Redireciona para o painel do profissional
-                    window.location.href = data.redirect || "/painel-profissional";
+                    // Redireciona para o painel exclusivo da Rede de Apoio
+                    window.location.href = data.redirect || "/painel-rede-apoio";
                 } else {
                     alert(data.erro || "E-mail ou senha incorretos.");
                 }
             } catch (erro) {
-                console.error("Erro no login:", erro);
+                console.error("Erro no login da Rede de Apoio:", erro);
                 alert("Erro ao conectar com o servidor.");
             }
         });

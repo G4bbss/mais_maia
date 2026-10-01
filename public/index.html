@@ -34,7 +34,7 @@
         .selection-card {
             position: relative;
             width: 100%;
-            max-width: 760px;
+            max-width: 980px; /* Aumentado para acomodar os 3 cards */
             background-color: #fffaf6;
             border-radius: 14px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
@@ -82,6 +82,7 @@
             letter-spacing: 1px;
             text-transform: uppercase;
             color: #e6ccb2;
+            margin: 0;
         }
 
         .selection-body {
@@ -118,9 +119,9 @@
 
         .profiles-container {
             display: flex;
-            align-items: center;
+            align-items: stretch;
             justify-content: center;
-            gap: 20px;
+            gap: 15px;
         }
 
         .profile-option {
@@ -128,7 +129,7 @@
             background-color: #f5ebe0;
             border: 1px solid #d9c5b2;
             border-radius: 12px;
-            padding: 24px 20px;
+            padding: 24px 18px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
             transition: transform 0.3s, box-shadow 0.3s;
             display: flex;
@@ -166,7 +167,7 @@
             letter-spacing: 0.5px;
         }
 
-        .tag-root {
+        .tag-root, .tag-profissional {
             background-color: #ead9f0;
             color: #55305e;
         }
@@ -174,6 +175,11 @@
         .tag-user {
             background-color: #dcefdc;
             color: #2f5233;
+        }
+
+        .tag-apoio {
+            background-color: #e0f2fe;
+            color: #0369a1;
         }
 
         .profile-option h3 {
@@ -191,27 +197,182 @@
 
         .profile-option .btn {
             width: 100%;
+            text-align: center;
+            box-sizing: border-box;
+            text-decoration: none;
         }
 
         .separator-or {
-            font-size: 16px;
+            display: flex;
+            align-items: center;
+            font-size: 14px;
             font-weight: bold;
             color: #9c6644;
-            padding: 0 8px;
+            padding: 0 4px;
             user-select: none;
         }
 
-        @media (max-width: 680px) {
+        /* ===================== ESTILOS DA INTERFACE DA REDE DE APOIO ===================== */
+        .rede-apoio-block {
+            background-color: #fff8f0;
+            padding: 50px 24px;
+            border-radius: 18px;
+            margin: 40px auto;
+            max-width: 1200px;
+            border: 1px solid #f0e0d0;
+        }
+
+        .rede-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 30px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .rede-search-input, .rede-filter-select {
+            padding: 10px 16px;
+            border: 1px solid #d9c5b2;
+            border-radius: 8px;
+            font-size: 14px;
+            background-color: #fff;
+            color: #7f5539;
+            outline: none;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+        }
+
+        .rede-search-input:focus, .rede-filter-select:focus {
+            border-color: #7f5539;
+        }
+
+        .rede-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+        }
+
+        .voluntario-card {
+            background: #ffffff;
+            border: 1px solid #e6ccb2;
+            border-radius: 14px;
+            padding: 22px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .voluntario-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+        }
+
+        .voluntario-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 14px;
+        }
+
+        .voluntario-avatar {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background-color: #7f5539;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .voluntario-info h4 {
+            margin: 0;
+            color: #7f5539;
+            font-size: 17px;
+        }
+
+        .voluntario-info span {
+            font-size: 12px;
+            color: #8c735d;
+            display: block;
+            margin-top: 2px;
+        }
+
+        .voluntario-body p {
+            font-size: 13px;
+            color: #5c4a3a;
+            line-height: 1.5;
+            margin-bottom: 14px;
+        }
+
+        .voluntario-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 16px;
+        }
+
+        .badge-tipo {
+            font-size: 11px;
+            background-color: #f5ebe0;
+            color: #7f5539;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+
+        .voluntario-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 14px;
+            border-top: 1px solid #f0e6df;
+        }
+
+        .status-badge {
+            font-size: 12px;
+            color: #2e7d32;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 500;
+        }
+
+        .status-badge::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background-color: #2e7d32;
+            border-radius: 50%;
+        }
+
+        @media (max-width: 850px) {
             .profiles-container {
                 flex-direction: column;
             }
 
             .separator-or {
+                justify-content: center;
                 margin: 8px 0;
             }
 
             .selection-body {
                 padding: 25px 18px;
+            }
+
+            .rede-filters {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .rede-search-input, .rede-filter-select {
+                width: 100%;
             }
         }
     </style>
@@ -226,6 +387,7 @@
 
             <nav class="nav-links" id="navLinks">
                 <a href="#funcionalidades">Funcionalidades</a>
+                <a href="#rede-apoio">Rede de Apoio</a>
                 <a href="#dicas">Dicas</a>
             </nav>
 
@@ -327,7 +489,7 @@
                 <h3>Rede de apoio</h3>
                 <p>Encontre pessoas disponíveis para ajudar no dia a dia. Veja distância, atividades oferecidas e
                     disponibilidade de cada voluntário.</p>
-                <a href="/rede-apoio" class="card-link">Encontrar apoio →</a>
+                <a href="#rede-apoio" class="card-link">Encontrar apoio →</a>
             </div>
 
             <div class="card">
@@ -368,6 +530,149 @@
             <div class="fase-item">
                 <strong>Puerpério remoto</strong>
                 <span>Após o 45º dia, podendo se estender até um ano — fase de readaptação plena.</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===================== BLOCO DE INTERFACE DA REDE DE APOIO ===================== -->
+    <section id="rede-apoio" class="rede-apoio-block">
+        <div class="section-heading">
+            <span class="eyebrow">Conexões Locais</span>
+            <h2 style="color: #7f5539;">Rede de Apoio Interativa</h2>
+            <p>Encontre voluntários e apoiadores próximos dispostos a ajudar no seu dia a dia durante o pós-parto.</p>
+        </div>
+
+        <!-- Filtros e Busca -->
+        <div class="rede-filters">
+            <div style="position: relative; flex: 1; max-width: 380px; min-width: 240px;">
+                <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #9c6644;"></i>
+                <input type="text" id="inputBuscaRede" class="rede-search-input" placeholder="Buscar por nome, bairro ou tipo de ajuda..." style="padding-left: 38px; width: 100%;">
+            </div>
+            
+            <select id="selectTipoAjuda" class="rede-filter-select">
+                <option value="">Todas as categorias de ajuda</option>
+                <option value="bebe">Cuidados com o bebê</option>
+                <option value="domestico">Apoio doméstico</option>
+                <option value="noturno">Acompanhamento noturno</option>
+                <option value="escuta">Escuta empática / Conversa</option>
+            </select>
+
+            <select id="selectDistancia" class="rede-filter-select">
+                <option value="">Qualquer distância</option>
+                <option value="2">Até 2 km</option>
+                <option value="3">Até 3 km</option>
+                <option value="5">Até 5 km</option>
+            </select>
+        </div>
+
+        <!-- Grid de Voluntários da Rede de Apoio -->
+        <div class="rede-grid" id="gridVoluntarios">
+            <!-- Card 1 -->
+            <div class="voluntario-card" data-categoria="bebe" data-distancia="2.4">
+                <div>
+                    <div class="voluntario-header">
+                        <div class="voluntario-avatar">CM</div>
+                        <div class="voluntario-info">
+                            <h4>Cláudia Martins</h4>
+                            <span><i class="fa-solid fa-location-dot"></i> 2.4 km de distância · Centro</span>
+                            <div class="stars" style="color: #f39c12; font-size: 13px; margin-top: 2px;">★★★★★ (4.9)</div>
+                        </div>
+                    </div>
+                    <div class="voluntario-body">
+                        <p>Mãe de 2 filhos, voluntária para auxiliar com cuidados básicos do recém-nascido e proporcionar um momento de descanso para a mãe.</p>
+                        <div class="voluntario-tags">
+                            <span class="badge-tipo">Cuidados com o bebê</span>
+                            <span class="badge-tipo">Primeiros cuidados</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="voluntario-footer">
+                    <span class="status-badge">Disponível hoje</span>
+                    <button class="btn btn-filled" style="padding: 6px 14px; font-size: 13px;" onclick="solicitarApoio('Cláudia Martins')">
+                        <i class="fa-regular fa-paper-plane"></i> Conectar
+                    </button>
+                </div>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="voluntario-card" data-categoria="domestico" data-distancia="4.1">
+                <div>
+                    <div class="voluntario-header">
+                        <div class="voluntario-avatar">RS</div>
+                        <div class="voluntario-info">
+                            <h4>Renata Souza</h4>
+                            <span><i class="fa-solid fa-location-dot"></i> 4.1 km de distância · Jd. das Flores</span>
+                            <div class="stars" style="color: #f39c12; font-size: 13px; margin-top: 2px;">★★★★☆ (4.8)</div>
+                        </div>
+                    </div>
+                    <div class="voluntario-body">
+                        <p>Ofereço apoio na organização da casa, pequenos serviços domésticos e rotina de refeições leves para a puérpera.</p>
+                        <div class="voluntario-tags">
+                            <span class="badge-tipo">Apoio doméstico</span>
+                            <span class="badge-tipo">Organização</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="voluntario-footer">
+                    <span class="status-badge">Disponível esta semana</span>
+                    <button class="btn btn-filled" style="padding: 6px 14px; font-size: 13px;" onclick="solicitarApoio('Renata Souza')">
+                        <i class="fa-regular fa-paper-plane"></i> Conectar
+                    </button>
+                </div>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="voluntario-card" data-categoria="noturno" data-distancia="1.8">
+                <div>
+                    <div class="voluntario-header">
+                        <div class="voluntario-avatar">JA</div>
+                        <div class="voluntario-info">
+                            <h4>Juliana Alves</h4>
+                            <span><i class="fa-solid fa-location-dot"></i> 1.8 km de distância · Vila Nova</span>
+                            <div class="stars" style="color: #f39c12; font-size: 13px; margin-top: 2px;">★★★★★ (5.0)</div>
+                        </div>
+                    </div>
+                    <div class="voluntario-body">
+                        <p>Doula e mãe experiente. Disponível para suporte noturno, auxílio na amamentação e acolhimento nas madrugadas mais difíceis.</p>
+                        <div class="voluntario-tags">
+                            <span class="badge-tipo">Acompanhamento noturno</span>
+                            <span class="badge-tipo">Amamentação</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="voluntario-footer">
+                    <span class="status-badge">Disponível finais de semana</span>
+                    <button class="btn btn-filled" style="padding: 6px 14px; font-size: 13px;" onclick="solicitarApoio('Juliana Alves')">
+                        <i class="fa-regular fa-paper-plane"></i> Conectar
+                    </button>
+                </div>
+            </div>
+
+            <!-- Card 4 -->
+            <div class="voluntario-card" data-categoria="escuta" data-distancia="3.0">
+                <div>
+                    <div class="voluntario-header">
+                        <div class="voluntario-avatar">MB</div>
+                        <div class="voluntario-info">
+                            <h4>Mariana Barbosa</h4>
+                            <span><i class="fa-solid fa-location-dot"></i> 3.0 km de distância · Bela Vista</span>
+                            <div class="stars" style="color: #f39c12; font-size: 13px; margin-top: 2px;">★★★★★ (4.9)</div>
+                        </div>
+                    </div>
+                    <div class="voluntario-body">
+                        <p>Acolhimento emocional, rodas de conversa e escuta atenta para puérperas que precisam trocar experiências sem julgamentos.</p>
+                        <div class="voluntario-tags">
+                            <span class="badge-tipo">Escuta empática</span>
+                            <span class="badge-tipo">Apoio Emocional</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="voluntario-footer">
+                    <span class="status-badge">Disponível hoje</span>
+                    <button class="btn btn-filled" style="padding: 6px 14px; font-size: 13px;" onclick="solicitarApoio('Mariana Barbosa')">
+                        <i class="fa-regular fa-paper-plane"></i> Conectar
+                    </button>
+                </div>
             </div>
         </div>
     </section>
@@ -445,19 +750,19 @@
         </div>
     </section>
 
-    <!-- ===================== REDE DE APOIO E PROFISSIONAIS ===================== -->
+    <!-- ===================== REDE DE APOIO E PROFISSIONAIS (RESUMO) ===================== -->
     <section>
         <div class="split-section">
             <div class="split-text">
                 <span class="eyebrow">Rede de apoio</span>
                 <h2>Ajuda de quem está por perto</h2>
-                <p>Conheça pessoas contratadas e disponíveis para ajudar no dia a dia com o bebê e com a casa.</p>
+                <p>Conheça pessoas cadastradas e disponíveis para ajudar no dia a dia com o bebê e com a casa.</p>
                 <ul>
                     <li>Veja a distância entre você e cada voluntário</li>
                     <li>Consulte a descrição das atividades oferecidas</li>
                     <li>Confira a disponibilidade antes de escolher</li>
                 </ul>
-                <a href="/rede-apoio" class="btn btn-filled">Ver rede de apoio</a>
+                <a href="#rede-apoio" class="btn btn-filled">Ver rede de apoio completa</a>
             </div>
             <div class="split-visual">
                 <div class="profile-card">
@@ -518,12 +823,11 @@
                 </div>
             </div>
             <div class="depoimento-card">
-                <p>"Minha mãe recebe os alertas do meu contato de emergência. Isso trouxe segurança pra toda a
-                    família nas primeiras semanas do bebê."</p>
+                <p>"Minha mãe recebe os alertas do meu contato de emergência. Me sinto muito mais segura sabendo que existe essa rede em volta de mim."</p>
                 <div class="depoimento-autor">
-                    <div class="profile-avatar">PT</div>
+                    <div class="profile-avatar">AM</div>
                     <div>
-                        <strong>Patrícia T.</strong>
+                        <strong>Aline M.</strong>
                         <span>Puérpera imediata</span>
                     </div>
                 </div>
@@ -531,25 +835,13 @@
         </div>
     </section>
 
-    <!-- ===================== CTA FINAL ===================== -->
-    <section>
-        <div class="cta-final">
-            <h2>Comece a cuidar de você hoje</h2>
-            <p>Crie sua conta gratuita e tenha acesso ao diário emocional, à rede de apoio e a profissionais
-                indicados para o seu momento.</p>
-            <a href="/cadastro" class="btn btn-filled">Criar minha conta</a>
-        </div>
-    </section>
-
-    <!-- ===================== MODAL DE SELEÇÃO DE PERFIL ===================== -->
-    <div id="modalPerfil" class="modal-overlay">
+    <!-- ===================== MODAL SELEÇÃO DE PERFIL ===================== -->
+    <div class="modal-overlay" id="modalPerfil">
         <div class="selection-card">
-            <button class="modal-close" id="closeModal" aria-label="Fechar">&times;</button>
-            
+            <button class="modal-close" id="btnCloseModal">&times;</button>
             <div class="selection-header">
                 <h2>Acesso ao Portal Maia</h2>
             </div>
-
             <div class="selection-body">
                 <div class="section-heading">
                     <span class="eyebrow">Múltiplos Perfis Detectados</span>
@@ -558,84 +850,111 @@
                 </div>
 
                 <div class="profiles-container">
-                    <!-- Opção ROOT -->
+                    <!-- Perfil 1: Profissional -->
                     <div class="profile-option">
                         <div class="icon-wrapper">
                             <i class="fa-solid fa-user-shield"></i>
                         </div>
-                        <span class="tag-badge tag-profissional">Admin</span>
+                        <span class="tag-badge tag-profissional">ADMIN</span>
                         <h3>Profissional</h3>
                         <p>Acesso total às configurações avançadas, gestão de usuários e logs do sistema.</p>
-                        <button class="btn btn-filled" onclick="selecionarPerfil('profissional')">
-                            <i class="fa-solid fa-right-to-bracket"></i> Entrar como profissional
-                        </button>
+                        <a href="/login-profissional" class="btn btn-filled">➜ Entrar como profissional</a>
                     </div>
 
-                    <!-- Separador OU -->
-                    <div class="separator-or">
-                        <span>OU</span>
-                    </div>
+                    <div class="separator-or">OU</div>
 
-                    <!-- Opção USUÁRIO -->
+                    <!-- Perfil 2: Usuário -->
                     <div class="profile-option">
                         <div class="icon-wrapper">
                             <i class="fa-solid fa-user"></i>
                         </div>
-                        <span class="tag-badge tag-user">Padrão</span>
+                        <span class="tag-badge tag-user">PADRÃO</span>
                         <h3>Usuário</h3>
                         <p>Acesso regular às funcionalidades operacionais e rotinas do dia a dia.</p>
-                        <button class="btn btn-outline" onclick="selecionarPerfil('usuario')">
-                            <i class="fa-solid fa-right-to-bracket"></i> Entrar como Usuário
-                        </button>
+                        <a href="/login" class="btn btn-outline">➜ Entrar como Usuário</a>
+                    </div>
+
+                    <div class="separator-or">OU</div>
+
+                    <!-- Perfil 3: Rede de Apoio -->
+                    <div class="profile-option">
+                        <div class="icon-wrapper">
+                            <i class="fa-solid fa-hands-holding-child"></i>
+                        </div>
+                        <span class="tag-badge tag-apoio">APOIO</span>
+                        <h3>Rede de Apoio</h3>
+                        <p>Acesso dedicado para voluntários e apoiadores cadastrados na comunidade.</p>
+                        <a href="/login-rede-apoio" class="btn btn-outline">➜ Entrar como Apoio</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Scripts externos -->
-    <script src="script/script.js"></script>
+    <!-- ===================== FOOTER ===================== -->
+    <footer style="background-color: #7f5539; color: #fff; padding: 30px 20px; text-align: center; margin-top: 50px;">
+        <p>&copy; 2026 Maia - Rede de Apoio Materno. Todos os direitos reservados.</p>
+    </footer>
 
-    <!-- Controladores do Modal e Redirecionamentos -->
+    <!-- ===================== SCRIPTS ===================== -->
     <script>
+        // Abrir e Fechar Modal de Login
         const btnEntrar = document.getElementById('btnEntrar');
         const modalPerfil = document.getElementById('modalPerfil');
-        const closeModal = document.getElementById('closeModal');
+        const btnCloseModal = document.getElementById('btnCloseModal');
 
-        // Abre o modal ao clicar no botão "Entrar" do topo
-        if (btnEntrar) {
-            btnEntrar.addEventListener('click', (e) => {
-                e.preventDefault();
-                modalPerfil.classList.add('active');
-            });
-        }
+        btnEntrar.addEventListener('click', (e) => {
+            e.preventDefault();
+            modalPerfil.classList.add('active');
+        });
 
-        // Fecha o modal no botão 'X'
-        if (closeModal) {
-            closeModal.addEventListener('click', () => {
-                modalPerfil.classList.remove('active');
-            });
-        }
+        btnCloseModal.addEventListener('click', () => {
+            modalPerfil.classList.remove('active');
+        });
 
-        // Fecha o modal ao clicar fora da caixa
-        window.addEventListener('click', (e) => {
+        modalPerfil.addEventListener('click', (e) => {
             if (e.target === modalPerfil) {
                 modalPerfil.classList.remove('active');
             }
         });
 
-        // Função de Redirecionamento
-        function selecionarPerfil(tipoPerfil) {
-            if (tipoPerfil === 'usuario') {
-                // Redireciona para a rota /login existente no backend Node.js
-                window.location.href = '/login';
-            } else if (tipoPerfil === 'profissional') {
-                // Redireciona para a rota /login-profissional existente no backend Node.js
-                window.location.href = '/login-profissional';
-            }
+        // Solicitar Apoio
+        function solicitarApoio(nome) {
+            alert(`Sua solicitação de conexão com ${nome} foi enviada com sucesso! Em breve o voluntário entrará em contato.`);
         }
-    </script>
 
+        // Filtros da Rede de Apoio
+        const inputBusca = document.getElementById('inputBuscaRede');
+        const selectTipo = document.getElementById('selectTipoAjuda');
+        const selectDistancia = document.getElementById('selectDistancia');
+        const cards = document.querySelectorAll('.voluntario-card');
+
+        function filtrarVoluntarios() {
+            const texto = inputBusca.value.toLowerCase();
+            const tipo = selectTipo.value;
+            const distMax = parseFloat(selectDistancia.value) || Infinity;
+
+            cards.forEach(card => {
+                const infoText = card.textContent.toLowerCase();
+                const categoriaCard = card.getAttribute('data-categoria');
+                const distanciaCard = parseFloat(card.getAttribute('data-distancia'));
+
+                const atendeTexto = infoText.includes(texto);
+                const atendeTipo = !tipo || categoriaCard === tipo;
+                const atendeDistancia = distanciaCard <= distMax;
+
+                if (atendeTexto && atendeTipo && atendeDistancia) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        inputBusca.addEventListener('input', filtrarVoluntarios);
+        selectTipo.addEventListener('change', filtrarVoluntarios);
+        selectDistancia.addEventListener('change', filtrarVoluntarios);
+    </script>
 </body>
 
-</html> 
+</html>

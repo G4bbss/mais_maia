@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Rede de Apoio - Maia Care</title>
+    <link rel="icon" href="img/maiaFavicon.png" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #faf5ef; color: #6b5744; display: flex; min-height: 100vh; }
+        
+        /* SIDEBAR */
+        .sidebar { width: 250px; background-color: #fffaf6; border-right: 1px solid #e6ccb2; padding: 24px 18px; display: flex; flex-direction: column; justify-content: space-between; }
+        .sidebar .logo { font-size: 28px; font-weight: bold; color: #7f5539; text-decoration: none; margin-bottom: 30px; display: block; }
+        .sidebar .logo span { color: #9c6644; }
+        .sidebar nav a { display: flex; align-items: center; gap: 12px; padding: 12px 14px; color: #6b5744; text-decoration: none; border-radius: 8px; margin-bottom: 6px; font-size: 14px; font-weight: 600; transition: 0.2s; }
+        .sidebar nav a:hover, .sidebar nav a.ativo { background-color: #f5ebe0; color: #7f5539; }
+        
+        /* CONTEÚDO */
+        .conteudo { flex: 1; padding: 30px; overflow-y: auto; }
+        .header-painel { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; background: #fff; padding: 20px 25px; border-radius: 12px; border: 1px solid #e6ccb2; }
+        .header-painel h1 { font-size: 22px; color: #7f5539; }
+        .prof-badge { display: flex; align-items: center; gap: 10px; font-size: 13px; background-color: #f5ebe0; padding: 8px 14px; border-radius: 20px; color: #7f5539; font-weight: bold; }
+        
+        /* ABAS */
+        .abas-nav { display: flex; gap: 12px; margin-bottom: 20px; border-bottom: 2px solid #e6ccb2; }
+        .aba-btn { background: none; border: none; padding: 10px 20px; font-size: 15px; font-weight: bold; color: #9c6644; cursor: pointer; border-bottom: 3px solid transparent; }
+        .aba-btn.ativa { color: #7f5539; border-bottom-color: #7f5539; }
+        .secao-aba { display: none; }
+        .secao-aba.ativa { display: block; }
+        
+        /* CARDS E TABELAS */
+        .grid-agenda { display: grid; grid-template-columns: 280px 1fr; gap: 20px; }
+        .card { background: #fff; border-radius: 12px; padding: 20px; border: 1px solid #e6ccb2; margin-bottom: 20px; }
+        .tabela { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        .tabela th, .tabela td { padding: 12px 14px; text-align: left; font-size: 13px; border-bottom: 1px solid #f0e6dd; vertical-align: top; }
+        .tabela th { background-color: #f5ebe0; color: #7f5539; }
+        
+        /* BADGES */
+        .badge { padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; display: inline-block; }
+        .badge-pendente { background-color: #fff3cd; color: #856404; }
+        .badge-atendimento { background-color: #e3f2fd; color: #1976d2; }
+        .badge-concluido { background-color: #d4edda; color: #155724; }
+        .badge-cancelado { background-color: #f8d7da; color: #721c24; }
+        
+        /* BOTÕES E FORMULÁRIOS */
+        .btn-acao { background-color: #7f5539; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; margin-right: 4px; }
+        .btn-acao:hover { background-color: #9c6644; }
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+        .form-grupo { margin-bottom: 14px; }
+        .form-grupo label { font-size: 13px; font-weight: bold; color: #7f5539; display: block; margin-bottom: 6px; }
+        .form-grupo input, .form-grupo textarea, .form-grupo select { width: 100%; padding: 10px; border: 1px solid #d9c5b2; border-radius: 8px; font-size: 13px; background-color: #faf5ef; }
+
+        @media (max-width: 900px) { body { flex-direction: column; } .sidebar { width: 100%; } .grid-agenda { grid-template-columns: 1fr; } }
+    </style>
+</head>
+
+<body>
+
+    <!-- BARRA LATERAL -->
+    <aside class="sidebar">
+        <div>
+            <a href="#" class="logo">Ma<span>i</span>a</a>
+            <nav>
+                <a href="#" class="ativo" onclick="mudarAba('chamados')"><i class="fa-solid fa-hand-holding-heart"></i> Chamados & Alertas</a>
+                <a href="#" onclick="mudarAba('perfil')"><i class="fa-solid fa-user-gear"></i> Meu Perfil</a>
+            </nav>
+        </div>
+        <nav>
+            <a href="/index.html"><i class="fa-solid fa-right-from-bracket"></i> Sair</a>
+        </nav>
+    </aside>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="conteudo">
+        <div class="header-painel">
+            <div>
+                <h1>Painel de Controle da Rede de Apoio</h1>
+                <p style="font-size: 13px; color: #8c735d;">Gerencie suas solicitações de apoio e mantenha seu perfil atualizado.</p>
+            </div>
+            <div class="prof-badge">
+                <i class="fa-solid fa-heart-pulse"></i> <span id="nomeRedeHeader">Rede de Apoio</span>
+            </div>
+        </div>
+
+        <!-- NAVEGAÇÃO DE ABAS -->
+        <div class="abas-nav">
+            <button class="aba-btn ativa" onclick="mudarAba('chamados')"><i class="fa-solid fa-bell"></i> Chamados Recebidos</button>
+            <button class="aba-btn" onclick="mudarAba('perfil')"><i class="fa-solid fa-id-card"></i> Meu Perfil</button>
+        </div>
+
+        <!-- ABA 1: HISTÓRICO DE CHAMADOS / QUEM CHAMOU / MOTIVO -->
+        <section id="aba-chamados" class="secao-aba ativa">
+            <div class="grid-agenda">
+                <!-- FILTRO -->
+                <div class="card">
+                    <h3 style="color: #7f5539; margin-bottom: 12px; font-size: 15px;"><i class="fa-solid fa-filter"></i> Filtrar Chamados</h3>
+                    <div class="form-grupo">
+                        <label>Status:</label>
+                        <select id="filtroStatus" onchange="renderizarChamados()">
+                            <option value="todos">Todos</option>
+                            <option value="pendente">Pendente</option>
+                            <option value="em_atendimento">Em Atendimento</option>
+                            <option value="concluido">Concluído</option>
+                        </select>
+                    </div>
+                    <div class="form-grupo">
+                        <label>Data:</label>
+                        <input type="date" id="filtroData" style="width:100%; padding: 10px; border: 1px solid #d9c5b2; border-radius: 8px;" onchange="renderizarChamados()">
+                    </div>
+                    <button onclick="limparFiltros()" style="font-size: 12px; background: none; border: none; color: #7f5539; cursor: pointer; text-decoration: underline;">Limpar filtros</button>
+                </div>
+
+                <!-- TABELA DE CHAMADOS RECEBIDOS -->
+                <div class="card">
+                    <h3 style="color: #7f5539; margin-bottom: 12px; font-size: 16px;"><i class="fa-solid fa-list-check"></i> Histórico de Solicitantes</h3>
+                    <table class="tabela">
+                        <thead>
+                            <tr>
+                                <th>Solicitante (Quem chamou)</th>
+                                <th>Motivo / Necessidade</th>
+                                <th>Data / Hora</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelaChamados">
+                            <tr><td colspan="5">Carregando chamados...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ABA 2: MEU PERFIL (COM OS CAMPOS DA TABELA REDE_APOIO) -->
+        <section id="aba-perfil" class="secao-aba">
+            <div class="card">
+                <h3 style="color: #7f5539; margin-bottom: 16px; font-size: 16px;"><i class="fa-solid fa-pen-to-square"></i> Editar Informações da Rede de Apoio</h3>
+                
+                <form id="formPerfilRede">
+                    <div class="form-grid">
+                        <div class="form-grupo">
+                            <label>Nome / Razão Social (`nome`):</label>
+                            <input type="text" id="nome" placeholder="Ex: Maria Silva / Voluntárias Apoio">
+                        </div>
+
+                        <div class="form-grupo">
+                            <label>Telefone / WhatsApp (`telefone`):</label>
+                            <input type="text" id="telefone" placeholder="(00) 00000-0000">
+                        </div>
+
+                        <div class="form-grupo">
+                            <label>E-mail (`email`):</label>
+                            <input type="email" id="email" placeholder="email@exemplo.com">
+                        </div>
+
+                        <div class="form-grupo">
+                            <label>Raio de Atendimento (`distancia`):</label>
+                            <input type="text" id="distancia" placeholder="Ex: 5 km, Atendimento Bairro X">
+                        </div>
+
+                        <div class="form-grupo">
+                            <label>Disponibilidade (`disponibilidade`):</label>
+                            <input type="text" id="disponibilidade" placeholder="Ex: Presencial, Online, Híbrido">
+                        </div>
+
+                        <div class="form-grupo">
+                            <label>Horários Disponíveis (`horarios_disponiveis`):</label>
+                            <input type="text" id="horarios_disponiveis" placeholder="Ex: Seg a Sex das 08h às 18h">
+                        </div>
+
+                        <div class="form-grupo">
+                            <label>URL da Foto (`foto`):</label>
+                            <input type="text" id="foto" placeholder="Caminho ou URL da imagem de perfil">
+                        </div>
+
+                        <div class="form-grupo">
+                            <label>Status de Atividade (`ativo`):</label>
+                            <select id="ativo">
+                                <option value="1">Ativo (Recebendo chamados)</option>
+                                <option value="0">Inativo (Pausado)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-grupo" style="margin-top: 10px;">
+                        <label>Como pode ajudar / Descrição (`pode_ajudar_com`):</label>
+                        <textarea id="pode_ajudar_com" rows="4" placeholder="Descreva os serviços ou apoios prestados (ex: auxílio pós-parto, acolhimento emocional, transporte, etc.)"></textarea>
+                    </div>
+
+                    <button type="button" class="btn-acao" onclick="salvarPerfil()"><i class="fa-solid fa-floppy-disk"></i> Salvar Dados do Perfil</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <!-- SCRIPT DE NAVEGAÇÃO E LOGICA -->
+    <script src="js/painel-rede-apoio.js"></script>
+</body>
+</html>

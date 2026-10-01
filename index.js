@@ -10,6 +10,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 // Importação das rotas
 import rotasCliente from "./api/clienteRotas.js";
 import profissionalRotas from "./api/ProfissionalRotas.js";
+import redeApoioRotas from "./api/redeApoioRotas.js";
 
 // Configuração para recriar o __dirname em ES Modules
 const __filename = fileURLToPath(import.meta.url);
@@ -57,9 +58,12 @@ function exigirLogin(req, res, next) {
 backend.use("/cliente", rotasCliente);
 backend.use("/usuario", rotasCliente); // Suporte para rotas atreladas a /usuario
 
-// Adicione ou substitua por estas duas linhas abaixo:
 backend.use("/profissional", profissionalRotas); 
-backend.use("/api/profissionais", profissionalRotas); // Mantém compatibilidade caso use em outro lugar
+backend.use("/api/profissionais", profissionalRotas);
+
+// Rotas da API da Rede de Apoio e Chamados
+backend.use("/api", redeApoioRotas);        // Mapeia /api/rede-apoio e /api/chamados
+backend.use("/rede-apoio", redeApoioRotas); // Mapeia /rede-apoio/login, /rede-apoio/perfil, etc.
 
 // Rota do Chatbot com IA (com tentativas automáticas em caso de oscilação)
 backend.post("/api/chatbot", async (req, res) => {
@@ -81,11 +85,10 @@ Diretrizes de resposta:
 - Forneça orientação em saúde materno-infantil com responsabilidade, destacando que orientações de chat não substituem uma consulta presencial ou emergência médica urgente.`;
 
     const model = genAI.getGenerativeModel({
-      model: "gemini-3.6-flash",
+      model: "gemini-1.5-flash",
       systemInstruction: systemInstruction
     });
 
-    // Lógica de repetição automática (até 3 tentativas caso a API oscile)
     let respostaTexto = null;
     let tentativas = 0;
     const maxTentativas = 3;
@@ -125,6 +128,10 @@ backend.get("/login-profissional", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "login-profissional.html"));
 });
 
+// Página de Login da Rede de Apoio
+backend.get("/login-rede-apoio", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "login-rede-apoio.html"));
+});
 
 backend.get("/cadastro", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "cadastro.html"));
@@ -139,9 +146,13 @@ backend.get("/profissionais", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "profissionais.html"));
 });
 
-// Rota do Painel do Profissional
+// Painéis de Controle
 backend.get("/painel-profissional", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "painel-profissional.html"));
+});
+
+backend.get("/painel-rede-apoio", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "painel-rede-apoio.html"));
 });
 
 // ===================== Páginas Protegidas =====================
@@ -153,7 +164,7 @@ backend.get("/perfil", exigirLogin, (req, res) => {
   res.sendFile(path.join(__dirname, "public", "perfil.html"));
 });
 
-// Página de Agendamento (Renders agendamento.html)
+// Página de Agendamento
 backend.get("/agendamento", exigirLogin, (req, res) => {
   res.sendFile(path.join(__dirname, "public", "agendamento.html"));
 });
@@ -162,7 +173,6 @@ backend.get("/agendamento", exigirLogin, (req, res) => {
 backend.get("/telemedicina", exigirLogin, (req, res) => {
   res.sendFile(path.join(__dirname, "public", "telemedicina.html"));
 });
-
 
 // ===================== Inicialização =====================
 const PORT = process.env.PORT || 3000;
