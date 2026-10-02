@@ -65,13 +65,18 @@ function obterProximaDataPorDiaSemana(diaTexto) {
 }
 
 // 🔹 POST /api/chamados -> Criar novo chamado no MySQL
+// 🔹 POST /chamados -> Criar novo chamado no MySQL
 router.post("/chamados", async (req, res) => {
     try {
         const { id_rede_apoio, endereco_usuario, motivo, data_chamado, horario } = req.body;
-        const id_usuario = req.session?.usuarioId || req.session?.usuario?.id_usuario || 1;
+        
+        // Pega o ID do usuário diretamente da sessão do login
+        const id_usuario = req.session?.usuarioId || req.session?.id_usuario || req.session?.usuario?.id_usuario;
 
-        // Se já for uma data enviada no formato YYYY-MM-DD, mantém.
-        // Se for texto como "Segunda-feira", calcula no fuso de Brasília.
+        if (!id_usuario) {
+            return res.status(401).json({ mensagem: "Sessão expirada. Faça login novamente para agendar." });
+        }
+
         const dataFormatada = (data_chamado && data_chamado.includes("-") && data_chamado.length === 10)
             ? data_chamado 
             : obterProximaDataPorDiaSemana(data_chamado);

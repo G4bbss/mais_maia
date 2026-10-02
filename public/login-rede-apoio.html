@@ -25,9 +25,9 @@
                 <h2>Login Rede de Apoio</h2>
 
                 <!-- Formulário de login -->
-                <form method="POST" action="/rede-apoio/login">
-                    <input type="email" name="Email" placeholder="Endereço de e-mail" required>
-                    <input type="password" name="Senha" placeholder="Senha" required>
+                <form id="formLogin">
+                    <input type="email" id="email" name="Email" placeholder="Endereço de e-mail" required>
+                    <input type="password" id="senha" name="Senha" placeholder="Senha" required>
 
                     <!-- Opções extras -->
                     <div class="options">
@@ -37,7 +37,7 @@
                         <a href="#" onclick="esqueciMinhaSenha(event)">Esqueceu a senha?</a>
                     </div>
 
-                    <!-- Botão de envio -->
+                    <!-- Botão de envio (como estava originalmente) -->
                     <input type="submit" value="Entrar como Apoiadora">
                 </form>
 

@@ -42,9 +42,6 @@
         /* BADGES */
         .badge { padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; display: inline-block; }
         .badge-pendente { background-color: #fff3cd; color: #856404; }
-        .badge-atendimento { background-color: #e3f2fd; color: #1976d2; }
-        .badge-concluido { background-color: #d4edda; color: #155724; }
-        .badge-cancelado { background-color: #f8d7da; color: #721c24; }
         
         /* BOTÕES E FORMULÁRIOS */
         .btn-acao { background-color: #7f5539; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; margin-right: 4px; }
@@ -95,21 +92,12 @@
         <!-- ABA 1: HISTÓRICO DE CHAMADOS / QUEM CHAMOU / MOTIVO -->
         <section id="aba-chamados" class="secao-aba ativa">
             <div class="grid-agenda">
-                <!-- FILTRO -->
+                <!-- FILTRO POR DATA -->
                 <div class="card">
                     <h3 style="color: #7f5539; margin-bottom: 12px; font-size: 15px;"><i class="fa-solid fa-filter"></i> Filtrar Chamados</h3>
                     <div class="form-grupo">
-                        <label>Status:</label>
-                        <select id="filtroStatus" onchange="renderizarChamados()">
-                            <option value="todos">Todos</option>
-                            <option value="pendente">Pendente</option>
-                            <option value="em_atendimento">Em Atendimento</option>
-                            <option value="concluido">Concluído</option>
-                        </select>
-                    </div>
-                    <div class="form-grupo">
                         <label>Data:</label>
-                        <input type="date" id="filtroData" style="width:100%; padding: 10px; border: 1px solid #d9c5b2; border-radius: 8px;" onchange="renderizarChamados()">
+                        <input type="date" id="filtroData" style="width:100%; padding: 10px; border: 1px solid #d9c5b2; border-radius: 8px;" onchange="aplicarFiltros()">
                     </div>
                     <button onclick="limparFiltros()" style="font-size: 12px; background: none; border: none; color: #7f5539; cursor: pointer; text-decoration: underline;">Limpar filtros</button>
                 </div>
@@ -135,7 +123,7 @@
             </div>
         </section>
 
-        <!-- ABA 2: MEU PERFIL (COM OS CAMPOS DA TABELA REDE_APOIO) -->
+        <!-- ABA 2: MEU PERFIL -->
         <section id="aba-perfil" class="secao-aba">
             <div class="card">
                 <h3 style="color: #7f5539; margin-bottom: 16px; font-size: 16px;"><i class="fa-solid fa-pen-to-square"></i> Editar Informações da Rede de Apoio</h3>
@@ -143,42 +131,42 @@
                 <form id="formPerfilRede">
                     <div class="form-grid">
                         <div class="form-grupo">
-                            <label>Nome / Razão Social (`nome`):</label>
+                            <label>Nome / Razão Social:</label>
                             <input type="text" id="nome" placeholder="Ex: Maria Silva / Voluntárias Apoio">
                         </div>
 
                         <div class="form-grupo">
-                            <label>Telefone / WhatsApp (`telefone`):</label>
+                            <label>Telefone / WhatsApp:</label>
                             <input type="text" id="telefone" placeholder="(00) 00000-0000">
                         </div>
 
                         <div class="form-grupo">
-                            <label>E-mail (`email`):</label>
+                            <label>E-mail:</label>
                             <input type="email" id="email" placeholder="email@exemplo.com">
                         </div>
 
                         <div class="form-grupo">
-                            <label>Raio de Atendimento (`distancia`):</label>
+                            <label>Raio de Atendimento:</label>
                             <input type="text" id="distancia" placeholder="Ex: 5 km, Atendimento Bairro X">
                         </div>
 
                         <div class="form-grupo">
-                            <label>Disponibilidade (`disponibilidade`):</label>
+                            <label>Disponibilidade:</label>
                             <input type="text" id="disponibilidade" placeholder="Ex: Presencial, Online, Híbrido">
                         </div>
 
                         <div class="form-grupo">
-                            <label>Horários Disponíveis (`horarios_disponiveis`):</label>
+                            <label>Horários Disponíveis:</label>
                             <input type="text" id="horarios_disponiveis" placeholder="Ex: Seg a Sex das 08h às 18h">
                         </div>
 
                         <div class="form-grupo">
-                            <label>URL da Foto (`foto`):</label>
+                            <label>URL da Foto:</label>
                             <input type="text" id="foto" placeholder="Caminho ou URL da imagem de perfil">
                         </div>
 
                         <div class="form-grupo">
-                            <label>Status de Atividade (`ativo`):</label>
+                            <label>Status de Atividade:</label>
                             <select id="ativo">
                                 <option value="1">Ativo (Recebendo chamados)</option>
                                 <option value="0">Inativo (Pausado)</option>
@@ -187,7 +175,7 @@
                     </div>
 
                     <div class="form-grupo" style="margin-top: 10px;">
-                        <label>Como pode ajudar / Descrição (`pode_ajudar_com`):</label>
+                        <label>Como pode ajudar / Descrição:</label>
                         <textarea id="pode_ajudar_com" rows="4" placeholder="Descreva os serviços ou apoios prestados (ex: auxílio pós-parto, acolhimento emocional, transporte, etc.)"></textarea>
                     </div>
 
@@ -197,7 +185,7 @@
         </section>
     </main>
 
-    <!-- SCRIPT DE NAVEGAÇÃO E LOGICA -->
+    <!-- SCRIPT DE NAVEGAÇÃO E LÓGICA -->
     <script src="js/painel-rede-apoio.js"></script>
 </body>
 </html>

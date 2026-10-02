@@ -1,7 +1,7 @@
 import db from "../config/banco.js";
 import * as RedeApoioModel from "../model/redeApoio.js";
 
-// 🔹 Controller untuk menyenaraikan chamados
+// 🔹 Controller para listar chamados da rede de apoio logada
 export const listarChamados = async (req, res) => {
     try {
         const idRedeApoio = req.session?.redeApoioId;
@@ -16,9 +16,9 @@ export const listarChamados = async (req, res) => {
                 u.paciente_nome AS nome_usuario,
                 u.paciente_telefone AS telefone_usuario,
                 u.email AS email_usuario,
-                ra.nome AS nome_rede_apoio -- 👈 Ambil nama dari jadual rede_apoio
+                ra.nome AS nome_rede_apoio
             FROM chamado c
-            INNER JOIN usuario u ON c.USUARIO_id_usuario = u.id_usuario
+            LEFT JOIN usuario u ON c.USUARIO_id_usuario = u.id_usuario
             LEFT JOIN rede_apoio ra ON c.REDE_APOIO_id_rede_apoio = ra.id_rede_apoio
             ${idRedeApoio ? "WHERE c.REDE_APOIO_id_rede_apoio = ?" : ""}
             ORDER BY c.id_chamado DESC
