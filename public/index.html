@@ -835,61 +835,74 @@
         </div>
     </section>
 
-    <!-- ===================== MODAL SELEÇÃO DE PERFIL ===================== -->
-    <div class="modal-overlay" id="modalPerfil">
-        <div class="selection-card">
-            <button class="modal-close" id="btnCloseModal">&times;</button>
-            <div class="selection-header">
-                <h2>Acesso ao Portal Maia</h2>
+   <!-- ===================== MODAL SELEÇÃO DE PERFIL ===================== -->
+<div class="modal-overlay" id="modalPerfil">
+    <div class="selection-card">
+        <button class="modal-close" id="btnCloseModal">&times;</button>
+        <div class="selection-header">
+            <h2>Acesso ao Portal Maia</h2>
+        </div>
+        <div class="selection-body">
+            <div class="section-heading">
+                <span class="eyebrow">Múltiplos Perfis Detectados</span>
+                <h1>Escolha o perfil de acesso</h1>
+                <p>Selecione com qual nível de permissão você gostaria de navegar no sistema neste momento.</p>
             </div>
-            <div class="selection-body">
-                <div class="section-heading">
-                    <span class="eyebrow">Múltiplos Perfis Detectados</span>
-                    <h1>Escolha o perfil de acesso</h1>
-                    <p>Selecione com qual nível de permissão você gostaria de navegar no sistema neste momento.</p>
+
+            <div class="profiles-container">
+                <!-- Perfil 1: Profissional -->
+                <div class="profile-option">
+                    <div class="icon-wrapper">
+                        <i class="fa-solid fa-user-shield"></i>
+                    </div>
+                    <span class="tag-badge tag-profissional">ADMIN</span>
+                    <h3>Profissional</h3>
+                    <p>Acesso total às configurações avançadas, gestão de usuários e logs do sistema.</p>
+                    <a href="/login-profissional" class="btn btn-filled">➜ Entrar como Profissional</a>
                 </div>
 
-                <div class="profiles-container">
-                    <!-- Perfil 1: Profissional -->
-                    <div class="profile-option">
-                        <div class="icon-wrapper">
-                            <i class="fa-solid fa-user-shield"></i>
-                        </div>
-                        <span class="tag-badge tag-profissional">ADMIN</span>
-                        <h3>Profissional</h3>
-                        <p>Acesso total às configurações avançadas, gestão de usuários e logs do sistema.</p>
-                        <a href="/login-profissional" class="btn btn-filled">➜ Entrar como profissional</a>
+                <div class="separator-or">OU</div>
+
+                <!-- Perfil 2: Usuário -->
+                <div class="profile-option">
+                    <div class="icon-wrapper">
+                        <i class="fa-solid fa-user"></i>
                     </div>
+                    <span class="tag-badge tag-user">PADRÃO</span>
+                    <h3>Usuário</h3>
+                    <p>Acesso regular às funcionalidades operacionais e rotinas do dia a dia.</p>
+                    <a href="/login" class="btn btn-outline">➜ Entrar como Usuário</a>
+                </div>
 
-                    <div class="separator-or">OU</div>
+                <div class="separator-or">OU</div>
 
-                    <!-- Perfil 2: Usuário -->
-                    <div class="profile-option">
-                        <div class="icon-wrapper">
-                            <i class="fa-solid fa-user"></i>
-                        </div>
-                        <span class="tag-badge tag-user">PADRÃO</span>
-                        <h3>Usuário</h3>
-                        <p>Acesso regular às funcionalidades operacionais e rotinas do dia a dia.</p>
-                        <a href="/login" class="btn btn-outline">➜ Entrar como Usuário</a>
+                <!-- Perfil 3: Rede de Apoio -->
+                <div class="profile-option">
+                    <div class="icon-wrapper">
+                        <i class="fa-solid fa-hands-holding-child"></i>
                     </div>
+                    <span class="tag-badge tag-apoio">APOIO</span>
+                    <h3>Rede de Apoio</h3>
+                    <p>Acesso dedicado para voluntários e apoiadores cadastrados na comunidade.</p>
+                    <a href="/login-rede-apoio" class="btn btn-outline">➜ Entrar como Apoio</a>
+                </div>
 
-                    <div class="separator-or">OU</div>
+                <div class="separator-or">OU</div>
 
-                    <!-- Perfil 3: Rede de Apoio -->
-                    <div class="profile-option">
-                        <div class="icon-wrapper">
-                            <i class="fa-solid fa-hands-holding-child"></i>
-                        </div>
-                        <span class="tag-badge tag-apoio">APOIO</span>
-                        <h3>Rede de Apoio</h3>
-                        <p>Acesso dedicado para voluntários e apoiadores cadastrados na comunidade.</p>
-                        <a href="/login-rede-apoio" class="btn btn-outline">➜ Entrar como Apoio</a>
+                <!-- Perfil 4: Contato de Apoio -->
+                <div class="profile-option">
+                    <div class="icon-wrapper">
+                        <i class="fa-solid fa-key"></i>
                     </div>
+                    <span class="tag-badge tag-contato">CHAVE</span>
+                    <h3>Contato de Apoio</h3>
+                    <p>Acesso rápido via e-mail e chave de acesso de 10 dígitos para acompanhamento.</p>
+                    <a href="/login-contato-apoio" class="btn btn-outline">➜ Entrar com Chave</a>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
     <!-- ===================== FOOTER ===================== -->
     <footer style="background-color: #7f5539; color: #fff; padding: 30px 20px; text-align: center; margin-top: 50px;">

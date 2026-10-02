@@ -133,6 +133,12 @@ backend.get("/login-rede-apoio", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "login-rede-apoio.html"));
 });
 
+// Página de Login da Rede de Apoio
+backend.get("/login-contato-apoio", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "login-contato-apoio.html"));
+});
+
+
 backend.get("/cadastro", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "cadastro.html"));
 });

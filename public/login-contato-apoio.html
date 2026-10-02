@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Contato de Apoio - Maia</title>
+    <link rel="icon" href="img/maiaFavicon.png" type="image/png">
+    <link rel="stylesheet" href="style/login.css">
+</head>
+
+<body>
+    <div class="container">
+
+        <!-- Painel esquerdo -->
+        <div class="left-panel">
+            <h1>Bem-vindo(a), Apoio!</h1>
+            <p>Você é parte essencial dessa jornada. Utilize seu e-mail e a chave de 10 dígitos enviada para você para acompanhar e dar todo o suporte necessário.</p>
+        </div>
+
+        <!-- Painel direito -->
+        <div class="right-panel">
+            <div class="login-box">
+                <h2>Acesso Contato de Apoio</h2>
+
+                <form id="formLoginContato">
+                    <input type="email" id="email" name="email" placeholder="Seu e-mail cadastrado" required>
+                    <input type="text" id="chaveAcesso" name="chaveAcesso" placeholder="Chave de 10 dígitos (ex: ABC123XYZ8)" maxlength="10" style="letter-spacing: 2px; font-weight: bold; text-transform: uppercase;" required>
+
+                    <div id="mensagemErro" style="color: #d9534f; margin-bottom: 12px; font-size: 14px; display: none;"></div>
+
+                    <input type="submit" value="Entrar como Contato de Apoio">
+                </form>
+
+                <div class="social">
+                    <span>Siga:</span>
+                    <a href="https://www.instagram.com/mmaiabrasil/" target="_blank">@mmaiabrasil</a>
+                </div>
+
+                <footer>
+                    © 2026 Maia - Todos os direitos reservados
+                </footer>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/login-contato-apoio.js"></script>
+</body>
+
+</html>

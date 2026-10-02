@@ -734,7 +734,18 @@
 
         
 
+.selection-card {
+    max-width: 1100px; /* Aumente a largura do modal para caber os 4 cards lado a lado */
+    width: 90%;
+}
 
+.profiles-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap; /* Garante que em telas menores os cards fiquem um embaixo do outro */
+    gap: 15px;
+}
 
 
 

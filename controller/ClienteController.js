@@ -782,3 +782,50 @@ export async function removerContato(req, res) {
     return res.status(500).json({ erro: "Erro ao remover contato." });
   }
 }
+
+
+
+
+
+
+// ===================== Login do Contato de Apoio (Chave 10 dígitos) =====================
+export const loginContatoApoio = async (req, res) => {
+  try {
+    const { email, chaveAcesso } = req.body;
+
+    if (!email || !chaveAcesso) {
+      return res.status(400).json({ ok: false, erro: "E-mail e chave de acesso são obrigatórios." });
+    }
+
+    // Busca o contato de apoio ativo correspondente ao e-mail e à chave
+    const [contatos] = await pool.execute(
+      `SELECT c.id_contato, c.nome, c.email, c.USUARIO_id_usuario, u.email AS usuario_email
+       FROM contato_apoio c
+       JOIN usuario u ON c.USUARIO_id_usuario = u.id_usuario
+       WHERE c.email = ? AND c.chave_acesso = ?`,
+      [email.trim(), chaveAcesso.trim()]
+    );
+
+    if (contatos.length === 0) {
+      return res.status(401).json({ ok: false, erro: "E-mail ou chave de acesso inválidos." });
+    }
+
+    const contato = contatos[0];
+
+    // Guarda na sessão que quem está logado é um Contato de Apoio,
+    // mas vincula o e-mail do usuário principal para que ele veja os dados da mãe/paciente.
+    req.session.usuarioEmail = contato.usuario_email; 
+    req.session.tipoUsuario = "contato_apoio";
+    req.session.contatoNome = contato.nome;
+
+    return res.json({
+      ok: true,
+      tipo: "contato_apoio",
+      redirect: "/dashboard-contato-apoio.html" // ou a tela visual criada para ele
+    });
+
+  } catch (erro) {
+    console.error("Erro no login do Contato de Apoio:", erro.message);
+    return res.status(500).json({ ok: false, erro: "Erro ao autenticar contato de apoio." });
+  }
+};

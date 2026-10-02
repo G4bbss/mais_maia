@@ -41,5 +41,15 @@ router.post("/agendamento", clienteController.agendarConsulta);
 router.get("/meus-agendamento/:email", clienteController.meusAgendamentos);
 router.post("/cancelar-agendamento", clienteController.cancelarAgendamento);
 
+
+
+
+
+
+
+
+// Rota de login exclusiva para Contato de Apoio
+router.post("/contato-apoio/login", clienteController.loginContatoApoio);
+
 // ✅ Exportação padrão para funcionar com ES Modules
 export default router;

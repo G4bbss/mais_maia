@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Apoio - Maia</title>
+    <link rel="icon" href="img/maiaFavicon.png" type="image/png">
+    <link rel="stylesheet" href="./style/dashboard.css">
+</head>
+
+<body>
+    <div class="app">
+        <!-- ===================== SIDEBAR CONTATO DE APOIO ===================== -->
+        <aside class="sidebar">
+            <a href="#" class="logo">Ma<span>i</span>a</a>
+            <nav>
+                <a href="./agendamentos.html">Agendamentos</a>
+                <a href="./diario-emocional.html">Diário Emocional</a>
+                <a href="./perfil.html">Meu Perfil</a>
+                <a href="./mural.html">Mural</a>
+                <a href="./dashboard-contato-apoio.html" class="ativo">Painel</a>
+                <a href="./profissionais.html">Profissionais</a>
+                <a href="./rede-apoio.html">Rede de Apoio</a>
+                <a href="./telemedicina.html">Telemedicina</a>
+            </nav>
+            <span class="rodape-sidebar">© 2026 Maia</span>
+        </aside>
+
+        <!-- ===================== BARRA DE ACESSIBILIDADE ===================== -->
+        <div class="barra-acessibilidade">
+            <div style="position: relative;">
+                <button class="btn-acessibilidade" onclick="toggleMenuTema()" title="Aparência e Contraste">
+                    🌓
+                </button>
+                <div id="painelTema" class="painel-ajuste-tema">
+                    <select id="selectTema" onchange="mudarTema(this.value)">
+                        <option value="claro">Claro</option>
+                        <option value="escuro">Escuro</option>
+                        <option value="alto-contraste">Alto Contraste</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== CONTEÚDO PRINCIPAL ===================== -->
+        <main class="conteudo">
+            <div class="topbar">
+                <div class="saudacao">
+                    <h1 id="saudacaoContato">Olá!</h1>
+                    <p id="saudacaoMae">Acompanhando: Carregando...</p>
+                </div>
+
+                <div class="conta">
+                    <button class="conta-botao" id="botaoConta">
+                        <span class="avatar-mini" id="avatarMini">A</span>
+                        <span class="nome-mini" id="nomeMini">Apoiador</span>
+                        <span class="icone-engrenagem">⚙️</span>
+                    </button>
+                    <div class="conta-menu" id="menuConta">
+                        <button id="botaoSair">🚪 Sair</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-principal">
+                <!-- Cartão Informativo de Status da Mãe -->
+                <div class="painel-card" style="background: #f0f7f7; border-left: 5px solid #2a9d8f;">
+                    <h2>Status do Acompanhamento</h2>
+                    <p id="infoStatusMae">Carregando informações da mãe...</p>
+                </div>
+
+                <!-- Calendário de Compromissos (Modo Leitura) -->
+                <div class="painel-card">
+                    <div class="calendario-cabecalho">
+                        <button id="mesAnterior">‹</button>
+                        <h2 id="mesAtual">Mês</h2>
+                        <button id="mesSeguinte">›</button>
+                    </div>
+                    <div class="calendario-grade" id="grade"></div>
+                    <h3 style="margin-top: 15px; font-size: 16px;">Compromissos Agendados:</h3>
+                    <div class="lista-compromissos" id="listaCompromissos"></div>
+                </div>
+
+                <!-- Feed de Dicas de Apoio -->
+                <div class="painel-card feed">
+                    <h2>Como você pode ajudar hoje?</h2>
+                    <div class="feed-lista">
+                        <div class="feed-item">
+                            <div class="feed-texto">
+                                <strong>Apoio Prático</strong>
+                                <span>Pergunte se pode ajudar com tarefas domésticas ou com o preparo de refeições.</span>
+                            </div>
+                        </div>
+                        <div class="feed-item">
+                            <div class="feed-texto">
+                                <strong>Escuta Ativa</strong>
+                                <span>Reserve momentos para ouvir sem julgar. O pós-parto e a gestação são fases de intensas mudanças.</span>
+                            </div>
+                        </div>
+                        <div class="feed-item">
+                            <div class="feed-texto">
+                                <strong>Acompanhamento Médico</strong>
+                                <span>Fique atento às datas de consultas e exames na agenda acima.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="./js/dashboard-contato-apoio.js"></script>
+</body>
+
+</html>
