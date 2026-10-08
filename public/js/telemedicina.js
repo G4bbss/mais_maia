@@ -553,54 +553,56 @@ async function enviarChatChamada() {
     corpo.scrollTop = corpo.scrollHeight;
 }
 
-/* PRONTUÁRIOS E SALVAMENTO DE CONSULTA */
-function salvarFormularioConsulta(finalizarConsulta) {
-    const getVal = (id, def) => {
-        const el = document.getElementById(id);
-        return (el && el.value) ? el.value : def;
+/* PRONTUÁRIOS E SALVAMENTO DE CONSULTA INTEGRADO AO BANCO DE DADOS */
+async function salvarFormularioConsulta(isFinalizado) {
+    const form = document.getElementById('formAtendimento');
+
+    if (form && !form.checkValidity()) {
+        form.reportValidity();
+        return;
+    }
+
+    const dadosProntuario = {
+        nomePaciente: document.getElementById('formNomePaciente')?.value || '',
+        fasePaciente: document.getElementById('formFasePaciente')?.value || '',
+        sintomas: document.getElementById('formSintomas')?.value || '',
+        tempoSintomas: document.getElementById('formTempoSintomas')?.value || '',
+        nivelDor: document.getElementById('formNivelDor')?.value || 'Leve',
+        alergias: document.getElementById('formAlergias')?.value || '',
+        medicamentosUso: document.getElementById('formMedicamentosUso')?.value || '',
+        orientacoes: document.getElementById('formOrientacoes')?.value || '',
+        idAgendamento: null // Passe o ID do agendamento aqui se tiver disponível
     };
 
-    const nomePaciente = getVal("formNomePaciente", "Paciente");
-    const fase = getVal("formFasePaciente", "Acompanhamento Perinatal");
-    const sintomas = getVal("formSintomas", "Consulta de rotina");
-    const tempoSintomas = getVal("formTempoSintomas", "Recente");
-    const nivelDor = getVal("formNivelDor", "Leve");
-    const alergias = getVal("formAlergias", "Nenhuma");
-    const medicamentos = getVal("formMedicamentosUso", "Nenhum");
-    const avaliacao = getVal("formAvaliacaoMedica", "Atendimento realizado normalmente");
-    const orientacoes = getVal("formOrientacoes", "Manter acompanhamento periódico");
+    try {
+        const response = await fetch('/api/prontuarios', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(dadosProntuario)
+        });
 
-    const documento = {
-        id: medicoAtualConsulta ? `DOC-${medicoAtualConsulta.medico}-${Date.now()}` : Date.now(),
-        medico: medicoAtualConsulta ? medicoAtualConsulta.medico : "Profissional Maia Care",
-        especialidade: medicoAtualConsulta ? medicoAtualConsulta.esp : "Atendimento Virtual",
-        data: new Date().toLocaleDateString('pt-BR'),
-        hora: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        nomePaciente,
-        fase,
-        sintomas,
-        tempoSintomas,
-        nivelDor,
-        alergias,
-        medicamentos,
-        avaliacao,
-        orientacoes
-    };
+        const resultado = await response.json();
 
-    let salvos = JSON.parse(localStorage.getItem("documentos_maia") || "[]");
-    salvos = salvos.filter(d => d.id !== documento.id);
-    salvos.unshift(documento);
-    localStorage.setItem("documentos_maia", JSON.stringify(salvos));
-
-    if (!finalizarConsulta) {
-        const alerta = document.getElementById("alertaSalvamento");
-        if (alerta) {
-            alerta.style.display = "block";
-            setTimeout(() => alerta.style.display = "none", 3000);
+        if (!response.ok) {
+            throw new Error(resultado.erro || 'Erro ao salvar prontuário.');
         }
-    } else {
-        alert("Prontuário salvo com sucesso!");
-        encerrarConsultaModal();
+
+        // Alerta visual de sucesso
+        const alerta = document.getElementById('alertaSalvamento');
+        if (alerta) {
+            alerta.style.display = 'block';
+            setTimeout(() => { alerta.style.display = 'none'; }, 3000);
+        }
+
+        if (isFinalizado && typeof fecharModalVideo === 'function') {
+            fecharModalVideo();
+        }
+
+    } catch (error) {
+        console.error('Falha ao salvar no banco:', error);
+        alert('Ocorreu um erro ao salvar no banco de dados: ' + error.message);
     }
 }
 

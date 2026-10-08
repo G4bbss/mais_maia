@@ -1,24 +1,38 @@
-        let nomeUsuarioLogado = "Usuária";
-        let inicialUsuarioLogado = "U";
+let nomeUsuarioLogado = "Usuária";
+let inicialUsuarioLogado = "U";
 
-        // Carregar Perfil do Usuário Logado
-        fetch("/cliente/me")
-            .then(res => res.json())
-            .then(usuario => {
-                const primeiroNome = (usuario.Nome || usuario.nome || "Mamãe").split(" ")[0];
-                nomeUsuarioLogado = primeiroNome;
-                inicialUsuarioLogado = primeiroNome.charAt(0).toUpperCase();
+document.addEventListener("DOMContentLoaded", () => {
+    carregarUsuario();
+    configurarMenuConta();
+    mostrarRelatos();
+});
 
-                document.getElementById("nomeMini").textContent = primeiroNome;
-                document.getElementById("avatarMini").textContent = inicialUsuarioLogado;
-                document.getElementById("nomeUsuario").value = primeiroNome;
-            })
-            .catch(() => {});
+// 1. Carregar Perfil do Usuário Logado
+function carregarUsuario() {
+    fetch("/cliente/me")
+        .then(res => res.json())
+        .then(usuario => {
+            const primeiroNome = (usuario.Nome || usuario.nome || "Mamãe").split(" ")[0];
+            nomeUsuarioLogado = primeiroNome;
+            inicialUsuarioLogado = primeiroNome.charAt(0).toUpperCase();
 
-        // Controle do Menu da Conta
-        const botaoConta = document.getElementById("botaoConta");
-        const menuConta = document.getElementById("menuConta");
+            const nomeMini = document.getElementById("nomeMini");
+            const avatarMini = document.getElementById("avatarMini");
+            const nomeUsuario = document.getElementById("nomeUsuario");
 
+            if (nomeMini) nomeMini.textContent = primeiroNome;
+            if (avatarMini) avatarMini.textContent = inicialUsuarioLogado;
+            if (nomeUsuario) nomeUsuario.value = primeiroNome;
+        })
+        .catch(() => {});
+}
+
+// 2. Menu de Conta
+function configurarMenuConta() {
+    const botaoConta = document.getElementById("botaoConta");
+    const menuConta = document.getElementById("menuConta");
+
+    if (botaoConta && menuConta) {
         botaoConta.addEventListener("click", function (e) {
             e.stopPropagation();
             menuConta.classList.toggle("aberto");
@@ -27,95 +41,111 @@
         document.addEventListener("click", function () {
             menuConta.classList.remove("aberto");
         });
+    }
 
-        document.getElementById("botaoSair").addEventListener("click", function () {
+    const botaoSair = document.getElementById("botaoSair");
+    if (botaoSair) {
+        botaoSair.addEventListener("click", function () {
             fetch("/cliente/logout", { method: "POST" }).then(() => {
                 window.location.href = "/";
             });
         });
+    }
+}
 
-        // ===================== FEED DE RELATOS =====================
-        let relatos = JSON.parse(localStorage.getItem("relatos")) || [];
+function verificarTipoUsuario() {
+    let tipo = document.getElementById("tipoUsuario").value;
+    let inputNome = document.getElementById("nomeUsuario");
 
-        function verificarTipoUsuario() {
-            let tipo = document.getElementById("tipoUsuario").value;
-            let inputNome = document.getElementById("nomeUsuario");
+    if (tipo === "nome") {
+        inputNome.style.display = "inline-block";
+        if (!inputNome.value) inputNome.value = nomeUsuarioLogado;
+    } else {
+        inputNome.style.display = "none";
+    }
+}
 
-            if (tipo === "nome") {
-                inputNome.style.display = "inline-block";
-                if (!inputNome.value) inputNome.value = nomeUsuarioLogado;
-            } else {
-                inputNome.style.display = "none";
-            }
-        }
+// 3. Enviar Novo Relato para o Banco de Dados
+async function enviarRelato() {
+    let textoInput = document.getElementById("relatoTexto");
+    let texto = textoInput ? textoInput.value.trim() : "";
+    let tipo = document.getElementById("tipoUsuario").value;
+    let nomeInput = document.getElementById("nomeUsuario");
 
-        function enviarRelato() {
-            let texto = document.getElementById("relatoTexto").value;
-            let tipo = document.getElementById("tipoUsuario").value;
-            let nome = document.getElementById("nomeUsuario").value;
+    if (!texto) {
+        alert("Por favor, escreva algo antes de publicar.");
+        return;
+    }
 
-            if (!texto.trim()) {
-                alert("Por favor, escreva algo antes de publicar.");
-                return;
-            }
+    if (texto.toLowerCase().includes("matar") || texto.toLowerCase().includes("suic")) {
+        alert("Você não está sozinha 💛\nSe estiver passando por um momento difícil, ligue 188 (CVV) – apoio emocional gratuito 24h.");
+    }
 
-            // Alerta de apoio emocional / prevenção
-            if (texto.toLowerCase().includes("matar") || texto.toLowerCase().includes("suic")) {
-                alert("Você não está sozinha 💛\nSe estiver passando por um momento difícil, ligue 188 (CVV) – apoio emocional gratuito 24h.");
-            }
+    let eAnonimo = (tipo === "anonimo");
+    let nomeExibicao = eAnonimo ? "Anônima" : (nomeInput?.value || nomeUsuarioLogado || "Usuária");
 
-            let eAnonimo = (tipo === "anonimo");
-            let nomeExibicao = eAnonimo ? "Anônima" : (nome || nomeUsuarioLogado || "Usuária");
-
-            relatos.push({
-                usuario: nomeExibicao,
-                eAnonimo: eAnonimo,
+    try {
+        const resposta = await fetch("/api/mural", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
                 texto: texto,
-                curtidas: 0,
-                respostas: []
-            });
+                e_anonimo: eAnonimo,
+                nome_exibicao: nomeExibicao
+            })
+        });
 
-            localStorage.setItem("relatos", JSON.stringify(relatos));
+        if (resposta.ok) {
+            textoInput.value = "";
             mostrarRelatos();
+        } else {
+            alert("Erro ao publicar no mural.");
+        }
+    } catch (erro) {
+        console.error("Erro ao enviar post:", erro);
+        alert("Falha na conexão com o servidor.");
+    }
+}
 
-            document.getElementById("relatoTexto").value = "";
+// 4. Carregar e Renderizar Posts do Banco de Dados
+async function mostrarRelatos() {
+    let lista = document.getElementById("lista-relatos");
+    if (!lista) return;
+
+    try {
+        const resposta = await fetch("/api/mural");
+        if (!resposta.ok) throw new Error("Erro ao buscar publicações");
+
+        const relatos = await resposta.json();
+        lista.innerHTML = "";
+
+        if (!Array.isArray(relatos) || relatos.length === 0) {
+            lista.innerHTML = "<div class='item-relato' style='text-align:center; color:#6b5744;'>Seja a primeira a compartilhar uma mensagem no mural! 💛</div>";
+            return;
         }
 
-        function mostrarRelatos() {
-            let lista = document.getElementById("lista-relatos");
-            if (!lista) return;
+        relatos.forEach(r => {
+            const eAnonimo = Boolean(r.e_anonimo) || r.nome_exibicao === "Anônima";
 
-            lista.innerHTML = "";
+            const avatarHTML = eAnonimo
+                ? `<div class="avatar avatar-anonimo"><img src="img/maiaFavicon.png" alt="Anônima"></div>`
+                : `<div class="avatar avatar-conta">${(r.nome_exibicao || "U").charAt(0).toUpperCase()}</div>`;
 
-            if (relatos.length === 0) {
-                lista.innerHTML = "<div class='item-relato' style='text-align:center; color:#6b5744;'>Seja a primeira a compartilhar uma mensagem no mural! 💛</div>";
-                return;
+            let htmlRespostas = "";
+            if (r.respostas && r.respostas.length > 0) {
+                r.respostas.forEach(resp => {
+                    htmlRespostas += `<div class="item-resposta"><strong>${resp.nome_exibicao}:</strong> ${resp.texto}</div>`;
+                });
             }
 
-            relatos.slice().reverse().forEach((r, index) => {
-                const indexReal = relatos.length - 1 - index;
-                const eAnonimo = r.eAnonimo || r.usuario === "Anônima";
-
-                // Avatar de anônimo usa a imagem maiaFavicon.png; usuária identificada usa a inicial da conta
-                const avatarHTML = eAnonimo
-                    ? `<div class="avatar avatar-anonimo"><img src="img/maiaFavicon.png" alt="Anônima"></div>`
-                    : `<div class="avatar avatar-conta">${r.usuario.charAt(0).toUpperCase()}</div>`;
-
-                let htmlRespostas = "";
-                if (r.respostas && r.respostas.length > 0) {
-                    r.respostas.forEach(resp => {
-                        htmlRespostas += `<div class="item-resposta"><strong>${resp.user}:</strong> ${resp.texto}</div>`;
-                    });
-                }
-
-                lista.innerHTML += `
+            lista.innerHTML += `
                 <div class="item-relato">
                     <div class="post-header">
                         <div class="post-header-user">
                             ${avatarHTML}
-                            <span class="nome-usuario">${r.usuario}</span>
+                            <span class="nome-usuario">${r.nome_exibicao}</span>
                         </div>
-                        <button class="btn-curtir-topo" onclick="curtir(${indexReal})">
+                        <button class="btn-curtir-topo" onclick="curtir(${r.id_post})">
                             💖 <span>${r.curtidas || 0}</span>
                         </button>
                     </div>
@@ -125,44 +155,56 @@
                     <div class="respostas-container">
                         ${htmlRespostas}
                         <div class="campo-responder">
-                            <input type="text" id="nome-${indexReal}" placeholder="Seu nome (opcional)">
-                            <input type="text" id="input-${indexReal}" placeholder="Escreva um comentário carinhoso...">
-                            <button onclick="adicionarResposta(${indexReal})">Enviar</button>
+                            <input type="text" id="nome-${r.id_post}" placeholder="Seu nome (opcional)">
+                            <input type="text" id="input-${r.id_post}" placeholder="Escreva um comentário carinhoso...">
+                            <button onclick="adicionarResposta(${r.id_post})">Enviar</button>
                         </div>
                     </div>
                 </div>
-                `;
-            });
-        }
+            `;
+        });
+    } catch (erro) {
+        console.error("Erro ao carregar relatos:", erro);
+        lista.innerHTML = "<div class='item-relato' style='text-align:center; color:#d9534f;'>Erro ao carregar mensagens do mural.</div>";
+    }
+}
 
-        function adicionarResposta(index) {
-            let input = document.getElementById(`input-${index}`);
-            let inputNome = document.getElementById(`nome-${index}`);
-
-            if (!input) return;
-
-            let texto = input.value;
-            let nome = inputNome && inputNome.value.trim() ? inputNome.value : "Anônima";
-
-            if (!texto.trim()) return;
-
-            if (!relatos[index].respostas) relatos[index].respostas = [];
-
-            relatos[index].respostas.push({
-                user: nome,
-                texto: texto
-            });
-
-            localStorage.setItem("relatos", JSON.stringify(relatos));
+// 5. Curtir um Post
+async function curtir(idPost) {
+    try {
+        const resposta = await fetch(`/api/mural/${idPost}/curtir`, { method: "POST" });
+        if (resposta.ok) {
             mostrarRelatos();
         }
+    } catch (erro) {
+        console.error("Erro ao curtir:", erro);
+    }
+}
 
-        function curtir(index) {
-            relatos[index].curtidas = (relatos[index].curtidas || 0) + 1;
-            localStorage.setItem("relatos", JSON.stringify(relatos));
+// 6. Adicionar Comentário/Resposta
+async function adicionarResposta(idPost) {
+    let input = document.getElementById(`input-${idPost}`);
+    let inputNome = document.getElementById(`nome-${idPost}`);
+
+    if (!input || !input.value.trim()) return;
+
+    let texto = input.value.trim();
+    let nome = inputNome && inputNome.value.trim() ? inputNome.value.trim() : (nomeUsuarioLogado || "Anônima");
+
+    try {
+        const resposta = await fetch(`/api/mural/${idPost}/resposta`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                texto: texto,
+                nome_exibicao: nome
+            })
+        });
+
+        if (resposta.ok) {
             mostrarRelatos();
         }
-
-
-        mostrarRelatos();
-    
+    } catch (erro) {
+        console.error("Erro ao responder:", erro);
+    }
+}
