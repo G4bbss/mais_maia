@@ -193,7 +193,7 @@ export const login = async (req, res) => {
     );
 
     if (profissional.length > 0) {
-      // Valide a senha do profissional aqui se tiver hash/coluna de senha
+      // (Se profissional tiver verificação ou login direto)
       req.session.usuarioEmail = email;
       req.session.tipoUsuario = "profissional";
 
@@ -204,33 +204,65 @@ export const login = async (req, res) => {
       });
     }
 
-    // 2. Se não for profissional, busca na tabela de Usuário (Paciente)
-    const [usuario] = await pool.execute(
+    // 2. Busca na tabela de Usuário (Paciente)
+    const [usuarios] = await pool.execute(
       "SELECT * FROM usuario WHERE email = ?",
       [email]
     );
 
-    if (usuario.length > 0) {
-      // Valide a senha do usuário
-      req.session.usuarioEmail = email;
-      req.session.tipoUsuario = "paciente";
-
-      return res.json({
-        ok: true,
-        tipo: "paciente",
-        redirect: "/dashboard"
-      });
+    if (usuarios.length === 0) {
+      return res.status(401).json({ ok: false, erro: "E-mail ou senha inválidos." });
     }
 
-    // 3. Se não encontrou em nenhuma das duas tabelas
-    return res.status(401).json({ ok: false, erro: "E-mail ou senha inválidos." });
+    const usuario = usuarios[0];
+
+    // 3. Valida a senha do usuário com bcrypt
+    const senhaValida = await bcrypt.compare(senha, usuario.senha);
+    if (!senhaValida) {
+      return res.status(401).json({ ok: false, erro: "E-mail ou senha inválidos." });
+    }
+
+    // 4. GERAR CÓDIGO 2FA E ENVIAR POR E-MAIL
+    const codigo2FA = Math.floor(100000 + Math.random() * 900000).toString();
+
+    await pool.execute(
+      "UPDATE usuario SET codigo_verificacao = ? WHERE id_usuario = ?",
+      [codigo2FA, usuario.id_usuario]
+    );
+
+    try {
+      await transporter.sendMail({
+        from: `"Equipe Maia" <${EMAIL_SISTEMA}>`,
+        to: email,
+        subject: "Seu Código de Acesso (2FA) - Maia",
+        html: `
+          <div style="${emailStyle}">
+            <h2 style="color: #8c5a4d; margin-top: 0;">Código de Autenticação</h2>
+            <p>Olá, <b>${usuario.paciente_nome || "Usuária"}</b>!</p>
+            <p>Utilize o código abaixo para concluir seu login na plataforma Maia:</p>
+            <div style="background-color: #f9f9f9; padding: 20px; text-align: center; border-radius: 8px; margin: 20px 0;">
+              <span style="font-size: 32px; font-weight: bold; letter-spacing: 5px; color: #8c5a4d;">${codigo2FA}</span>
+            </div>
+            <p style="font-size: 12px; color: #999;">Se você não tentou realizar o login, altere sua senha imediatamente.</p>
+          </div>
+        `
+      });
+    } catch (erroEmail) {
+      console.error("⚠️ Falha ao enviar e-mail de 2FA:", erroEmail.message);
+    }
+
+    // Retorna informando que necessita da etapa de verificação
+    return res.json({
+      ok: true,
+      requer2FA: true,
+      redirect: `/verificacao?email=${encodeURIComponent(email)}`
+    });
 
   } catch (erro) {
     console.error("Erro no login:", erro.message);
     return res.status(500).json({ ok: false, erro: "Erro interno ao realizar login." });
   }
 };
-
 
 
 
@@ -487,10 +519,38 @@ export const redefinirSenha = async (req, res) => {
 
     const novaSenhaCriptografada = await bcrypt.hash(NovaSenha, 10);
 
+    // 1. Atualiza a senha no banco de dados e limpa o código de verificação
     await pool.execute(
       "UPDATE usuario SET senha = ?, codigo_verificacao = NULL WHERE email = ?",
       [novaSenhaCriptografada, Email]
     );
+
+    // 2. Envia o e-mail de notificação de segurança reutilizando o transporter do arquivo
+    try {
+      await transporter.sendMail({
+        from: `"Equipe Maia" <${EMAIL_SISTEMA}>`,
+        to: Email,
+        subject: "Sua senha foi alterada com sucesso - Maia",
+        html: `
+          <div style="${emailStyle}">
+            <h2 style="color: #8c5a4d; margin-top: 0;">Senha Alterada com Sucesso</h2>
+            <p>Olá!</p>
+            <p>Confirmamos que a senha da sua conta na plataforma <b>Maia</b> foi alterada recentemente.</p>
+            <div style="background-color: #f9f9f9; padding: 12px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #8c5a4d;">
+              <p style="margin: 0; font-size: 13px; color: #3b2a25;">
+                <b>Data e Hora:</b> ${new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' })}
+              </p>
+            </div>
+            <p style="font-size: 12px; color: #c62828;">
+              <b>Atenção:</b> Se você não realizou essa alteração, entre em contato com o suporte imediatamente para proteger sua conta.
+            </p>
+          </div>
+        `
+      });
+      console.log(`📧 E-mail de confirmação de alteração de senha enviado para: ${Email}`);
+    } catch (erroEmail) {
+      console.error("⚠️ Falha ao enviar e-mail de aviso de alteração de senha:", erroEmail.message);
+    }
 
     return res.json({ ok: true, mensagem: "Senha alterada com sucesso! Você já pode fazer login." });
 

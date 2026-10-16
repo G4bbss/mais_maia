@@ -1,68 +1,62 @@
-
-
 // =========================================================================
-// 2. RECUPERAÇÃO DE SENHA
+// 1. GOOGLE SIGN-IN
 // =========================================================================
 
 /**
- * Fluxo de esquecimento e redefinição de senha via prompt/API
+ * Processa o token JWT enviado pelo Google Sign-In e redireciona o utilizador
  */
-async function esqueciMinhaSenha(e) {
-    if (e) e.preventDefault();
-
-    const emailInput = document.querySelector('input[name="Email"]');
-    const emailValor = emailInput ? emailInput.value.trim() : "";
-    const email = prompt("Digite seu e-mail cadastrado para redefinir a senha:", emailValor);
-
-    if (!email || !email.trim()) return;
-
+async function lidarComRespostaGoogle(response) {
     try {
-        const res = await fetch("/cliente/esqueci-senha", {
+        const res = await fetch("/cliente/google-auth", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ Email: email.trim() })
+            body: JSON.stringify({ token: response.credential })
         });
 
         const data = await res.json();
 
         if (data.ok) {
-            alert("Enviamos um código de verificação para o seu e-mail!");
-
-            const codigo = prompt("Digite o código recebido no seu e-mail:");
-            if (!codigo || !codigo.trim()) return;
-
-            const novaSenha = prompt("Digite a sua nova senha:");
-            if (!novaSenha || !novaSenha.trim()) return;
-
-            const resRedefinir = await fetch("/cliente/redefinir-senha", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    Email: email.trim(),
-                    Codigo: codigo.trim(),
-                    NovaSenha: novaSenha
-                })
-            });
-
-            const dataRedefinir = await resRedefinir.json();
-
-            if (dataRedefinir.ok) {
-                alert(dataRedefinir.mensagem || "Senha alterada com sucesso! Você já pode entrar.");
+            if (data.cadastrado) {
+                window.location.href = data.redirect || "/";
             } else {
-                alert(dataRedefinir.erro || "Não foi possível alterar a senha.");
+                const query = `?nome=${encodeURIComponent(data.nome || '')}&email=${encodeURIComponent(data.email || '')}&foto=${encodeURIComponent(data.foto || '')}`;
+                window.location.href = (data.redirect || "/cadastro") + query;
             }
         } else {
-            alert(data.erro || "Não foi possível processar a solicitação.");
+            alert(data.erro || "Erro ao verificar autenticação com o Google.");
         }
     } catch (erro) {
-        console.error("Erro na recuperação de senha:", erro);
-        alert("Erro ao conectar com o servidor.");
+        console.error("Erro no login Google:", erro);
+        alert("Erro ao conectar com o servidor. Tente novamente mais tarde.");
     }
 }
 
-window.esqueciMinhaSenha = esqueciMinhaSenha;
+// Disponibiliza no escopo global para a API do Google
+window.lidarComRespostaGoogle = lidarComRespostaGoogle;
 
-/// =========================================================================
+/**
+ * Inicializa a biblioteca Google Identity Services e renderiza o botão
+ */
+function inicializarGoogleSignIn() {
+    if (window.google && google.accounts && google.accounts.id) {
+        google.accounts.id.initialize({
+            client_id: "910310455755-ecuctmqtfutt440jbjebr97jdj1pgkk5.apps.googleusercontent.com",
+            callback: lidarComRespostaGoogle
+        });
+
+        const containerBotao = document.getElementById("buttonDiv") || document.querySelector(".g_id_signin");
+        if (containerBotao) {
+            google.accounts.id.renderButton(containerBotao, {
+                theme: "outline",
+                size: "large",
+                width: "100%"
+            });
+        }
+    }
+}
+
+
+// =========================================================================
 // 3. EVENTOS DOM (INICIALIZAÇÃO E FORMULÁRIO)
 // =========================================================================
 
@@ -85,7 +79,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const formLogin = document.querySelector("form");
     if (formLogin) {
         formLogin.addEventListener("submit", async function (e) {
-            e.preventDefault();
+            e.preventDefault(); // Impede a navegação direta do HTML
 
             const senhaInput = document.querySelector('input[name="Senha"]');
             const email = emailInput ? emailInput.value.trim() : "";
@@ -117,8 +111,8 @@ document.addEventListener("DOMContentLoaded", () => {
                         }
                     }
 
-                    // Redireciona para o painel do profissional
-                    window.location.href = data.redirect || "/painel-profissional";
+                    // Redireciona para a página do cliente
+                    window.location.href = data.redirect || "/painel-profissional.html";
                 } else {
                     alert(data.erro || "E-mail ou senha incorretos.");
                 }

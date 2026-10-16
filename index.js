@@ -76,73 +76,6 @@ backend.use("/diario", diarioRotas);
 // API do Mural
 backend.use("/api/mural", muralRotas);
 
-// ===================== ROTA DO PRONTUÁRIO (SALVAR NO MYSQL) =====================
-backend.post("/api/prontuarios", async (req, res) => {
-  try {
-    const {
-      nomePaciente,
-      fasePaciente,
-      sintomas,
-      tempoSintomas,
-      nivelDor,
-      alergias,
-      medicamentosUso,
-      orientacoes,
-      idAgendamento
-    } = req.body;
-
-    // Resgata o email da sessão do usuário logado (se existir)
-    const emailPaciente = req.session?.usuarioEmail || null;
-
-    // Agrupa os campos do formulário para salvar na coluna 'anamnese'
-    const anamneseText = [
-      `Fase/Idade: ${fasePaciente || 'Não informado'}`,
-      `Sintomas/Queixa: ${sintomas || 'Não informado'}`,
-      `Tempo dos Sintomas: ${tempoSintomas || 'Não informado'}`,
-      `Intensidade: ${nivelDor || 'Leve'}`,
-      `Alergias: ${alergias || 'Nenhuma'}`,
-      `Medicamentos em uso: ${medicamentosUso || 'Nenhum'}`
-    ].join('\n');
-
-    const condutaText = orientacoes || '';
-    const dataRegistro = new Date();
-
-    const sql = `
-      INSERT INTO prontuario 
-      (email_paciente, nome_paciente, anamnese, conduta, data_registro, id_agendamento) 
-      VALUES (?, ?, ?, ?, ?, ?)
-    `;
-
-    const values = [
-      emailPaciente,
-      nomePaciente || null,
-      anamneseText,
-      condutaText,
-      dataRegistro,
-      idAgendamento || null
-    ];
-
-    // Executa a instrução no MySQL
-    db.query(sql, values, (err, result) => {
-      if (err) {
-        console.error("❌ Erro ao inserir prontuário no MySQL:", err);
-        return res.status(500).json({ erro: "Erro ao salvar no banco de dados." });
-      }
-
-      console.log("✅ Prontuário gravado com sucesso! ID:", result.insertId);
-      return res.status(201).json({
-        sucesso: true,
-        mensagem: "Prontuário salvo no banco de dados com sucesso!",
-        idProntuario: result.insertId
-      });
-    });
-
-  } catch (error) {
-    console.error("❌ Erro interno no servidor ao processar prontuário:", error);
-    return res.status(500).json({ erro: "Falha interna do servidor." });
-  }
-});
-
 // ===================== CHATBOT COM IA =====================
 backend.post("/api/chatbot", async (req, res) => {
   try {
@@ -214,6 +147,7 @@ backend.get("/login-contato-apoio", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "login-contato-apoio.html"));
 });
 
+
 backend.get("/cadastro", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "cadastro.html"));
 });
@@ -234,10 +168,19 @@ backend.get("/painel-rede-apoio", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "painel-rede-apoio.html"));
 });
 
+backend.get("/dashboard-contato-apoio", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "painel-rede-apoio.html"));
+});
+
 // ===================== Páginas Protegidas =====================
 backend.get("/dashboard", exigirLogin, (req, res) => {
   res.sendFile(path.join(__dirname, "public", "dashboard.html"));
 });
+
+backend.get("/dashboardapoio", exigirLogin, (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "dashboard.html"));
+});
+
 
 backend.get("/perfil", exigirLogin, (req, res) => {
   res.sendFile(path.join(__dirname, "public", "perfil.html"));

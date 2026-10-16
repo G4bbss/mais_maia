@@ -11,206 +11,239 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        /* ===================== ESTILOS DO MODAL DE SELEÇÃO DE PERFIL ===================== */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background-color: rgba(0, 0, 0, 0.55);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            padding: 20px;
-            backdrop-filter: blur(4px);
-        }
+       /* ===================== ESTILOS DO MODAL DE SELEÇÃO DE PERFIL ===================== */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.65);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 20px;
+    backdrop-filter: blur(6px);
+}
 
-        .modal-overlay.active {
-            display: flex;
-        }
+.modal-overlay.active {
+    display: flex;
+}
 
-        .selection-card {
-            position: relative;
-            width: 100%;
-            max-width: 980px; /* Aumentado para acomodar os 3 cards */
-            background-color: #fffaf6;
-            border-radius: 14px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
-            overflow: hidden;
-            animation: modalFadeIn 0.3s ease-out;
-        }
+.selection-card {
+    position: relative;
+    width: 100%;
+    max-width: 1020px; /* Aumentado para comportar os 4 cards em linha */
+    background-color: #fffaf6;
+    border-radius: 16px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.35);
+    overflow: hidden;
+    animation: modalFadeIn 0.3s ease-out;
+}
 
-        @keyframes modalFadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.96) translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
 
-        .modal-close {
-            position: absolute;
-            top: 12px;
-            right: 18px;
-            background: none;
-            border: none;
-            font-size: 28px;
-            color: #fff;
-            cursor: pointer;
-            z-index: 10;
-            line-height: 1;
-        }
+.selection-header {
+    background-color: #7f5539;
+    color: #fff;
+    padding: 18px 28px;
+    position: relative;
+}
 
-        .modal-close:hover {
-            color: #e6ccb2;
-        }
+.selection-header h2 {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #e6ccb2;
+    margin: 0;
+}
 
-        .selection-header {
-            background-color: #7f5539;
-            color: #fff;
-            padding: 16px 28px;
-        }
+.modal-close {
+    position: absolute;
+    top: 14px;
+    right: 20px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #e6ccb2;
+    cursor: pointer;
+    z-index: 10;
+    line-height: 1;
+    transition: color 0.2s;
+}
 
-        .selection-header h2 {
-            font-size: 14px;
-            font-weight: bold;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            color: #e6ccb2;
-            margin: 0;
-        }
+.modal-close:hover {
+    color: #ffffff;
+}
 
-        .selection-body {
-            padding: 35px 28px;
-        }
+.selection-body {
+    padding: 32px 28px;
+}
 
-        .selection-body .section-heading {
-            text-align: center;
-            margin-bottom: 30px;
-        }
+.selection-body .section-heading {
+    text-align: center;
+    margin-bottom: 28px;
+}
 
-        .selection-body .section-heading .eyebrow {
-            font-size: 12px;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            color: #9c6644;
-            font-weight: bold;
-            margin-bottom: 6px;
-            display: block;
-        }
+.selection-body .section-heading .eyebrow {
+    font-size: 11px;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: #9c6644;
+    font-weight: 700;
+    margin-bottom: 6px;
+    display: block;
+}
 
-        .selection-body .section-heading h1 {
-            font-size: 24px;
-            color: #7f5539;
-            margin-bottom: 8px;
-        }
+.selection-body .section-heading h1 {
+    font-size: 24px;
+    color: #7f5539;
+    margin: 0 0 8px 0;
+    font-weight: 700;
+}
 
-        .selection-body .section-heading p {
-            max-width: 520px;
-            margin: 0 auto;
-            color: #6b5744;
-            font-size: 14px;
-        }
+.selection-body .section-heading p {
+    max-width: 540px;
+    margin: 0 auto;
+    color: #6b5744;
+    font-size: 14px;
+    line-height: 1.4;
+}
 
-        .profiles-container {
-            display: flex;
-            align-items: stretch;
-            justify-content: center;
-            gap: 15px;
-        }
+/* OCULTA OS TEXTOS "OU" QUE POLUIAM A TELA */
+.separator-or {
+    display: none !important;
+}
 
-        .profile-option {
-            flex: 1;
-            background-color: #f5ebe0;
-            border: 1px solid #d9c5b2;
-            border-radius: 12px;
-            padding: 24px 18px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-            transition: transform 0.3s, box-shadow 0.3s;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-        }
+/* ALINHA OS 4 CARDS EM UMA GRELHA DE 4 COLUNAS */
+.profiles-container {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 16px !important;
+    align-items: stretch !important;
+}
 
-        .profile-option:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
-        }
+.profile-option {
+    background-color: #fcf8f4;
+    border: 1px solid #e8d8c8;
+    border-radius: 14px;
+    padding: 22px 14px;
+    box-shadow: 0 2px 8px rgba(127, 85, 57, 0.05);
+    transition: all 0.25s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
 
-        .icon-wrapper {
-            width: 58px;
-            height: 58px;
-            border-radius: 50%;
-            background-color: #e6ccb2;
-            color: #7f5539;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            margin-bottom: 14px;
-        }
+.profile-option:hover {
+    transform: translateY(-5px);
+    border-color: #7f5539;
+    background-color: #ffffff;
+    box-shadow: 0 10px 25px rgba(127, 85, 57, 0.15);
+}
 
-        .tag-badge {
-            display: inline-block;
-            font-size: 11px;
-            font-weight: bold;
-            padding: 4px 10px;
-            border-radius: 20px;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
+.icon-wrapper,
+.profile-option .icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background-color: #f5ebe0;
+    color: #7f5539;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    margin-bottom: 12px;
+    border: 1px solid #d9c5b2;
+}
 
-        .tag-root, .tag-profissional {
-            background-color: #ead9f0;
-            color: #55305e;
-        }
+.tag-badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
 
-        .tag-user {
-            background-color: #dcefdc;
-            color: #2f5233;
-        }
+.tag-root, .tag-profissional { background-color: #ead9f0; color: #55305e; }
+.tag-user { background-color: #dcefdc; color: #2f5233; }
+.tag-apoio { background-color: #e0f2fe; color: #0369a1; }
+.tag-contato { background-color: #fef3c7; color: #92400e; }
 
-        .tag-apoio {
-            background-color: #e0f2fe;
-            color: #0369a1;
-        }
+.profile-option h3 {
+    color: #7f5539;
+    font-size: 17px;
+    margin: 0 0 6px 0;
+    font-weight: 700;
+}
 
-        .profile-option h3 {
-            color: #7f5539;
-            font-size: 19px;
-            margin-bottom: 6px;
-        }
+.profile-option p {
+    font-size: 12px;
+    color: #6b5744;
+    line-height: 1.4;
+    margin: 0 0 18px 0;
+    flex-grow: 1; /* Garante alinhamento dos botões no rodapé dos cards */
+}
 
-        .profile-option p {
-            font-size: 13px;
-            color: #6b5744;
-            margin-bottom: 20px;
-            flex-grow: 1;
-        }
+/* PADRONIZA TODOS OS BOTÕES INTERNOS DOS CARDS */
+.profile-option .btn,
+.profile-option button,
+.profile-option a {
+    width: 100% !important;
+    padding: 10px 8px !important;
+    background-color: #7f5539 !important;
+    color: #ffffff !important;
+    border: none !important;
+    border-radius: 8px !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    text-decoration: none !important;
+    display: block !important;
+    box-sizing: border-box !important;
+    transition: background-color 0.2s !important;
+    text-align: center !important;
+    cursor: pointer !important;
+}
 
-        .profile-option .btn {
-            width: 100%;
-            text-align: center;
-            box-sizing: border-box;
-            text-decoration: none;
-        }
+.profile-option .btn:hover,
+.profile-option button:hover,
+.profile-option a:hover {
+    background-color: #9c6644 !important;
+    color: #ffffff !important;
+}
 
-        .separator-or {
-            display: flex;
-            align-items: center;
-            font-size: 14px;
-            font-weight: bold;
-            color: #9c6644;
-            padding: 0 4px;
-            user-select: none;
-        }
+/* RESPONSIVIDADE */
+@media (max-width: 920px) {
+    .profiles-container {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 14px !important;
+    }
+}
+
+@media (max-width: 520px) {
+    .profiles-container {
+        grid-template-columns: 1fr !important;
+    }
+    
+    .selection-body {
+        padding: 24px 16px;
+    }
+}
 
         /* ===================== ESTILOS DA INTERFACE DA REDE DE APOIO ===================== */
         .rede-apoio-block {
@@ -375,6 +408,12 @@
                 width: 100%;
             }
         }
+
+
+
+
+
+        
     </style>
 </head>
 
@@ -855,9 +894,10 @@
                     <div class="icon-wrapper">
                         <i class="fa-solid fa-user-shield"></i>
                     </div>
-                    <span class="tag-badge tag-profissional">ADMIN</span>
+                    <span class="tag-badge tag-profissional">SAÚDE</span>
                     <h3>Profissional</h3>
-                    <p>Acesso total às configurações avançadas, gestão de usuários e logs do sistema.</p>
+                    <p>Acesso exclusivos dos profissionais da saúde.
+                        tendo acesso ás consultas e pontuarios médicos.</p>
                     <a href="/login-profissional" class="btn btn-filled">➜ Entrar como Profissional</a>
                 </div>
 

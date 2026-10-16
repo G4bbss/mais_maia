@@ -189,3 +189,134 @@
             }
         }
     
+
+        /* =========================================================================
+   ESTILOS DO MODAL DE RECUPERAÇÃO DE SENHA
+   ========================================================================= */
+
+/* Fundo escurecido e desfocado */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(4px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    animation: fadeIn 0.25s ease-out;
+}
+
+/* Card central do Modal */
+.modal-content {
+    background-color: #fffaf6;
+    padding: 35px 30px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    position: relative;
+    text-align: center;
+}
+
+.modal-close {
+    position: absolute;
+    top: 12px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #7f5539;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.modal-content h3 {
+    color: #7f5539;
+    margin-top: 0;
+    margin-bottom: 8px;
+    font-size: 22px;
+}
+
+.modal-content p {
+    font-size: 13px;
+    color: #4a3c31;
+    margin-bottom: 20px;
+    line-height: 1.4;
+}
+
+.modal-content input {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    border: 1px solid #d9c5b2;
+    border-radius: 5px;
+    font-size: 14px;
+    background-color: #f5ebe0;
+    color: #4a3c31;
+}
+
+.btn-modal {
+    width: 100%;
+    padding: 12px;
+    margin-top: 12px;
+    background-color: #7f5539;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn-modal:hover {
+    background-color: #9c6644;
+}
+
+/* Mensagens de Feedback */
+.msg-status {
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 13px;
+    margin-bottom: 12px;
+}
+
+.msg-status.erro {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.msg-status.sucesso {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+/* Botão secundário para voltar entre os passos */
+.btn-modal-secundario {
+    width: 100%;
+    padding: 10px;
+    margin-top: 8px;
+    background-color: transparent;
+    color: #7f5539;
+    border: 1px solid #7f5539;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-modal-secundario:hover {
+    background-color: #f5ebe0;
+}

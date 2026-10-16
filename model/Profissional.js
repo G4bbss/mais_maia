@@ -59,60 +59,6 @@ export const atualizarStatusAgendamentoBanco = async (id_agendamento, status) =>
     );
 };
 
-export const salvarProntuarioBanco = async (dados) => {
-    const { email_paciente, nome_paciente, anamnese, conduta, id_agendamento } = dados;
-
-    // Criar tabela de prontuário se não existir
-    await pool.execute(`
-      CREATE TABLE IF NOT EXISTS prontuario (
-        id_prontuario INT AUTO_INCREMENT PRIMARY KEY,
-        email_paciente VARCHAR(255) NOT NULL,
-        nome_paciente VARCHAR(255),
-        anamnese TEXT NOT NULL,
-        conduta TEXT,
-        data_registro DATETIME DEFAULT CURRENT_TIMESTAMP,
-        id_agendamento INT
-      )
-    `);
-
-    await pool.execute(
-        `INSERT INTO prontuario (email_paciente, nome_paciente, anamnese, conduta, id_agendamento)
-         VALUES (?, ?, ?, ?, ?)`,
-        [email_paciente, nome_paciente || "Paciente", anamnese, conduta || "", id_agendamento || null]
-    );
-
-    if (id_agendamento) {
-        await pool.execute(
-            "UPDATE agendamento SET status = 'Realizada' WHERE id_agendamento = ?",
-            [id_agendamento]
-        );
-    }
-};
-
-export const buscarProntuariosPorEmail = async (email) => {
-    await pool.execute(`
-      CREATE TABLE IF NOT EXISTS prontuario (
-        id_prontuario INT AUTO_INCREMENT PRIMARY KEY,
-        email_paciente VARCHAR(255) NOT NULL,
-        nome_paciente VARCHAR(255),
-        anamnese TEXT NOT NULL,
-        conduta TEXT,
-        data_registro DATETIME DEFAULT CURRENT_TIMESTAMP,
-        id_agendamento INT
-      )
-    `);
-
-    const [historico] = await pool.execute(
-        `SELECT id_prontuario, email_paciente, nome_paciente, anamnese, conduta, 
-                DATE_FORMAT(data_registro, '%d/%m/%Y %H:%i') AS data_formatada
-         FROM prontuario 
-         WHERE email_paciente = ? 
-         ORDER BY data_registro DESC`,
-        [email]
-    );
-    return historico;
-};
-
 // --- AUTENTICAÇÃO ---
 
 export const buscarProfissionalPorEmail = async (email) => {

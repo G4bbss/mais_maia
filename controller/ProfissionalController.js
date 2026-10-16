@@ -104,40 +104,6 @@ export const atualizarStatusAgendamento = async (req, res) => {
     }
 };
 
-export const salvarProntuario = async (req, res) => {
-    try {
-        const { email_paciente, nome_paciente, anamnese, conduta, id_agendamento } = req.body;
-
-        if (!email_paciente || !anamnese) {
-            return res.status(400).json({ ok: false, erro: "E-mail do paciente e anamnese são obrigatórios." });
-        }
-
-        await ProfissionalModel.salvarProntuarioBanco({
-            email_paciente,
-            nome_paciente,
-            anamnese,
-            conduta,
-            id_agendamento
-        });
-
-        return res.json({ ok: true, mensagem: "Prontuário salvo com sucesso!" });
-    } catch (erro) {
-        console.error("Erro ao salvar prontuário:", erro.message);
-        return res.status(500).json({ ok: false, erro: "Erro ao salvar prontuário." });
-    }
-};
-
-export const buscarProntuariosPaciente = async (req, res) => {
-    try {
-        const { email } = req.params;
-        const historico = await ProfissionalModel.buscarProntuariosPorEmail(email);
-        return res.json(historico);
-    } catch (erro) {
-        console.error("Erro ao buscar prontuários:", erro.message);
-        return res.status(500).json({ erro: "Erro ao buscar prontuários." });
-    }
-};
-
 // --- AUTENTICAÇÃO / LOGIN DO PROFISSIONAL ---
 
 export const loginProfissional = async (req, res) => {
