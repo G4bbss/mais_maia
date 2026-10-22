@@ -6,6 +6,9 @@
     <title>Login - Maia</title> <!-- Título da aba do navegador -->
     <link rel="icon" href="img/maiaFavicon.png" type="image/png">
 <link rel="stylesheet" href="style/login.css"> <!-- Link para o arquivo CSS externo -->
+
+<script src="/js/apoio-readonly.js"></script>
+    <script src="/js/acessibilidade.js"></script>
    
 
 </head>
@@ -29,15 +32,6 @@
                 <form method="POST" action="/cliente/login">
                     <input type="email" name="Email" placeholder="Endereço de e-mail" required>
                     <input type="password" name="Senha" placeholder="Senha" required>
-
-                    <!-- Opções extras -->
-                    <div class="options">
-                        <label class="checkbox-label">
-                            <input type="checkbox" id="lembrar"> Lembrar-me
-                        </label>
-                        <!-- BOTÃO ESQUECEU A SENHA CORRIGIDO -->
-                        <a href="#" onclick="esqueciMinhaSenha(event)">Esqueceu a senha?</a>
-                    </div>
 
                     <!-- Botão de envio -->
                     <input type="submit" value="Entrar">

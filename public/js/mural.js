@@ -7,10 +7,24 @@ document.addEventListener("DOMContentLoaded", () => {
     mostrarRelatos();
 });
 
+// Função auxiliar para prevenir ataques XSS (injeção de código malicioso no HTML)
+function escaparHTML(str) {
+    if (!str) return "";
+    return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
 // 1. Carregar Perfil do Usuário Logado
 function carregarUsuario() {
     fetch("/cliente/me")
-        .then(res => res.json())
+        .then(res => {
+            if (!res.ok) throw new Error("Falha ao carregar usuário");
+            return res.json();
+        })
         .then(usuario => {
             const primeiroNome = (usuario.Nome || usuario.nome || "Mamãe").split(" ")[0];
             nomeUsuarioLogado = primeiroNome;
@@ -22,9 +36,9 @@ function carregarUsuario() {
 
             if (nomeMini) nomeMini.textContent = primeiroNome;
             if (avatarMini) avatarMini.textContent = inicialUsuarioLogado;
-            if (nomeUsuario) nomeUsuario.value = primeiroNome;
+            if (nomeUsuario && !nomeUsuario.value) nomeUsuario.value = primeiroNome;
         })
-        .catch(() => {});
+        .catch(err => console.warn("Aviso: Não foi possível carregar o perfil logado.", err));
 }
 
 // 2. Menu de Conta
@@ -46,7 +60,7 @@ function configurarMenuConta() {
     const botaoSair = document.getElementById("botaoSair");
     if (botaoSair) {
         botaoSair.addEventListener("click", function () {
-            fetch("/cliente/logout", { method: "POST" }).then(() => {
+            fetch("/cliente/logout", { method: "POST" }).finally(() => {
                 window.location.href = "/";
             });
         });
@@ -54,10 +68,12 @@ function configurarMenuConta() {
 }
 
 function verificarTipoUsuario() {
-    let tipo = document.getElementById("tipoUsuario").value;
+    let tipoSelect = document.getElementById("tipoUsuario");
     let inputNome = document.getElementById("nomeUsuario");
 
-    if (tipo === "nome") {
+    if (!tipoSelect || !inputNome) return;
+
+    if (tipoSelect.value === "nome") {
         inputNome.style.display = "inline-block";
         if (!inputNome.value) inputNome.value = nomeUsuarioLogado;
     } else {
@@ -69,7 +85,8 @@ function verificarTipoUsuario() {
 async function enviarRelato() {
     let textoInput = document.getElementById("relatoTexto");
     let texto = textoInput ? textoInput.value.trim() : "";
-    let tipo = document.getElementById("tipoUsuario").value;
+    let tipoSelect = document.getElementById("tipoUsuario");
+    let tipo = tipoSelect ? tipoSelect.value : "anonimo";
     let nomeInput = document.getElementById("nomeUsuario");
 
     if (!texto) {
@@ -82,7 +99,7 @@ async function enviarRelato() {
     }
 
     let eAnonimo = (tipo === "anonimo");
-    let nomeExibicao = eAnonimo ? "Anônima" : (nomeInput?.value || nomeUsuarioLogado || "Usuária");
+    let nomeExibicao = eAnonimo ? "Anônima" : (nomeInput?.value?.trim() || nomeUsuarioLogado || "Usuária");
 
     try {
         const resposta = await fetch("/api/mural", {
@@ -99,7 +116,8 @@ async function enviarRelato() {
             textoInput.value = "";
             mostrarRelatos();
         } else {
-            alert("Erro ao publicar no mural.");
+            const erroData = await resposta.json().catch(() => ({}));
+            alert(`Erro ao publicar no mural: ${erroData.mensagem || "Falha no servidor"}`);
         }
     } catch (erro) {
         console.error("Erro ao enviar post:", erro);
@@ -114,55 +132,63 @@ async function mostrarRelatos() {
 
     try {
         const resposta = await fetch("/api/mural");
-        if (!resposta.ok) throw new Error("Erro ao buscar publicações");
+        if (!resposta.ok) {
+            throw new Error(`Erro na resposta do servidor (código ${resposta.status})`);
+        }
 
         const relatos = await resposta.json();
-        lista.innerHTML = "";
 
         if (!Array.isArray(relatos) || relatos.length === 0) {
             lista.innerHTML = "<div class='item-relato' style='text-align:center; color:#6b5744;'>Seja a primeira a compartilhar uma mensagem no mural! 💛</div>";
             return;
         }
 
+        let htmlAcumulado = "";
+
         relatos.forEach(r => {
             const eAnonimo = Boolean(r.e_anonimo) || r.nome_exibicao === "Anônima";
+            const nomeExibido = escaparHTML(r.nome_exibicao || "Anônima");
+            const textoRelato = escaparHTML(r.texto || "");
+            const idPost = r.id_post;
 
             const avatarHTML = eAnonimo
                 ? `<div class="avatar avatar-anonimo"><img src="img/maiaFavicon.png" alt="Anônima"></div>`
-                : `<div class="avatar avatar-conta">${(r.nome_exibicao || "U").charAt(0).toUpperCase()}</div>`;
+                : `<div class="avatar avatar-conta">${escaparHTML((r.nome_exibicao || "U").charAt(0).toUpperCase())}</div>`;
 
             let htmlRespostas = "";
-            if (r.respostas && r.respostas.length > 0) {
+            if (Array.isArray(r.respostas) && r.respostas.length > 0) {
                 r.respostas.forEach(resp => {
-                    htmlRespostas += `<div class="item-resposta"><strong>${resp.nome_exibicao}:</strong> ${resp.texto}</div>`;
+                    htmlRespostas += `<div class="item-resposta"><strong>${escaparHTML(resp.nome_exibicao)}:</strong> ${escaparHTML(resp.texto)}</div>`;
                 });
             }
 
-            lista.innerHTML += `
+            htmlAcumulado += `
                 <div class="item-relato">
                     <div class="post-header">
                         <div class="post-header-user">
                             ${avatarHTML}
-                            <span class="nome-usuario">${r.nome_exibicao}</span>
+                            <span class="nome-usuario">${nomeExibido}</span>
                         </div>
-                        <button class="btn-curtir-topo" onclick="curtir(${r.id_post})">
+                        <button class="btn-curtir-topo" onclick="curtir(${idPost})">
                             💖 <span>${r.curtidas || 0}</span>
                         </button>
                     </div>
                     
-                    <p class="texto-relato">${r.texto}</p>
+                    <p class="texto-relato">${textoRelato}</p>
 
                     <div class="respostas-container">
                         ${htmlRespostas}
                         <div class="campo-responder">
-                            <input type="text" id="nome-${r.id_post}" placeholder="Seu nome (opcional)">
-                            <input type="text" id="input-${r.id_post}" placeholder="Escreva um comentário carinhoso...">
-                            <button onclick="adicionarResposta(${r.id_post})">Enviar</button>
+                            <input type="text" id="nome-${idPost}" placeholder="Seu nome (opcional)">
+                            <input type="text" id="input-${idPost}" placeholder="Escreva um comentário carinhoso...">
+                            <button onclick="adicionarResposta(${idPost})">Enviar</button>
                         </div>
                     </div>
                 </div>
             `;
         });
+
+        lista.innerHTML = htmlAcumulado;
     } catch (erro) {
         console.error("Erro ao carregar relatos:", erro);
         lista.innerHTML = "<div class='item-relato' style='text-align:center; color:#d9534f;'>Erro ao carregar mensagens do mural.</div>";
@@ -171,6 +197,7 @@ async function mostrarRelatos() {
 
 // 5. Curtir um Post
 async function curtir(idPost) {
+    if (!idPost) return;
     try {
         const resposta = await fetch(`/api/mural/${idPost}/curtir`, { method: "POST" });
         if (resposta.ok) {
@@ -182,14 +209,20 @@ async function curtir(idPost) {
 }
 
 // 6. Adicionar Comentário/Resposta
+// 6. Adicionar Comentário/Resposta
 async function adicionarResposta(idPost) {
+    if (!idPost) return;
+
     let input = document.getElementById(`input-${idPost}`);
     let inputNome = document.getElementById(`nome-${idPost}`);
 
     if (!input || !input.value.trim()) return;
 
     let texto = input.value.trim();
-    let nome = inputNome && inputNome.value.trim() ? inputNome.value.trim() : (nomeUsuarioLogado || "Anônima");
+    
+    // Se o usuário digitou algo no campo de nome, usa o nome digitado.
+    // Se deixou em branco, define automaticamente como "Anônima".
+    let nome = inputNome && inputNome.value.trim() ? inputNome.value.trim() : "Anônima";
 
     try {
         const resposta = await fetch(`/api/mural/${idPost}/resposta`, {
@@ -202,9 +235,12 @@ async function adicionarResposta(idPost) {
         });
 
         if (resposta.ok) {
-            mostrarRelatos();
+            mostrarRelatos(); // Recarrega a lista com a nova resposta
+        } else {
+            alert("Erro ao enviar comentário.");
         }
     } catch (erro) {
         console.error("Erro ao responder:", erro);
+        alert("Falha de conexão ao enviar resposta.");
     }
 }

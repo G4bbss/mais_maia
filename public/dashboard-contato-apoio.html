@@ -7,22 +7,22 @@
     <title>Painel de Apoio - Maia</title>
     <link rel="icon" href="img/maiaFavicon.png" type="image/png">
     <link rel="stylesheet" href="./style/dashboard.css">
+
+    <script src="/js/apoio-readonly.js"></script>
+    <script src="/js/acessibilidade.js"></script>
+
 </head>
 
 <body>
     <div class="app">
         <!-- ===================== SIDEBAR CONTATO DE APOIO ===================== -->
         <aside class="sidebar">
-            <a href="#" class="logo">Ma<span>i</span>a</a>
+            <a href="/dashboard-contato-apoio" class="logo">Ma<span>i</span>a</a>
             <nav>
-                <a href="./agendamentos.html">Agendamentos</a>
-                <a href="./diario-emocional.html">Diário Emocional</a>
-                <a href="./perfil.html">Meu Perfil</a>
-                <a href="./mural.html">Mural</a>
-                <a href="./dashboard-contato-apoio.html" class="ativo">Painel</a>
-                <a href="./profissionais.html">Profissionais</a>
-                <a href="./rede-apoio.html">Rede de Apoio</a>
-                <a href="./telemedicina.html">Telemedicina</a>
+                <a href="/dashboard-contato-apoio" class="ativo"> Painel</a>
+                <a href="./diario.html"> Diário Emocional</a>
+                <a href="./perfil.html"> Perfil</a>
+                <a href="./mural.html"> Mural</a>
             </nav>
             <span class="rodape-sidebar">© 2026 Maia</span>
         </aside>
@@ -48,13 +48,13 @@
             <div class="topbar">
                 <div class="saudacao">
                     <h1 id="saudacaoContato">Olá!</h1>
-                    <p id="saudacaoMae">Acompanhando: Carregando...</p>
+                    <p id="saudacaoMae">Acompanhando: carregando...</p>
                 </div>
 
                 <div class="conta">
                     <button class="conta-botao" id="botaoConta">
                         <span class="avatar-mini" id="avatarMini">A</span>
-                        <span class="nome-mini" id="nomeMini">Apoiador</span>
+                        <span class="nome-mini" id="nomeMini">Apoio</span>
                         <span class="icone-engrenagem">⚙️</span>
                     </button>
                     <div class="conta-menu" id="menuConta">
@@ -64,13 +64,14 @@
             </div>
 
             <div class="grid-principal">
-                <!-- Cartão Informativo de Status da Mãe -->
+                <!-- Status de quem está sendo acompanhada -->
                 <div class="painel-card" style="background: #f0f7f7; border-left: 5px solid #2a9d8f;">
                     <h2>Status do Acompanhamento</h2>
-                    <p id="infoStatusMae">Carregando informações da mãe...</p>
+                    <p id="infoStatusMae">Carregando informações...</p>
+                    <p style="font-size: 13px; margin-top: 8px;"> Você tem acesso somente para visualização. Não é possível alterar dados nem agendar consultas.</p>
                 </div>
 
-                <!-- Calendário de Compromissos (Modo Leitura) -->
+                <!-- Calendário de compromissos (somente leitura) -->
                 <div class="painel-card">
                     <div class="calendario-cabecalho">
                         <button id="mesAnterior">‹</button>
@@ -78,30 +79,39 @@
                         <button id="mesSeguinte">›</button>
                     </div>
                     <div class="calendario-grade" id="grade"></div>
-                    <h3 style="margin-top: 15px; font-size: 16px;">Compromissos Agendados:</h3>
+                    <h3 style="margin-top: 15px; font-size: 16px;">Compromissos agendados:</h3>
                     <div class="lista-compromissos" id="listaCompromissos"></div>
                 </div>
 
-                <!-- Feed de Dicas de Apoio -->
+                <!-- Últimos registros do diário emocional -->
+                <div class="painel-card feed">
+                    <h2>Como ela tem se sentido</h2>
+                    <div class="feed-lista" id="listaHumor">
+                        <p class="vazio">Carregando registros...</p>
+                    </div>
+                    <p style="margin-top: 10px;"><a href="./diario.html">Ver diário completo →</a></p>
+                </div>
+
+                <!-- Dicas de apoio -->
                 <div class="painel-card feed">
                     <h2>Como você pode ajudar hoje?</h2>
                     <div class="feed-lista">
                         <div class="feed-item">
                             <div class="feed-texto">
-                                <strong>Apoio Prático</strong>
+                                <strong>Apoio prático</strong>
                                 <span>Pergunte se pode ajudar com tarefas domésticas ou com o preparo de refeições.</span>
                             </div>
                         </div>
                         <div class="feed-item">
                             <div class="feed-texto">
-                                <strong>Escuta Ativa</strong>
-                                <span>Reserve momentos para ouvir sem julgar. O pós-parto e a gestação são fases de intensas mudanças.</span>
+                                <strong>Escuta ativa</strong>
+                                <span>Reserve momentos para ouvir sem julgar. Gestação e pós-parto são fases de intensas mudanças.</span>
                             </div>
                         </div>
                         <div class="feed-item">
                             <div class="feed-texto">
-                                <strong>Acompanhamento Médico</strong>
-                                <span>Fique atento às datas de consultas e exames na agenda acima.</span>
+                                <strong>Acompanhamento médico</strong>
+                                <span>Fique atento às datas de consultas e exames no calendário.</span>
                             </div>
                         </div>
                     </div>
@@ -109,6 +119,18 @@
             </div>
         </main>
     </div>
+
+    <!-- ===================== WIDGET VLIBRAS ===================== -->
+    <div vw class="enabled">
+        <div vw-access-button class="active"></div>
+        <div vw-plugin-wrapper>
+            <div class="vw-plugin-top-wrapper"></div>
+        </div>
+    </div>
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script>
+        new window.VLibras.Widget('https://vlibras.gov.br/app');
+    </script>
 
     <script src="./js/dashboard-contato-apoio.js"></script>
 </body>

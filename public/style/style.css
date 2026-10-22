@@ -726,13 +726,7 @@
             .hero-text h1 {
                 font-size: 28px;
             }
-        }
-   
-
-
-
-
-        
+        }  
 
 .selection-card {
     max-width: 1100px; /* Aumente a largura do modal para caber os 4 cards lado a lado */
@@ -747,7 +741,400 @@
     gap: 15px;
 }
 
+       /* ===================== ESTILOS DO MODAL DE SELEÇÃO DE PERFIL ===================== */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.65);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 20px;
+    backdrop-filter: blur(6px);
+}
 
+.modal-overlay.active {
+    display: flex;
+}
 
+.selection-card {
+    position: relative;
+    width: 100%;
+    max-width: 1020px; /* Aumentado para comportar os 4 cards em linha */
+    background-color: #fffaf6;
+    border-radius: 16px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.35);
+    overflow: hidden;
+    animation: modalFadeIn 0.3s ease-out;
+}
 
-        
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.96) translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.selection-header {
+    background-color: #7f5539;
+    color: #fff;
+    padding: 18px 28px;
+    position: relative;
+}
+
+.selection-header h2 {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #e6ccb2;
+    margin: 0;
+}
+
+.modal-close {
+    position: absolute;
+    top: 14px;
+    right: 20px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #e6ccb2;
+    cursor: pointer;
+    z-index: 10;
+    line-height: 1;
+    transition: color 0.2s;
+}
+
+.modal-close:hover {
+    color: #ffffff;
+}
+
+.selection-body {
+    padding: 32px 28px;
+}
+
+.selection-body .section-heading {
+    text-align: center;
+    margin-bottom: 28px;
+}
+
+.selection-body .section-heading .eyebrow {
+    font-size: 11px;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: #9c6644;
+    font-weight: 700;
+    margin-bottom: 6px;
+    display: block;
+}
+
+.selection-body .section-heading h1 {
+    font-size: 24px;
+    color: #7f5539;
+    margin: 0 0 8px 0;
+    font-weight: 700;
+}
+
+.selection-body .section-heading p {
+    max-width: 540px;
+    margin: 0 auto;
+    color: #6b5744;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+/* OCULTA OS TEXTOS "OU" QUE POLUIAM A TELA */
+.separator-or {
+    display: none !important;
+}
+
+/* ALINHA OS 4 CARDS EM UMA GRELHA DE 4 COLUNAS */
+.profiles-container {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 16px !important;
+    align-items: stretch !important;
+}
+
+.profile-option {
+    background-color: #fcf8f4;
+    border: 1px solid #e8d8c8;
+    border-radius: 14px;
+    padding: 22px 14px;
+    box-shadow: 0 2px 8px rgba(127, 85, 57, 0.05);
+    transition: all 0.25s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.profile-option:hover {
+    transform: translateY(-5px);
+    border-color: #7f5539;
+    background-color: #ffffff;
+    box-shadow: 0 10px 25px rgba(127, 85, 57, 0.15);
+}
+
+.icon-wrapper,
+.profile-option .icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background-color: #f5ebe0;
+    color: #7f5539;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    margin-bottom: 12px;
+    border: 1px solid #d9c5b2;
+}
+
+.tag-badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.tag-root, .tag-profissional { background-color: #ead9f0; color: #55305e; }
+.tag-user { background-color: #dcefdc; color: #2f5233; }
+.tag-apoio { background-color: #e0f2fe; color: #0369a1; }
+.tag-contato { background-color: #fef3c7; color: #92400e; }
+
+.profile-option h3 {
+    color: #7f5539;
+    font-size: 17px;
+    margin: 0 0 6px 0;
+    font-weight: 700;
+}
+
+.profile-option p {
+    font-size: 12px;
+    color: #6b5744;
+    line-height: 1.4;
+    margin: 0 0 18px 0;
+    flex-grow: 1; /* Garante alinhamento dos botões no rodapé dos cards */
+}
+
+/* PADRONIZA TODOS OS BOTÕES INTERNOS DOS CARDS */
+.profile-option .btn,
+.profile-option button,
+.profile-option a {
+    width: 100% !important;
+    padding: 10px 8px !important;
+    background-color: #7f5539 !important;
+    color: #ffffff !important;
+    border: none !important;
+    border-radius: 8px !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    text-decoration: none !important;
+    display: block !important;
+    box-sizing: border-box !important;
+    transition: background-color 0.2s !important;
+    text-align: center !important;
+    cursor: pointer !important;
+}
+
+.profile-option .btn:hover,
+.profile-option button:hover,
+.profile-option a:hover {
+    background-color: #9c6644 !important;
+    color: #ffffff !important;
+}
+
+/* RESPONSIVIDADE */
+@media (max-width: 920px) {
+    .profiles-container {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 14px !important;
+    }
+}
+
+@media (max-width: 520px) {
+    .profiles-container {
+        grid-template-columns: 1fr !important;
+    }
+    
+    .selection-body {
+        padding: 24px 16px;
+    }
+}
+
+        /* ===================== ESTILOS DA INTERFACE DA REDE DE APOIO ===================== */
+        .rede-apoio-block {
+            background-color: #fff8f0;
+            padding: 50px 24px;
+            border-radius: 18px;
+            margin: 40px auto;
+            max-width: 1200px;
+            border: 1px solid #f0e0d0;
+        }
+
+        .rede-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 30px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .rede-search-input, .rede-filter-select {
+            padding: 10px 16px;
+            border: 1px solid #d9c5b2;
+            border-radius: 8px;
+            font-size: 14px;
+            background-color: #fff;
+            color: #7f5539;
+            outline: none;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+        }
+
+        .rede-search-input:focus, .rede-filter-select:focus {
+            border-color: #7f5539;
+        }
+
+        .rede-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+        }
+
+        .voluntario-card {
+            background: #ffffff;
+            border: 1px solid #e6ccb2;
+            border-radius: 14px;
+            padding: 22px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .voluntario-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+        }
+
+        .voluntario-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 14px;
+        }
+
+        .voluntario-avatar {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background-color: #7f5539;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .voluntario-info h4 {
+            margin: 0;
+            color: #7f5539;
+            font-size: 17px;
+        }
+
+        .voluntario-info span {
+            font-size: 12px;
+            color: #8c735d;
+            display: block;
+            margin-top: 2px;
+        }
+
+        .voluntario-body p {
+            font-size: 13px;
+            color: #5c4a3a;
+            line-height: 1.5;
+            margin-bottom: 14px;
+        }
+
+        .voluntario-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 16px;
+        }
+
+        .badge-tipo {
+            font-size: 11px;
+            background-color: #f5ebe0;
+            color: #7f5539;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+
+        .voluntario-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 14px;
+            border-top: 1px solid #f0e6df;
+        }
+
+        .status-badge {
+            font-size: 12px;
+            color: #2e7d32;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 500;
+        }
+
+        .status-badge::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background-color: #2e7d32;
+            border-radius: 50%;
+        }
+
+        @media (max-width: 850px) {
+            .profiles-container {
+                flex-direction: column;
+            }
+
+            .separator-or {
+                justify-content: center;
+                margin: 8px 0;
+            }
+
+            .selection-body {
+                padding: 25px 18px;
+            }
+
+            .rede-filters {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .rede-search-input, .rede-filter-select {
+                width: 100%;
+            }
+        }

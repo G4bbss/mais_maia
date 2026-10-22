@@ -3,15 +3,15 @@ import pool from "../config/banco.js";
 import { OAuth2Client } from "google-auth-library";
 import nodemailer from "nodemailer";
 
-const GOOGLE_CLIENT_ID = "910310455755-ecuctmqtfutt440jbjebr97jdj1pgkk5.apps.googleusercontent.com";
+const GOOGLE_CLIENT_ID = "388467000446-ourhp19ai6janfmbcg1tjjes0gbht3gi.apps.googleusercontent.com";
 const googleClient = new OAuth2Client(GOOGLE_CLIENT_ID);
 
-const EMAIL_SISTEMA = "central.equipemaia@gmail.com";
+const EMAIL_SISTEMA = "batmandastrevas@gmail.com";
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
     user: EMAIL_SISTEMA,
-    pass: "psok rogj tgaq wtuu"
+    pass: "hnrw xdbp ztpy mnff"
   },
   tls: {
     rejectUnauthorized: false,
@@ -32,6 +32,19 @@ const emailStyle = `
 
 function gerarChaveAcesso10() {
   return Math.floor(1000000000 + Math.random() * 9000000000).toString();
+}
+
+// Gera uma chave de 10 dígitos e confirma no banco que ela ainda não existe (coluna é UNIQUE)
+async function gerarChaveAcessoUnica() {
+  for (let i = 0; i < 20; i++) {
+    const chave = gerarChaveAcesso10();
+    const [existe] = await pool.execute(
+      "SELECT id_contato FROM contato_apoio WHERE chave_acesso = ?",
+      [chave]
+    );
+    if (existe.length === 0) return chave;
+  }
+  throw new Error("Não foi possível gerar uma chave de acesso única.");
 }
 
 export const cadastrar = async (req, res) => {
@@ -108,6 +121,9 @@ export const verificarCodigo = async (req, res) => {
 
     if (linhas.length > 0) {
       req.session.usuarioEmail = email;
+      req.session.tipoUsuario = "usuario";
+      delete req.session.contatoNome;
+      delete req.session.contatoId;
       return res.json({ ok: true, mensagem: "E-mail verificado com sucesso!" });
     } else {
       return res.status(401).json({ ok: false, erro: "Código de verificação inválido!" });
@@ -151,6 +167,9 @@ export const googleAuth = async (req, res) => {
 
     if (linhas.length > 0) {
       req.session.usuarioEmail = email;
+      req.session.tipoUsuario = "usuario";
+      delete req.session.contatoNome;
+      delete req.session.contatoId;
       return res.json({
         ok: true,
         cadastrado: true,
@@ -193,7 +212,7 @@ export const login = async (req, res) => {
     );
 
     if (profissional.length > 0) {
-      // Valide a senha do profissional aqui se tiver hash/coluna de senha
+      // (Se profissional tiver verificação ou login direto)
       req.session.usuarioEmail = email;
       req.session.tipoUsuario = "profissional";
 
@@ -204,33 +223,65 @@ export const login = async (req, res) => {
       });
     }
 
-    // 2. Se não for profissional, busca na tabela de Usuário (Paciente)
-    const [usuario] = await pool.execute(
+    // 2. Busca na tabela de Usuário (Paciente)
+    const [usuarios] = await pool.execute(
       "SELECT * FROM usuario WHERE email = ?",
       [email]
     );
 
-    if (usuario.length > 0) {
-      // Valide a senha do usuário
-      req.session.usuarioEmail = email;
-      req.session.tipoUsuario = "paciente";
-
-      return res.json({
-        ok: true,
-        tipo: "paciente",
-        redirect: "/dashboard"
-      });
+    if (usuarios.length === 0) {
+      return res.status(401).json({ ok: false, erro: "E-mail ou senha inválidos." });
     }
 
-    // 3. Se não encontrou em nenhuma das duas tabelas
-    return res.status(401).json({ ok: false, erro: "E-mail ou senha inválidos." });
+    const usuario = usuarios[0];
+
+    // 3. Valida a senha do usuário com bcrypt
+    const senhaValida = await bcrypt.compare(senha, usuario.senha);
+    if (!senhaValida) {
+      return res.status(401).json({ ok: false, erro: "E-mail ou senha inválidos." });
+    }
+
+    // 4. GERAR CÓDIGO 2FA E ENVIAR POR E-MAIL
+    const codigo2FA = Math.floor(100000 + Math.random() * 900000).toString();
+
+    await pool.execute(
+      "UPDATE usuario SET codigo_verificacao = ? WHERE id_usuario = ?",
+      [codigo2FA, usuario.id_usuario]
+    );
+
+    try {
+      await transporter.sendMail({
+        from: `"Equipe Maia" <${EMAIL_SISTEMA}>`,
+        to: email,
+        subject: "Seu Código de Acesso (2FA) - Maia",
+        html: `
+          <div style="${emailStyle}">
+            <h2 style="color: #8c5a4d; margin-top: 0;">Código de Autenticação</h2>
+            <p>Olá, <b>${usuario.paciente_nome || "Usuária"}</b>!</p>
+            <p>Utilize o código abaixo para concluir seu login na plataforma Maia:</p>
+            <div style="background-color: #f9f9f9; padding: 20px; text-align: center; border-radius: 8px; margin: 20px 0;">
+              <span style="font-size: 32px; font-weight: bold; letter-spacing: 5px; color: #8c5a4d;">${codigo2FA}</span>
+            </div>
+            <p style="font-size: 12px; color: #999;">Se você não tentou realizar o login, altere sua senha imediatamente.</p>
+          </div>
+        `
+      });
+    } catch (erroEmail) {
+      console.error("⚠️ Falha ao enviar e-mail de 2FA:", erroEmail.message);
+    }
+
+    // Retorna informando que necessita da etapa de verificação
+    return res.json({
+      ok: true,
+      requer2FA: true,
+      redirect: `/verificacao?email=${encodeURIComponent(email)}`
+    });
 
   } catch (erro) {
     console.error("Erro no login:", erro.message);
     return res.status(500).json({ ok: false, erro: "Erro interno ao realizar login." });
   }
 };
-
 
 
 
@@ -270,6 +321,12 @@ export const meusDados = async (req, res) => {
     );
 
     usuario.contatos = contatos;
+
+    // Informa ao front-end se quem está logado é o contato de apoio (modo somente leitura)
+    usuario.tipoUsuario = req.session.tipoUsuario || "usuario";
+    usuario.somenteLeitura = req.session.tipoUsuario === "contato_apoio";
+    usuario.contatoNome = req.session.contatoNome || null;
+
     return res.json(usuario);
 
   } catch (erro) {
@@ -372,7 +429,7 @@ export const atualizarPerfil = async (req, res) => {
             [nomeFinal, telFinal, emailFinal, parentescoFinal, c.id_contato, idUsuario]
           );
         } else {
-          const chaveAcesso = gerarChaveAcesso10();
+          const chaveAcesso = await gerarChaveAcessoUnica();
 
           const [insertRes] = await pool.execute(
             `INSERT INTO contato_apoio (USUARIO_id_usuario, nome, telefone, email, parentesco, chave_acesso)
@@ -487,10 +544,38 @@ export const redefinirSenha = async (req, res) => {
 
     const novaSenhaCriptografada = await bcrypt.hash(NovaSenha, 10);
 
+    // 1. Atualiza a senha no banco de dados e limpa o código de verificação
     await pool.execute(
       "UPDATE usuario SET senha = ?, codigo_verificacao = NULL WHERE email = ?",
       [novaSenhaCriptografada, Email]
     );
+
+    // 2. Envia o e-mail de notificação de segurança reutilizando o transporter do arquivo
+    try {
+      await transporter.sendMail({
+        from: `"Equipe Maia" <${EMAIL_SISTEMA}>`,
+        to: Email,
+        subject: "Sua senha foi alterada com sucesso - Maia",
+        html: `
+          <div style="${emailStyle}">
+            <h2 style="color: #8c5a4d; margin-top: 0;">Senha Alterada com Sucesso</h2>
+            <p>Olá!</p>
+            <p>Confirmamos que a senha da sua conta na plataforma <b>Maia</b> foi alterada recentemente.</p>
+            <div style="background-color: #f9f9f9; padding: 12px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #8c5a4d;">
+              <p style="margin: 0; font-size: 13px; color: #3b2a25;">
+                <b>Data e Hora:</b> ${new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' })}
+              </p>
+            </div>
+            <p style="font-size: 12px; color: #c62828;">
+              <b>Atenção:</b> Se você não realizou essa alteração, entre em contato com o suporte imediatamente para proteger sua conta.
+            </p>
+          </div>
+        `
+      });
+      console.log(`📧 E-mail de confirmação de alteração de senha enviado para: ${Email}`);
+    } catch (erroEmail) {
+      console.error("⚠️ Falha ao enviar e-mail de aviso de alteração de senha:", erroEmail.message);
+    }
 
     return res.json({ ok: true, mensagem: "Senha alterada com sucesso! Você já pode fazer login." });
 
@@ -648,7 +733,10 @@ export const agendarConsulta = async (req, res) => {
 
 export const meusAgendamentos = async (req, res) => {
   try {
-    const emailParam = req.params.email || req.query.email || req.session?.usuarioEmail;
+    // Contato de apoio só pode ver os agendamentos do usuário ao qual está vinculado
+    const emailParam = req.session?.tipoUsuario === "contato_apoio"
+      ? req.session.usuarioEmail
+      : (req.params.email || req.query.email || req.session?.usuarioEmail);
 
     if (!emailParam) {
       return res.json([]);
@@ -791,19 +879,21 @@ export async function removerContato(req, res) {
 // ===================== Login do Contato de Apoio (Chave 10 dígitos) =====================
 export const loginContatoApoio = async (req, res) => {
   try {
-    const { email, chaveAcesso } = req.body;
+    const email = String(req.body?.email || "").trim().toLowerCase();
+    const chaveAcesso = String(req.body?.chaveAcesso || "").trim().toUpperCase();
 
     if (!email || !chaveAcesso) {
       return res.status(400).json({ ok: false, erro: "E-mail e chave de acesso são obrigatórios." });
     }
 
-    // Busca o contato de apoio ativo correspondente ao e-mail e à chave
+    // O contato só entra com o e-mail que o usuário cadastrou + a chave gerada para ele
     const [contatos] = await pool.execute(
-      `SELECT c.id_contato, c.nome, c.email, c.USUARIO_id_usuario, u.email AS usuario_email
-       FROM contato_apoio c
-       JOIN usuario u ON c.USUARIO_id_usuario = u.id_usuario
-       WHERE c.email = ? AND c.chave_acesso = ?`,
-      [email.trim(), chaveAcesso.trim()]
+      `SELECT c.id_contato, c.nome, c.email, c.USUARIO_id_usuario,
+              u.email AS usuario_email, u.paciente_nome AS usuario_nome
+         FROM contato_apoio c
+         JOIN usuario u ON c.USUARIO_id_usuario = u.id_usuario
+        WHERE LOWER(c.email) = ? AND UPPER(c.chave_acesso) = ?`,
+      [email, chaveAcesso]
     );
 
     if (contatos.length === 0) {
@@ -812,16 +902,20 @@ export const loginContatoApoio = async (req, res) => {
 
     const contato = contatos[0];
 
-    // Guarda na sessão que quem está logado é um Contato de Apoio,
-    // mas vincula o e-mail do usuário principal para que ele veja os dados da mãe/paciente.
-    req.session.usuarioEmail = contato.usuario_email; 
+    // A sessão aponta para o e-mail do usuário (assim todas as telas mostram os dados dele),
+    // mas o tipo "contato_apoio" faz o servidor bloquear qualquer alteração.
+    req.session.usuarioEmail = contato.usuario_email;
     req.session.tipoUsuario = "contato_apoio";
+    req.session.contatoId = contato.id_contato;
     req.session.contatoNome = contato.nome;
+    delete req.session.profissionalId;
+    delete req.session.redeApoioId;
 
     return res.json({
       ok: true,
       tipo: "contato_apoio",
-      redirect: "/dashboard-contato-apoio.html" // ou a tela visual criada para ele
+      nome: contato.nome,
+      redirect: "/dashboard-contato-apoio"
     });
 
   } catch (erro) {

@@ -78,12 +78,6 @@ document.addEventListener("click", function (e) {
         /* ===================== INTEGRAÇÃO COM GOOGLE GEMINI ===================== */
         let historicoGemini = [];
 
-        const SYSTEM_INSTRUCTION = {
-            parts: [{
-                text: "Você é a Camila, assistente virtual empática e acolhedora da plataforma Maia (voltada para gestantes e puérperas). Suas respostas devem ser claras, humanas e focadas na saúde materna. Caso o usuário mencione sintomas de alerta (como febre alta, dores intensas, sangramentos ou tonturas), oriente-o a buscar atendimento médico presencial imediatamente."
-            }]
-        };
-
         async function enviarMensagemChat() {
             const input = document.getElementById("chatInput");
             const texto = input.value.trim();
@@ -115,24 +109,28 @@ document.addEventListener("click", function (e) {
             });
 
             try {
-                const API_KEY = "AQ.Ab8RN6KsV9VBvwTDy8NSDNW9yUY0t2nBCBw_YWzgxgYIhpky3Q"; 
-                const MODELO = "gemini-1.5-flash";
+                // A chamada à IA é feita pelo servidor (a chave fica protegida no .env)
+                const historicoParaEnviar = historicoGemini.slice(0, -1).map(h => ({
+                    role: h.role,
+                    texto: h.parts[0].text
+                }));
 
-                const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODELO}:generateContent?key=${API_KEY}`;
-
-                const response = await fetch(url, {
+                const response = await fetch("/api/chatbot", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
-                        systemInstruction: SYSTEM_INSTRUCTION,
-                        contents: historicoGemini
+                        mensagem: texto,
+                        persona: "camila",
+                        historico: historicoParaEnviar
                     })
                 });
 
-                if (!response.ok) throw new Error("Erro de comunicação com a API do Gemini");
+                const data = await response.json().catch(() => ({}));
+                if (!response.ok || !data.resposta) {
+                    throw new Error(data.erro || "Erro de comunicação com a IA");
+                }
 
-                const data = await response.json();
-                const respostaIA = data.candidates[0].content.parts[0].text;
+                const respostaIA = data.resposta;
 
                 // Salva resposta no histórico com o papel 'model'
                 historicoGemini.push({
@@ -152,6 +150,7 @@ document.addEventListener("click", function (e) {
 
             } catch (erro) {
                 console.error("Erro no Gemini:", erro);
+                historicoGemini.pop(); // descarta a pergunta sem resposta para não quebrar a conversa
 
                 const elDigitando = document.getElementById("mensagemDigitando");
                 if (elDigitando) elDigitando.remove();

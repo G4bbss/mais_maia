@@ -1,0 +1,45 @@
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #faf5ef; color: #6b5744; display: flex; min-height: 100vh; }
+        
+        /* SIDEBAR */
+        .sidebar { width: 250px; background-color: #fffaf6; border-right: 1px solid #e6ccb2; padding: 24px 18px; display: flex; flex-direction: column; justify-content: space-between; }
+        .sidebar .logo { font-size: 28px; font-weight: bold; color: #7f5539; text-decoration: none; margin-bottom: 30px; display: block; }
+        .sidebar .logo span { color: #9c6644; }
+        .sidebar nav a { display: flex; align-items: center; gap: 12px; padding: 12px 14px; color: #6b5744; text-decoration: none; border-radius: 8px; margin-bottom: 6px; font-size: 14px; font-weight: 600; transition: 0.2s; }
+        .sidebar nav a:hover, .sidebar nav a.ativo { background-color: #f5ebe0; color: #7f5539; }
+        
+        /* CONTEÚDO */
+        .conteudo { flex: 1; padding: 30px; overflow-y: auto; }
+        .header-painel { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; background: #fff; padding: 20px 25px; border-radius: 12px; border: 1px solid #e6ccb2; }
+        .header-painel h1 { font-size: 22px; color: #7f5539; }
+        .prof-badge { display: flex; align-items: center; gap: 10px; font-size: 13px; background-color: #f5ebe0; padding: 8px 14px; border-radius: 20px; color: #7f5539; font-weight: bold; }
+        
+        /* ABAS */
+        .abas-nav { display: flex; gap: 12px; margin-bottom: 20px; border-bottom: 2px solid #e6ccb2; }
+        .aba-btn { background: none; border: none; padding: 10px 20px; font-size: 15px; font-weight: bold; color: #9c6644; cursor: pointer; border-bottom: 3px solid transparent; }
+        .aba-btn.ativa { color: #7f5539; border-bottom-color: #7f5539; }
+        .secao-aba { display: none; }
+        .secao-aba.ativa { display: block; }
+        
+        /* CARDS E TABELAS */
+        .grid-agenda { display: grid; grid-template-columns: 280px 1fr; gap: 20px; }
+        .card { background: #fff; border-radius: 12px; padding: 20px; border: 1px solid #e6ccb2; margin-bottom: 20px; }
+        .tabela { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        .tabela th, .tabela td { padding: 12px 14px; text-align: left; font-size: 13px; border-bottom: 1px solid #f0e6dd; vertical-align: top; }
+        .tabela th { background-color: #f5ebe0; color: #7f5539; }
+        
+        /* BADGES */
+        .badge { padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; display: inline-block; }
+        .badge-pendente { background-color: #fff3cd; color: #856404; }
+        
+        /* BOTÕES E FORMULÁRIOS */
+        .btn-acao { background-color: #7f5539; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; margin-right: 4px; }
+        .btn-acao:hover { background-color: #9c6644; }
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+        .form-grupo { margin-bottom: 14px; }
+        .form-grupo label { font-size: 13px; font-weight: bold; color: #7f5539; display: block; margin-bottom: 6px; }
+        .form-grupo input, .form-grupo textarea, .form-grupo select { width: 100%; padding: 10px; border: 1px solid #d9c5b2; border-radius: 8px; font-size: 13px; background-color: #faf5ef; }
+
+        @media (max-width: 900px) { body { flex-direction: column; } .sidebar { width: 100%; } .grid-agenda { grid-template-columns: 1fr; } }
+  

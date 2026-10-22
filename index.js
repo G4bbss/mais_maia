@@ -1,11 +1,10 @@
-import dotenv from "dotenv";
-dotenv.config();
+import "./config/env.js"; // precisa ser o primeiro import (carrega o .env)
 
 import express from "express";
 import path from "path";
 import session from "express-session";
 import { fileURLToPath } from "url";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { gerarResposta, modelosConfigurados, provedoresConfigurados } from "./config/gemini.js";
 
 // Importação da conexão do banco de dados (ajuste o caminho se necessário)
 import db from "./config/banco.js";
@@ -23,16 +22,12 @@ const __dirname = path.dirname(__filename);
 
 const backend = express();
 
-// Verificação do carregamento da chave de API
-const apiKey = process.env.GEMINI_API_KEY;
-if (!apiKey) {
+// Verificação do carregamento da chave de API (fica só no .env, nunca no front-end)
+if (!process.env.GEMINI_API_KEY) {
   console.error("⚠️ AVISO: GEMINI_API_KEY não foi encontrada no arquivo .env!");
 } else {
-  console.log("🔑 GEMINI_API_KEY carregada com sucesso.");
+  console.log(`🔑 GEMINI_API_KEY carregada. Serviços: ${provedoresConfigurados().join(" → ")} | Modelos: ${modelosConfigurados().join(" → ")}`);
 }
-
-// Inicialização da IA com a biblioteca oficial
-const genAI = new GoogleGenerativeAI(apiKey);
 
 // ===================== Middlewares =====================
 backend.use(express.json());
@@ -47,6 +42,47 @@ backend.use(
     cookie: { maxAge: 1000 * 60 * 60 * 4 } // 4 horas de sessão
   })
 );
+
+// ===================== Contato de Apoio: SOMENTE LEITURA =====================
+// O contato de apoio enxerga os dados do usuário que o cadastrou, mas nunca altera nada
+// e não acessa o agendamento de consultas. Esta trava vale para todas as rotas.
+const ESCRITAS_LIBERADAS_APOIO = [
+  "/cliente/logout",
+  "/usuario/logout",
+  "/cliente/contato-apoio/login",
+  "/usuario/contato-apoio/login",
+  "/api/chatbot" // só conversa com a IA, não grava dados do usuário
+];
+
+// Páginas que o contato de apoio não usa (agendar, profissionais, rede de apoio e telemedicina)
+const PAGINAS_BLOQUEADAS_APOIO = [
+  "/agendamento", "/agendamento.html",
+  "/profissionais", "/profissionais.html",
+  "/redeapoio", "/redeapoio.html",
+  "/telemedicina", "/telemedicina.html"
+];
+
+function somenteLeituraParaContatoApoio(req, res, next) {
+  if (req.session?.tipoUsuario !== "contato_apoio") return next();
+
+  const metodo = req.method.toUpperCase();
+
+  if (metodo === "GET" || metodo === "HEAD" || metodo === "OPTIONS") {
+    const caminho = req.path.toLowerCase();
+    if (PAGINAS_BLOQUEADAS_APOIO.includes(caminho)) {
+      return res.redirect("/dashboard-contato-apoio");
+    }
+    return next();
+  }
+
+  if (ESCRITAS_LIBERADAS_APOIO.includes(req.path)) return next();
+
+  return res.status(403).json({
+    ok: false,
+    erro: "Modo somente visualização: o contato de apoio não pode alterar dados."
+  });
+}
+backend.use(somenteLeituraParaContatoApoio);
 
 // Arquivos públicos (CSS, imagens, JS do front e páginas HTML)
 backend.use(express.static(path.join(__dirname, "public")));
@@ -76,119 +112,86 @@ backend.use("/diario", diarioRotas);
 // API do Mural
 backend.use("/api/mural", muralRotas);
 
-// ===================== ROTA DO PRONTUÁRIO (SALVAR NO MYSQL) =====================
-backend.post("/api/prontuarios", async (req, res) => {
-  try {
-    const {
-      nomePaciente,
-      fasePaciente,
-      sintomas,
-      tempoSintomas,
-      nivelDor,
-      alergias,
-      medicamentosUso,
-      orientacoes,
-      idAgendamento
-    } = req.body;
+// ===================== CHATBOT COM IA (Gemini) =====================
+// Usado pelos directs (telemedicina, rede de apoio) e pela assistente Camila do painel.
+// Corpo aceito: { mensagem, profissional?, especialidade?, persona?, historico? }
+const limiteChatbot = new Map(); // ip -> horários das últimas requisições
+function chatbotLiberado(ip) {
+  const agora = Date.now();
+  const recentes = (limiteChatbot.get(ip) || []).filter(t => agora - t < 60000);
+  if (recentes.length >= 20) { limiteChatbot.set(ip, recentes); return false; }
+  recentes.push(agora);
+  limiteChatbot.set(ip, recentes);
+  return true;
+}
 
-    // Resgata o email da sessão do usuário logado (se existir)
-    const emailPaciente = req.session?.usuarioEmail || null;
-
-    // Agrupa os campos do formulário para salvar na coluna 'anamnese'
-    const anamneseText = [
-      `Fase/Idade: ${fasePaciente || 'Não informado'}`,
-      `Sintomas/Queixa: ${sintomas || 'Não informado'}`,
-      `Tempo dos Sintomas: ${tempoSintomas || 'Não informado'}`,
-      `Intensidade: ${nivelDor || 'Leve'}`,
-      `Alergias: ${alergias || 'Nenhuma'}`,
-      `Medicamentos em uso: ${medicamentosUso || 'Nenhum'}`
-    ].join('\n');
-
-    const condutaText = orientacoes || '';
-    const dataRegistro = new Date();
-
-    const sql = `
-      INSERT INTO prontuario 
-      (email_paciente, nome_paciente, anamnese, conduta, data_registro, id_agendamento) 
-      VALUES (?, ?, ?, ?, ?, ?)
-    `;
-
-    const values = [
-      emailPaciente,
-      nomePaciente || null,
-      anamneseText,
-      condutaText,
-      dataRegistro,
-      idAgendamento || null
-    ];
-
-    // Executa a instrução no MySQL
-    db.query(sql, values, (err, result) => {
-      if (err) {
-        console.error("❌ Erro ao inserir prontuário no MySQL:", err);
-        return res.status(500).json({ erro: "Erro ao salvar no banco de dados." });
-      }
-
-      console.log("✅ Prontuário gravado com sucesso! ID:", result.insertId);
-      return res.status(201).json({
-        sucesso: true,
-        mensagem: "Prontuário salvo no banco de dados com sucesso!",
-        idProntuario: result.insertId
-      });
-    });
-
-  } catch (error) {
-    console.error("❌ Erro interno no servidor ao processar prontuário:", error);
-    return res.status(500).json({ erro: "Falha interna do servidor." });
+function montarInstrucaoChatbot({ profissional, especialidade, persona }) {
+  if (persona === "camila") {
+    return `Você é a Camila, assistente virtual empática e acolhedora da plataforma Maia (voltada para gestantes e puérperas).
+Diretrizes:
+- Responda em Português do Brasil, com respostas claras, humanas e focadas na saúde materna.
+- Seja objetivo (no máximo 1 a 3 parágrafos curtos).
+- Se a pessoa mencionar sintomas de alerta (febre alta, dores intensas, sangramentos, tonturas), oriente a buscar atendimento médico presencial imediatamente.
+- Lembre, quando fizer sentido, que o chat não substitui consulta médica.`;
   }
-});
 
-// ===================== CHATBOT COM IA =====================
-backend.post("/api/chatbot", async (req, res) => {
-  try {
-    const { mensagem, profissional, especialidade } = req.body;
-
-    if (!mensagem) {
-      return res.status(400).json({ error: "A mensagem é obrigatória." });
-    }
-
-    const nomeProf = profissional || "Profissional de Saúde Maia Care";
-    const espProf = especialidade || "Saúde Materno-Infantil";
-
-    const systemInstruction = `Você é ${nomeProf}, especialista em ${espProf} da plataforma de telemedicina "Maia Care".
+  const nomeProf = profissional || "Profissional de Saúde Maia Care";
+  const espProf = especialidade || "Saúde Materno-Infantil";
+  return `Você é ${nomeProf}, especialista em ${espProf} da plataforma "Maia Care".
 Você está conversando diretamente com uma paciente ou familiar pelo chat da plataforma.
 Diretrizes de resposta:
 - Responda em Português do Brasil com tom acolhedor, empático, seguro e profissional.
 - Seja objetivo e conciso (máximo de 1 a 3 parágrafos curtos).
 - Forneça orientação em saúde materno-infantil com responsabilidade, destacando que orientações de chat não substituem uma consulta presencial ou emergência médica urgente.`;
+}
 
-    const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-flash",
-      systemInstruction: systemInstruction
+// Diagnóstico: abra http://localhost:3000/api/chatbot/teste no navegador do computador onde o servidor roda
+backend.get("/api/chatbot/teste", async (req, res) => {
+  const local = ["::1", "127.0.0.1", "::ffff:127.0.0.1"].includes(req.ip);
+  if (!local) return res.status(403).json({ ok: false, erro: "Disponível apenas na máquina do servidor." });
+
+  try {
+    const resposta = await gerarResposta({
+      systemInstruction: "Responda em português, em uma frase curta.",
+      mensagem: "Diga olá para a plataforma Maia."
+    });
+    return res.json({ ok: true, resposta, modelos: modelosConfigurados() });
+  } catch (error) {
+    return res.status(502).json({
+      ok: false,
+      status: error.status || null,
+      erro: error.message,
+      modelos_tentados: modelosConfigurados(),
+      chave_no_env: Boolean(process.env.GEMINI_API_KEY),
+      tentativas: error.falhas || []
+    });
+  }
+});
+
+backend.post("/api/chatbot", async (req, res) => {
+  const mensagem = String(req.body?.mensagem ?? "").trim();
+
+  if (!mensagem) {
+    return res.status(400).json({ erro: "A mensagem é obrigatória.", resposta: "Escreva uma mensagem para eu poder ajudar." });
+  }
+
+  if (!chatbotLiberado(req.ip)) {
+    return res.status(429).json({ erro: "Muitas mensagens em pouco tempo.", resposta: "Você enviou muitas mensagens seguidas. Aguarde um instante e tente de novo." });
+  }
+
+  try {
+    const resposta = await gerarResposta({
+      systemInstruction: montarInstrucaoChatbot(req.body),
+      historico: req.body.historico,
+      mensagem
     });
 
-    let respostaTexto = null;
-    let tentativas = 0;
-    const maxTentativas = 3;
-
-    while (tentativas < maxTentativas && !respostaTexto) {
-      try {
-        tentativas++;
-        const result = await model.generateContent(mensagem);
-        const response = await result.response;
-        respostaTexto = response.text();
-      } catch (err) {
-        console.warn(`Tentativa ${tentativas} falhou. Tentando novamente...`);
-        if (tentativas >= maxTentativas) throw err;
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-      }
-    }
-
-    res.json({ resposta: respostaTexto });
+    return res.json({ resposta });
   } catch (error) {
-    console.error("Erro na API do Chatbot:", error);
-    res.status(500).json({
-      resposta: "Olá! Tive uma breve oscilação de sinal. Como posso te orientar hoje?"
+    console.error(`❌ Erro na API do Gemini (status ${error.status || "?"}):`, error.message);
+    return res.status(502).json({
+      erro: error.message,
+      resposta: "Olá! Tive uma breve oscilação de sinal. Pode repetir sua mensagem?"
     });
   }
 });
@@ -214,6 +217,7 @@ backend.get("/login-contato-apoio", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "login-contato-apoio.html"));
 });
 
+
 backend.get("/cadastro", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "cadastro.html"));
 });
@@ -234,10 +238,22 @@ backend.get("/painel-rede-apoio", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "painel-rede-apoio.html"));
 });
 
+backend.get("/dashboard-contato-apoio", (req, res) => {
+  if (req.session?.tipoUsuario !== "contato_apoio") {
+    return res.redirect("/login-contato-apoio");
+  }
+  res.sendFile(path.join(__dirname, "public", "dashboard-contato-apoio.html"));
+});
+
 // ===================== Páginas Protegidas =====================
 backend.get("/dashboard", exigirLogin, (req, res) => {
   res.sendFile(path.join(__dirname, "public", "dashboard.html"));
 });
+
+backend.get("/dashboardapoio", exigirLogin, (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "dashboard.html"));
+});
+
 
 backend.get("/perfil", exigirLogin, (req, res) => {
   res.sendFile(path.join(__dirname, "public", "perfil.html"));

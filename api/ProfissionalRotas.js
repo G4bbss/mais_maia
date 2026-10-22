@@ -1,5 +1,6 @@
 import { Router } from "express";
 import * as profissionalController from "../controller/profissionalController.js";
+import ProntuarioController from "../controller/prontuarioController.js";
 
 const router = Router();
 
@@ -13,8 +14,8 @@ router.get("/especialidade/:nome", profissionalController.filtrarPorEspecialidad
 // Rotas do Painel Médico / Profissional (Rotas estáticas antes das rotas com :id)
 router.get("/agendamentos", profissionalController.listarAgendamentosProfissional);
 router.post("/agendamento/status", profissionalController.atualizarStatusAgendamento);
-router.post("/prontuario", profissionalController.salvarProntuario);
-router.get("/prontuario/:email", profissionalController.buscarProntuariosPaciente);
+router.post("/prontuario", ProntuarioController.salvar);
+router.get("/prontuario/:email", ProntuarioController.buscarPorEmail);
 
 // Rotas com Parâmetros Dinâmicos
 router.get("/:id", profissionalController.buscarProfissionalPorId);

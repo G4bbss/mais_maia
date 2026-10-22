@@ -7,42 +7,12 @@
     <title>Painel do Profissional - Maia Care</title>
     <link rel="icon" href="img/maiaFavicon.png" type="image/png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="stylesheet" href="../public/style/painel-profissional.css">
+
+    <script src="/js/apoio-readonly.js"></script>
+    <script src="/js/acessibilidade.js"></script>
     
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: #faf5ef; color: #6b5744; display: flex; min-height: 100vh; }
-        .sidebar { width: 250px; background-color: #fffaf6; border-right: 1px solid #e6ccb2; padding: 24px 18px; display: flex; flex-direction: column; }
-        .sidebar .logo { font-size: 28px; font-weight: bold; color: #7f5539; text-decoration: none; margin-bottom: 30px; display: block; }
-        .sidebar .logo span { color: #9c6644; }
-        .sidebar nav a { display: flex; align-items: center; gap: 12px; padding: 12px 14px; color: #6b5744; text-decoration: none; border-radius: 8px; margin-bottom: 6px; font-size: 14px; font-weight: 600; transition: 0.2s; }
-        .sidebar nav a:hover, .sidebar nav a.ativo { background-color: #f5ebe0; color: #7f5539; }
-        .conteudo { flex: 1; padding: 30px; overflow-y: auto; }
-        .header-painel { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; background: #fff; padding: 20px 25px; border-radius: 12px; border: 1px solid #e6ccb2; }
-        .header-painel h1 { font-size: 22px; color: #7f5539; }
-        .prof-badge { display: flex; align-items: center; gap: 10px; font-size: 13px; background-color: #f5ebe0; padding: 8px 14px; border-radius: 20px; color: #7f5539; font-weight: bold; }
-        .abas-nav { display: flex; gap: 12px; margin-bottom: 20px; border-bottom: 2px solid #e6ccb2; }
-        .aba-btn { background: none; border: none; padding: 10px 20px; font-size: 15px; font-weight: bold; color: #9c6644; cursor: pointer; border-bottom: 3px solid transparent; }
-        .aba-btn.ativa { color: #7f5539; border-bottom-color: #7f5539; }
-        .secao-aba { display: none; }
-        .secao-aba.ativa { display: block; }
-        .grid-agenda { display: grid; grid-template-columns: 300px 1fr; gap: 20px; }
-        .card { background: #fff; border-radius: 12px; padding: 20px; border: 1px solid #e6ccb2; margin-bottom: 20px; }
-        .tabela { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        .tabela th, .tabela td { padding: 12px 14px; text-align: left; font-size: 13px; border-bottom: 1px solid #f0e6dd; }
-        .tabela th { background-color: #f5ebe0; color: #7f5539; }
-        .badge { padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; display: inline-block; }
-        .badge-online { background-color: #e3f2fd; color: #1976d2; }
-        .badge-presencial { background-color: #e8f5e9; color: #2e7d32; }
-        .badge-agendado { background-color: #fff3cd; color: #856404; }
-        .badge-realizada { background-color: #d4edda; color: #155724; }
-        .badge-cancelada { background-color: #f8d7da; color: #721c24; }
-        .btn-meet { background-color: #1a73e8; color: white; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-size: 12px; font-weight: bold; display: inline-flex; align-items: center; gap: 6px; }
-        .btn-acao { background-color: #7f5539; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; margin-right: 4px; }
-        .form-grupo { margin-bottom: 14px; }
-        .form-grupo label { font-size: 13px; font-weight: bold; color: #7f5539; display: block; margin-bottom: 4px; }
-        .form-grupo textarea, .form-grupo select { width: 100%; padding: 10px; border: 1px solid #d9c5b2; border-radius: 8px; font-size: 13px; }
-        @media (max-width: 900px) { body { flex-direction: column; } .sidebar { width: 100%; } .grid-agenda { grid-template-columns: 1fr; } }
-    </style>
 </head>
 
 <body>

@@ -33,7 +33,10 @@ function carregarPerfilUsuario() {
     fetch("/cliente/me")
         .then(res => res.ok ? res.json() : Promise.reject())
         .then(usuario => {
-            const primeiroNome = (usuario.Nome || usuario.nome || usuario.profissional_nome || "Usuário").split(" ")[0];
+            if (usuario.Email || usuario.email) {
+                window.emailPacienteAtual = usuario.Email || usuario.email;
+            }
+            const primeiroNome = (usuario.Nome || usuario.nome || usuario.paciente_nome || "Usuário").split(" ")[0];
             const nomeMiniEl = document.getElementById("nomeMini");
             const avatarMiniEl = document.getElementById("avatarMini");
             if (nomeMiniEl) nomeMiniEl.textContent = primeiroNome;
@@ -48,7 +51,7 @@ async function carregarAgendamentosDoBanco() {
     if (!grid) return;
 
     let agendamentos = [];
-    const emailLogado = localStorage.getItem("usuarioEmail");
+    const emailLogado = localStorage.getItem("usuarioEmail") || localStorage.getItem("email");
 
     const endpoints = emailLogado ? [
         `/usuario/meus-agendamento/${emailLogado}`,
@@ -144,6 +147,8 @@ function renderizarConsultasAgendadas(listaAgendamentos) {
                 pacienteNome = (item.nome && item.nome !== nomeFinal) ? item.nome : (document.getElementById("nomeMini")?.textContent || "Paciente");
             }
 
+            const emailPaciente = item.email_paciente || item.email || item.paciente_email || localStorage.getItem("usuarioEmail") || "";
+
             return {
                 id: item.id_agendamento || item.id,
                 profissional: nomeFinal,
@@ -151,6 +156,7 @@ function renderizarConsultasAgendadas(listaAgendamentos) {
                 data: dataFormatada,
                 horario: item.horario || item.hora || item.horario_agendamento || "Horário a definir",
                 paciente: pacienteNome,
+                emailPaciente: emailPaciente,
                 foto: fotoFinal,
                 linkVideo: item.linkvideoconferencia || item.link_videoconferencia || item.linkvideoconf || item.link || "",
                 status: item.status
@@ -185,7 +191,7 @@ function renderizarConsultasAgendadas(listaAgendamentos) {
 
         const btnEntrar = card.querySelector(".btn-entrar-sala");
         btnEntrar.addEventListener("click", () => {
-            entrarChamadaDireta(item.profissional, item.especialidade, item.foto, item.paciente, item.id);
+            entrarChamadaDireta(item.profissional, item.especialidade, item.foto, item.paciente, item.id, item.emailPaciente);
         });
 
         grid.appendChild(card);
@@ -205,7 +211,7 @@ function exibirMensagemSemConsultas() {
 }
 
 /* INICIALIZAÇÃO DA SALA WEBRTC VIA JITSI MEET */
-function entrarChamadaDireta(medico, esp, foto, paciente, idConsulta) {
+function entrarChamadaDireta(medico, esp, foto, paciente, idConsulta, emailPaciente) {
     fecharFila();
 
     let fotoProcessada = foto || "img/maiaFavicon.png";
@@ -213,7 +219,10 @@ function entrarChamadaDireta(medico, esp, foto, paciente, idConsulta) {
         fotoProcessada = `img/${fotoProcessada}`;
     }
 
-    medicoAtualConsulta = { medico, esp, foto: fotoProcessada, paciente, idConsulta };
+    // Armazena dados no estado global e no window para fácil recuperação no salvamento
+    medicoAtualConsulta = { medico, esp, foto: fotoProcessada, paciente, idConsulta, emailPaciente };
+    window.idAgendamentoAtual = idConsulta || null;
+    if (emailPaciente) window.emailPacienteAtual = emailPaciente;
     
     const elMedico = document.getElementById("modalNomeMedico");
     const elEsp = document.getElementById("modalEspecialidade");
@@ -554,28 +563,54 @@ async function enviarChatChamada() {
 }
 
 /* PRONTUÁRIOS E SALVAMENTO DE CONSULTA INTEGRADO AO BANCO DE DADOS */
-async function salvarFormularioConsulta(isFinalizado) {
-    const form = document.getElementById('formAtendimento');
+// =========================================================================
+// SALVAMENTO DE PRONTUÁRIO E CONSULTA INTEGRADO
+// =========================================================================
 
-    if (form && !form.checkValidity()) {
-        form.reportValidity();
+async function salvarFormularioConsulta(isFinalizado) {
+    console.log("Iniciando salvamento do prontuário...", { isFinalizado });
+
+    // 1. Captura os valores do formulário
+    const nomePaciente = document.getElementById('formNomePaciente')?.value.trim() || '';
+    const fasePaciente = document.getElementById('formFasePaciente')?.value.trim() || '';
+    const sintomas = document.getElementById('formSintomas')?.value.trim() || '';
+    const tempoSintomas = document.getElementById('formTempoSintomas')?.value.trim() || '';
+    const nivelDor = document.getElementById('formNivelDor')?.value || 'Leve';
+    const alergias = document.getElementById('formAlergias')?.value.trim() || '';
+    const medicamentosUso = document.getElementById('formMedicamentosUso')?.value.trim() || '';
+    const orientacoes = document.getElementById('formOrientacoes')?.value.trim() || '';
+
+    // 2. Validações manuais com alertas claros para o usuário
+    if (!sintomas) {
+        alert("Por favor, preencha o campo 'Queixa Principal / Motivo da Consulta'.");
+        document.getElementById('formSintomas')?.focus();
         return;
     }
 
-    const dadosProntuario = {
-        nomePaciente: document.getElementById('formNomePaciente')?.value || '',
-        fasePaciente: document.getElementById('formFasePaciente')?.value || '',
-        sintomas: document.getElementById('formSintomas')?.value || '',
-        tempoSintomas: document.getElementById('formTempoSintomas')?.value || '',
-        nivelDor: document.getElementById('formNivelDor')?.value || 'Leve',
-        alergias: document.getElementById('formAlergias')?.value || '',
-        medicamentosUso: document.getElementById('formMedicamentosUso')?.value || '',
-        orientacoes: document.getElementById('formOrientacoes')?.value || '',
-        idAgendamento: null // Passe o ID do agendamento aqui se tiver disponível
-    };
+    if (!orientacoes) {
+        alert("Por favor, preencha o campo 'Orientações'.");
+        document.getElementById('formOrientacoes')?.focus();
+        return;
+    }
+
+    const idAgendamento = window.idAgendamentoAtual ||
+    (medicoAtualConsulta ? medicoAtualConsulta.idConsulta : null);
+
+const dadosProntuario = {
+    AGENDAMENTO_id_agendamento: idAgendamento,
+    nome_paciente: nomePaciente,
+    fase_paciente: fasePaciente,
+    sintomas: sintomas,
+    tempo_sintomas: tempoSintomas,
+    nivel_dor: nivelDor,
+    alergias: alergias,
+    medicamentos_uso: medicamentosUso,
+    orientacoes: orientacoes,
+    finalizado: isFinalizado
+};
 
     try {
-        const response = await fetch('/api/prontuarios', {
+        const response = await fetch('/api/profissionais/prontuario', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -585,19 +620,24 @@ async function salvarFormularioConsulta(isFinalizado) {
 
         const resultado = await response.json();
 
-        if (!response.ok) {
-            throw new Error(resultado.erro || 'Erro ao salvar prontuário.');
+        if (!response.ok || (resultado.ok !== undefined && !resultado.ok)) {
+            throw new Error(resultado.erro || resultado.mensagem || 'Erro ao salvar prontuário.');
         }
 
-        // Alerta visual de sucesso
+        // Alerta visual de sucesso no painel
         const alerta = document.getElementById('alertaSalvamento');
         if (alerta) {
             alerta.style.display = 'block';
             setTimeout(() => { alerta.style.display = 'none'; }, 3000);
         }
 
-        if (isFinalizado && typeof fecharModalVideo === 'function') {
-            fecharModalVideo();
+        if (isFinalizado) {
+            alert('Prontuário salvo e consulta finalizada com sucesso!');
+            if (typeof encerrarConsultaModal === 'function') {
+                encerrarConsultaModal();
+            }
+        } else {
+            alert('Rascunho do prontuário salvo com sucesso!');
         }
 
     } catch (error) {
@@ -605,6 +645,17 @@ async function salvarFormularioConsulta(isFinalizado) {
         alert('Ocorreu um erro ao salvar no banco de dados: ' + error.message);
     }
 }
+
+// Torna a função globalmente acessível
+window.salvarFormularioConsulta = salvarFormularioConsulta;
+
+
+
+// Disponibiliza as funções no escopo do window
+window.salvarFormularioConsulta = salvarFormularioConsulta;
+window.entrarChamadaDireta = entrarChamadaDireta;
+window.encerrarConsultaModal = encerrarConsultaModal;
+window.alternarTabChamada = alternarTabChamada;
 
 /* CONTROLE DA CARTEIRINHA DIGITAL */
 function abrirCarteirinha() {
@@ -627,7 +678,7 @@ function fecharCarteirinha() {
     }
 }
 
-/* HISTÓRICO DE DOCUMENTOS (EXIBE ÍCONES COM A DATA DA CONSULTA) */
+/* HISTÓRICO DE DOCUMENTOS */
 function abrirMeusArquivos() {
     const modal = document.getElementById("modalArquivos");
     const lista = document.getElementById("listaArquivosSalvos");
@@ -687,7 +738,7 @@ function verDetalhesRelatorio(idDoc) {
                 <h4>📄 Prontuário Maia Care - ${doc.medico}</h4>
                 <p><strong>Data/Hora:</strong> ${doc.data} às ${doc.hora}</p>
                 <p><strong>Paciente:</strong> ${doc.nomePaciente} (${doc.fase})</p>
-                <p><strong>Sintomas Relatados:</strong> ${doc.sintomas} - ${doc.tempoSintomas} (Intensidade: ${doc.nivelDor})</p>
+                <p><strong>Sintomas Relatados:</strong> ${doc.sintomas} ${doc.tempoSintomas} (Intensidade: ${doc.nivelDor})</p>
                 <p><strong>Alergias / Med. Uso:</strong> ${doc.alergias} / ${doc.medicamentos}</p>
                 <p><strong>Avaliação Médica:</strong> ${doc.avaliacao}</p>
                 <p><strong>Prescrição & Orientações:</strong> ${doc.orientacoes}</p>
@@ -721,3 +772,13 @@ function toggleCam() {
         jitsiApi.executeCommand('toggleVideo');
     }
 }
+
+
+
+
+
+
+
+
+// Expõe expressamente a função na janela do navegador
+window.salvarFormularioConsulta = salvarFormularioConsulta;

@@ -38,8 +38,9 @@ const MuralController = {
                 ORDER BY data_criacao DESC
             `);
 
+            // Apelida 'POST_id_post AS id_post' para bater com o nome da coluna no seu banco
             const [respostas] = await db.query(`
-                SELECT id_resposta, id_post, nome_exibicao, texto, data_criacao 
+                SELECT id_resposta, POST_id_post AS id_post, nome_exibicao, texto, data_criacao 
                 FROM mural_resposta 
                 ORDER BY data_criacao ASC
             `);
@@ -66,12 +67,19 @@ const MuralController = {
                 return res.status(400).json({ mensagem: "O texto é obrigatório." });
             }
 
+            // Calculates the next id_post manually
+            const [maxResult] = await db.query(
+                "SELECT COALESCE(MAX(id_post), 0) + 1 AS proximoId FROM mural_post"
+            );
+            const proximoId = maxResult[0].proximoId;
+
             const sql = `
-                INSERT INTO mural_post (USUARIO_id_usuario, nome_exibicao, e_anonimo, texto, curtidas, data_criacao)
-                VALUES (?, ?, ?, ?, 0, NOW())
+                INSERT INTO mural_post (id_post, USUARIO_id_usuario, nome_exibicao, e_anonimo, texto, curtidas, data_criacao)
+                VALUES (?, ?, ?, ?, ?, 0, NOW())
             `;
 
             await db.query(sql, [
+                proximoId,
                 idUsuario || null,
                 nome_exibicao || "Anônima",
                 e_anonimo ? 1 : 0,
@@ -97,7 +105,7 @@ const MuralController = {
         }
     },
 
-    // Salva uma resposta em um post
+    // Salva uma resposta em um post (Sem precisar de AUTO_INCREMENT no banco)
     async salvarResposta(req, res) {
         try {
             const { id } = req.params;
@@ -107,12 +115,24 @@ const MuralController = {
                 return res.status(400).json({ mensagem: "O comentário não pode ser vazio." });
             }
 
+            // 1. Calcula o próximo id_resposta manualmente
+            const [maxResult] = await db.query(
+                "SELECT COALESCE(MAX(id_resposta), 0) + 1 AS proximoId FROM mural_resposta"
+            );
+            const proximoId = maxResult[0].proximoId;
+
+            // 2. Insere informando o id_resposta e usando a coluna POST_id_post
             const sql = `
-                INSERT INTO mural_resposta (id_post, nome_exibicao, texto, data_criacao)
-                VALUES (?, ?, ?, NOW())
+                INSERT INTO mural_resposta (id_resposta, POST_id_post, nome_exibicao, texto, data_criacao)
+                VALUES (?, ?, ?, ?, NOW())
             `;
 
-            await db.query(sql, [id, nome_exibicao || "Anônima", texto.trim()]);
+            await db.query(sql, [
+                proximoId,
+                id,
+                nome_exibicao || "Anônima",
+                texto.trim()
+            ]);
 
             return res.status(201).json({ mensagem: "Comentário enviado!" });
         } catch (erro) {

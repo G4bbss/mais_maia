@@ -1,15 +1,18 @@
 <!DOCTYPE html>
-<html lang="pt-BR"> <!-- Define que o documento é HTML5 e está em português do Brasil -->
+<html lang="pt-BR">
 
 <head>
-    <meta charset="UTF-8"> <!-- Garante suporte a acentos e caracteres especiais -->
-    <title>Login - Maia</title> <!-- Título da aba do navegador -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Maia</title>
     <link rel="icon" href="img/maiaFavicon.png" type="image/png">
-<link rel="stylesheet" href="style/login.css"> <!-- Link para o arquivo CSS externo -->
+    <link rel="stylesheet" href="style/login.css">
+
+    <script src="/js/apoio-readonly.js"></script>
+    <script src="/js/acessibilidade.js"></script>
+    
     <!-- Script oficial do Google Sign-In -->
     <script src="https://accounts.google.com/gsi/client" async></script>
-
-
 </head>
 
 <body>
@@ -28,7 +31,7 @@
                 <h2>Login</h2>
 
                 <!-- Formulário de login -->
-                <form method="POST" action="/cliente/login">
+                <form id="formLogin">
                     <input type="email" name="Email" placeholder="Endereço de e-mail" required>
                     <input type="password" name="Senha" placeholder="Senha" required>
 
@@ -37,7 +40,7 @@
                         <label class="checkbox-label">
                             <input type="checkbox" id="lembrar"> Lembrar-me
                         </label>
-                        <!-- BOTÃO ESQUECEU A SENHA CORRIGIDO -->
+                        <!-- BOTÃO ESQUECEU A SENHA -->
                         <a href="#" onclick="esqueciMinhaSenha(event)">Esqueceu a senha?</a>
                     </div>
 
@@ -48,7 +51,7 @@
                 <!-- Botão do Google -->
                 <div class="google-btn-container">
                     <div id="g_id_onload"
-                        data-client_id="910310455755-ecuctmqtfutt440jbjebr97jdj1pgkk5.apps.googleusercontent.com"
+                        data-client_id="388467000446-ourhp19ai6janfmbcg1tjjes0gbht3gi.apps.googleusercontent.com"
                         data-context="signin" data-ux_mode="popup" data-callback="lidarComRespostaGoogle"
                         data-auto_prompt="false">
                     </div>
@@ -75,7 +78,47 @@
         </div>
     </div>
 
-   <script src="js/login.js"></script> <!-- Link para o arquivo JS externo -->
+    <!-- =========================================================================
+     MODAL DE RECUPERAÇÃO DE SENHA (COM NAVEGAÇÃO E VOLTAR)
+     ========================================================================= -->
+<div id="modalRecuperarSenha" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+        <button type="button" class="modal-close" onclick="fecharModalRecuperacao()">&times;</button>
+        
+        <!-- Passo 1: Solicitar E-mail -->
+        <div id="passo1Recuperacao">
+            <h3>Recuperar Senha</h3>
+            <p>Digite o seu e-mail cadastrado para receber o código de verificação.</p>
+            <div id="msgErroPasso1" class="msg-status erro" style="display:none;"></div>
+            <input type="email" id="emailRecuperacao" placeholder="Seu e-mail" required />
+            <button type="button" class="btn-modal" onclick="enviarCodigoRecuperacao()">Enviar Código</button>
+        </div>
+
+        <!-- Passo 2: Apenas Código -->
+        <div id="passo2Recuperacao" style="display: none;">
+            <h3>Código de Verificação</h3>
+            <p>Insira o código enviado para o seu e-mail.</p>
+            <div id="msgErroPasso2" class="msg-status erro" style="display:none;"></div>
+            <input type="text" id="codigoRecuperacao" placeholder="Código de verificação" required />
+            <button type="button" class="btn-modal" onclick="validarEContinuarCodigo()">Avançar</button>
+            <button type="button" class="btn-modal-secundario" onclick="voltarParaPasso1()">Voltar</button>
+        </div>
+
+        <!-- Passo 3: Apenas Nova Senha -->
+        <div id="passo3Recuperacao" style="display: none;">
+            <h3>Redefinir Senha</h3>
+            <p>Digite a sua nova senha.</p>
+            <div id="msgErroPasso3" class="msg-status erro" style="display:none;"></div>
+            <div id="msgSucessoPasso3" class="msg-status sucesso" style="display:none;"></div>
+            <input type="password" id="novaSenhaRecuperacao" placeholder="Nova senha" required />
+            <button type="button" class="btn-modal" onclick="redefinirSenha()">Alterar Senha</button>
+            <button type="button" class="btn-modal-secundario" onclick="voltarParaPasso2()">Corrigir Código</button>
+        </div>
+    </div>
+</div>
+
+    <!-- Link para o arquivo JS externo -->
+    <script src="js/login.js"></script>
 
 </body>
 
