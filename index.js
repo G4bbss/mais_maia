@@ -218,6 +218,7 @@ backend.get("/login-contato-apoio", (req, res) => {
 });
 
 
+
 backend.get("/cadastro", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "cadastro.html"));
 });
@@ -249,6 +250,11 @@ backend.get("/dashboard-contato-apoio", (req, res) => {
 backend.get("/dashboard", exigirLogin, (req, res) => {
   res.sendFile(path.join(__dirname, "public", "dashboard.html"));
 });
+
+backend.get("/dashboardapoio", exigirLogin, (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "dashboard.html"));
+});
+
 
 backend.get("/dashboardapoio", exigirLogin, (req, res) => {
   res.sendFile(path.join(__dirname, "public", "dashboard.html"));

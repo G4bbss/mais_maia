@@ -1,15 +1,21 @@
 // =========================================================================
 // 1. GOOGLE SIGN-IN
+// 1. GOOGLE SIGN-IN
 // =========================================================================
 
 /**
  * Processa o token JWT enviado pelo Google Sign-In e redireciona o utilizador
  */
 async function lidarComRespostaGoogle(response) {
+ * Processa o token JWT enviado pelo Google Sign-In e redireciona o utilizador
+ */
+async function lidarComRespostaGoogle(response) {
     try {
+        const res = await fetch("/cliente/google-auth", {
         const res = await fetch("/cliente/google-auth", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ token: response.credential })
             body: JSON.stringify({ token: response.credential })
         });
 
@@ -18,14 +24,21 @@ async function lidarComRespostaGoogle(response) {
         if (data.ok) {
             if (data.cadastrado) {
                 window.location.href = data.redirect || "/";
+            if (data.cadastrado) {
+                window.location.href = data.redirect || "/";
             } else {
+                const query = `?nome=${encodeURIComponent(data.nome || '')}&email=${encodeURIComponent(data.email || '')}&foto=${encodeURIComponent(data.foto || '')}`;
+                window.location.href = (data.redirect || "/cadastro") + query;
                 const query = `?nome=${encodeURIComponent(data.nome || '')}&email=${encodeURIComponent(data.email || '')}&foto=${encodeURIComponent(data.foto || '')}`;
                 window.location.href = (data.redirect || "/cadastro") + query;
             }
         } else {
             alert(data.erro || "Erro ao verificar autenticação com o Google.");
+            alert(data.erro || "Erro ao verificar autenticação com o Google.");
         }
     } catch (erro) {
+        console.error("Erro no login Google:", erro);
+        alert("Erro ao conectar com o servidor. Tente novamente mais tarde.");
         console.error("Erro no login Google:", erro);
         alert("Erro ao conectar com o servidor. Tente novamente mais tarde.");
     }
@@ -80,6 +93,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (formLogin) {
         formLogin.addEventListener("submit", async function (e) {
             e.preventDefault(); // Impede a navegação direta do HTML
+            e.preventDefault(); // Impede a navegação direta do HTML
 
             const senhaInput = document.querySelector('input[name="Senha"]');
             const email = emailInput ? emailInput.value.trim() : "";
@@ -111,6 +125,8 @@ document.addEventListener("DOMContentLoaded", () => {
                         }
                     }
 
+                    // Redireciona para a página do cliente
+                    window.location.href = data.redirect || "/painel-profissional.html";
                     // Redireciona para a página do cliente
                     window.location.href = data.redirect || "/painel-profissional.html";
                 } else {

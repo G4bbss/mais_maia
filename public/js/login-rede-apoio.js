@@ -80,12 +80,18 @@ document.addEventListener("DOMContentLoaded", () => {
     if (formLogin) {
         formLogin.addEventListener("submit", async function (e) {
             e.preventDefault(); // Impede a navegação direta do HTML
+        formLogin.addEventListener("submit", async function (e) {
+            e.preventDefault(); // Impede a navegação direta do HTML
 
+            const senhaInput = document.querySelector('input[name="Senha"]');
+            const email = emailInput ? emailInput.value.trim() : "";
+            const senha = senhaInput ? senhaInput.value.trim() : "";
             const senhaInput = document.querySelector('input[name="Senha"]');
             const email = emailInput ? emailInput.value.trim() : "";
             const senha = senhaInput ? senhaInput.value.trim() : "";
 
             if (!email || !senha) {
+                alert("Por favor, preencha o e-mail e a senha.");
                 alert("Por favor, preencha o e-mail e a senha.");
                 return;
             }
@@ -94,9 +100,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 const res = await fetch("/rede-apoio/login", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
+                const res = await fetch("/rede-apoio/login", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ email, senha })
                 });
 
+                const data = await res.json();
                 const data = await res.json();
 
                 if (res.ok && data.ok) {
@@ -113,10 +123,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     // Redireciona para a página do cliente
                     window.location.href = data.redirect || "/painel-rede-apoio.html";
+                if (res.ok && data.ok) {
+                    // Gerenciamento do "Lembrar-me"
+                    if (lembrarCheck) {
+                        if (lembrarCheck.checked && email) {
+                            localStorage.setItem("email", email);
+                            localStorage.setItem("lembrar", "true");
+                        } else {
+                            localStorage.removeItem("email");
+                            localStorage.removeItem("lembrar");
+                        }
+                    }
+
+                    // Redireciona para a página do cliente
+                    window.location.href = data.redirect || "/painel-rede-apoio.html";
                 } else {
+                    alert(data.erro || "E-mail ou senha incorretos.");
                     alert(data.erro || "E-mail ou senha incorretos.");
                 }
             } catch (erro) {
+                console.error("Erro no login:", erro);
+                alert("Erro ao conectar com o servidor.");
                 console.error("Erro no login:", erro);
                 alert("Erro ao conectar com o servidor.");
             }
